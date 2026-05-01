@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Topbar from '../components/Topbar';
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
   // 1. Tạo State để lưu trữ dữ liệu từ API
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // 2. Gọi API ngay khi trang vừa load xong
   useEffect(() => {
@@ -79,8 +81,11 @@ function Home() {
             /* Vẽ vòng lặp (Map) hiển thị từng công việc */
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
               {jobs.map((job) => (
-                <div key={job.id} style={{ border: '1px solid #E2E8F0', padding: '16px', borderRadius: '8px', display: 'flex', gap: '16px', backgroundColor: '#fff', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                  
+                <div 
+                  key={job.id} 
+                  onClick={() => navigate(`/job/${job.id}`)} // THÊM DÒNG NÀY
+                  style={{ border: '1px solid #E2E8F0', padding: '16px', borderRadius: '8px', display: 'flex', gap: '16px', backgroundColor: '#fff', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}
+                >  
                   {/* Cột Logo */}
                   <div style={{ width: '56px', height: '56px', backgroundColor: '#F1F5F9', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 600, color: '#94A3B8' }}>
                     {job.employer?.company_name?.substring(0, 2).toUpperCase() || 'CT'}

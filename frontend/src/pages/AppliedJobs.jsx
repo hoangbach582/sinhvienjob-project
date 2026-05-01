@@ -1,106 +1,103 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Topbar from '../components/Topbar';
 
 function AppliedJobs() {
-  const [activeTab, setActiveTab] = useState('applied');
+  const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchMyApplications();
+  }, []);
+
+  const fetchMyApplications = async () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      alert("Bạn cần đăng nhập để xem trang này!");
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/applications/me', {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setApplications(data);
+      } else {
+        console.error("Lỗi khi tải lịch sử ứng tuyển");
+      }
+    } catch (error) {
+      console.error("Lỗi kết nối:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    const badges = {
+      'pending': { text: 'Đang chờ duyệt', color: '#64748B', bg: '#F1F5F9' },
+      'reviewing': { text: 'Đang xem xét', color: '#D97706', bg: '#FEF3C7' },
+      'interview': { text: 'Hẹn phỏng vấn', color: '#2563EB', bg: '#DBEAFE' },
+      'accepted': { text: 'Trúng tuyển', color: '#16A34A', bg: '#DCFCE7' },
+      'rejected': { text: 'Từ chối', color: '#DC2626', bg: '#FEE2E2' }
+    };
+    
+    const badge = badges[status] || badges['pending'];
+    
+    return (
+      <span style={{ padding: '6px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: 600, color: badge.color, backgroundColor: badge.bg }}>
+        {badge.text}
+      </span>
+    );
+  };
+
+  if (loading) return <div style={{ textAlign: 'center', padding: '50px' }}>Đang tải lịch sử ứng tuyển...</div>;
 
   return (
-    <div className="app">
-      <div className="mock-frame">
-        <Topbar />
-        
-        <div style={{ maxWidth: '800px', margin: '20px auto', padding: '0 16px' }}>
-          <p className="section-title">Quản lý việc làm</p>
-          
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-            <button 
-              className={`btn ${activeTab === 'applied' ? 'btn-primary' : ''}`} 
-              onClick={() => setActiveTab('applied')}
-            >
-              Đã ứng tuyển (3)
-            </button>
-            <button 
-              className={`btn ${activeTab === 'saved' ? 'btn-primary' : ''}`} 
-              onClick={() => setActiveTab('saved')}
-            >
-              Đã lưu (5)
-            </button>
+    <div style={{ backgroundColor: '#F8FAFC', minHeight: '100vh' }}>
+      <Topbar />
+      
+      <div style={{ maxWidth: '1000px', margin: '30px auto', padding: '0 20px' }}>
+        <h2 style={{ fontSize: '24px', color: '#0F172A', marginBottom: '24px' }}>Công việc đã ứng tuyển</h2>
+
+        {applications.length === 0 ? (
+          <div style={{ backgroundColor: '#fff', padding: '40px', textAlign: 'center', borderRadius: '12px', border: '1px dashed #CBD5E1' }}>
+            <p style={{ color: '#64748B', fontSize: '16px' }}>Bạn chưa ứng tuyển công việc nào.</p>
+            <Link to="/" style={{ display: 'inline-block', marginTop: '12px', color: '#3B82F6', textDecoration: 'none', fontWeight: 500 }}>
+              Khám phá việc làm ngay →
+            </Link>
           </div>
-
-          {/* Danh sách công việc ĐÃ ỨNG TUYỂN */}
-          {activeTab === 'applied' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div className="card">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <Link to="/job/1" style={{ textDecoration: 'none', color: 'inherit' }}>
-                      <p className="job-title" style={{ fontSize: '15px' }}>Lập trình viên Frontend</p>
-                    </Link>
-                    <p className="job-company">FPT Software</p>
-                    <p style={{ fontSize: '12px', color: 'var(--color-text-secondary)', marginTop: '4px' }}>Đã nộp: 16/04/2026 - CV: CV_NguyenVanA_ReactJS.pdf</p>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <span className="badge" style={{ backgroundColor: '#FEF5E5', color: '#854F0B', borderColor: '#FDE1B9', fontSize: '12px' }}>Chờ xử lý</span>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {applications.map((app) => (
+              <div key={app.id} style={{ backgroundColor: '#fff', padding: '24px', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                
+                <div>
+                  <Link to={`/job/${app.job.id}`} style={{ fontSize: '18px', color: '#0F172A', fontWeight: 600, textDecoration: 'none', display: 'block', marginBottom: '8px' }}>
+                    {app.job.title}
+                  </Link>
+                  <div style={{ display: 'flex', gap: '16px', color: '#64748B', fontSize: '14px' }}>
+                    <span>🏢 {app.job.employer?.company_name || 'Đang cập nhật'}</span>
+                    <span>🕒 Đã nộp: {new Date(app.applied_at).toLocaleDateString('vi-VN')}</span>
                   </div>
                 </div>
-              </div>
 
-              <div className="card">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <Link to="/job/2" style={{ textDecoration: 'none', color: 'inherit' }}>
-                      <p className="job-title" style={{ fontSize: '15px' }}>Thực tập sinh Marketing</p>
-                    </Link>
-                    <p className="job-company">Momo</p>
-                    <p style={{ fontSize: '12px', color: 'var(--color-text-secondary)', marginTop: '4px' }}>Đã nộp: 10/04/2026 - CV: CV_Marketing_NVA.pdf</p>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <span className="badge" style={{ backgroundColor: '#EAF3DE', color: '#3B6D11', borderColor: '#C8E6A2', fontSize: '12px' }}>Mời phỏng vấn</span>
-                    <p style={{ fontSize: '11px', color: '#3B6FE8', marginTop: '6px', cursor: 'pointer' }}>Xem thư mời</p>
-                  </div>
+                <div>
+                  {getStatusBadge(app.status)}
                 </div>
-              </div>
 
-              <div className="card" style={{ opacity: 0.7 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <Link to="/job/3" style={{ textDecoration: 'none', color: 'inherit' }}>
-                      <p className="job-title" style={{ fontSize: '15px' }}>Nhân viên Part-time</p>
-                    </Link>
-                    <p className="job-company">The Coffee House</p>
-                    <p style={{ fontSize: '12px', color: 'var(--color-text-secondary)', marginTop: '4px' }}>Đã nộp: 01/04/2026 - CV: CV_Chung.pdf</p>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <span className="badge" style={{ backgroundColor: '#FDECEC', color: '#E24B4A', borderColor: '#FAD4D4', fontSize: '12px' }}>Hồ sơ không phù hợp</span>
-                  </div>
-                </div>
               </div>
-            </div>
-          )}
-
-          {/* Danh sách công việc ĐÃ LƯU (Hiển thị tượng trưng 1 cái) */}
-          {activeTab === 'saved' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-               <div className="card">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <Link to="/job/4" style={{ textDecoration: 'none', color: 'inherit' }}>
-                      <p className="job-title" style={{ fontSize: '15px' }}>Thiết kế UI/UX</p>
-                    </Link>
-                    <p className="job-company">VNG Corporation</p>
-                    <p style={{ fontSize: '12px', color: 'var(--color-text-secondary)', marginTop: '4px' }}>Đã lưu: Hôm nay</p>
-                  </div>
-                  <div>
-                    <button className="btn btn-primary" style={{ fontSize: '12px', marginRight: '8px' }}>Ứng tuyển</button>
-                    <button className="btn" style={{ fontSize: '12px', borderColor: '#E24B4A', color: '#E24B4A' }}>Bỏ lưu</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
-import Login from './pages/Login'; // Import trang login
+import Login from './pages/Login'; // Import trang đăng nhập
 import Register from './pages/Register'; // Import trang đăng ký
 import Jobs from './pages/Jobs'; // Import trang danh sách việc làm
 import JobDetail from './pages/JobDetail'; // Import trang chi tiết công việc
@@ -46,7 +46,7 @@ function App() {
           {/* Form ứng tuyển */}
           <Route path="/job/:id/apply" element={<ApplyJob />} />
           {/* Trang việc làm đã ứng tuyển */}
-          <Route path="/my-jobs" element={<AppliedJobs />} />
+          <Route path="/applied-jobs" element={<AppliedJobs />} />
 
           {/* Trang đăng ký cho NTD */}
           <Route path="/employer/register" element={<EmployerRegister />} />
