@@ -1,12 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import Topbar from '../components/Topbar';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Home() {
   // 1. Tạo State để lưu trữ dữ liệu từ API
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [keyword, setKeyword] = useState('');
+  const [location, setLocation] = useState('');
+
+  // Hàm xử lý khi bấm nút "Tìm kiếm"
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (keyword) params.append('keyword', keyword);
+    if (location) params.append('location', location);
+    
+    // Chuyển hướng sang trang Jobs kèm theo query string (VD: /jobs?keyword=React&location=Hà Nội)
+    navigate(`/jobs?${params.toString()}`);
+  };
 
   // 2. Gọi API ngay khi trang vừa load xong
   useEffect(() => {
@@ -56,15 +69,33 @@ function Home() {
         <div className="mock-frame" style={{ margin: '20px', padding: '40px', backgroundColor: '#E0F2FE', borderRadius: '12px', textAlign: 'center' }}>
           <h2 style={{ color: '#3B6FE8', marginBottom: '8px' }}>Tìm việc làm phù hợp cho sinh viên</h2>
           <p style={{ fontSize: '13px', color: 'var(--color-text-secondary)', marginBottom: '24px' }}>
-            Part-time, internship, full-time cho sinh viên toàn quốc
+            Part-time, internship, full-time cho sinh viên 
           </p>
-          <div style={{ display: 'flex', gap: '8px', maxWidth: '600px', margin: '0 auto' }}>
-            <input className="form-input" placeholder="Vị trí, kỹ năng, công ty..." style={{ flex: 1 }} />
-            <select className="form-input" style={{ width: '120px' }}>
-              <option>Hà Nội</option>
-              <option>TP.HCM</option>
-            </select>
-            <button className="btn btn-primary">Tìm kiếm</button>
+          <div style={{  maxWidth: '600px', margin: '0 auto' }}>
+            {/* --- KHU VỰC THANH TÌM KIẾM --- */}
+            <form onSubmit={handleSearch} style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+              <input 
+                type="text" 
+                placeholder="Vị trí, kỹ năng, công ty..." 
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)} // Lưu từ khóa
+                style={{ flex: 2, padding: '12px', borderRadius: '8px', border: '1px solid #CBD5E1', outline: 'none' }} 
+              />
+              <select 
+                value={location}
+                onChange={(e) => setLocation(e.target.value)} // Lưu địa điểm
+                style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '1px solid #CBD5E1', outline: 'none' }}
+              >
+                <option value="">Tất cả địa điểm</option>
+                <option value="Hà Nội">Hà Nội</option>
+                <option value="TP.HCM">TP.HCM</option>
+                <option value="Đà Nẵng">Đà Nẵng</option>
+                <option value="Remote">Remote</option>
+              </select>
+              <button type="submit" style={{ backgroundColor: '#3B82F6', color: '#fff', padding: '0 24px', borderRadius: '8px', border: 'none', fontWeight: 600, cursor: 'pointer' }}>
+                Tìm kiếm
+              </button>
+            </form>
           </div>
         </div>
 
@@ -120,14 +151,7 @@ function Home() {
             </div>
           )}
 
-          {/* Nút Xem thêm */}
-          {!loading && jobs.length > 0 && (
-             <div style={{ textAlign: 'center', marginTop: '30px', paddingBottom: '40px' }}>
-               <button className="btn" style={{ padding: '10px 24px', backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0', color: '#3B82F6', fontWeight: 500 }}>
-                 Xem tất cả việc làm
-               </button>
-             </div>
-          )}
+          
         </div>
 
       </div>

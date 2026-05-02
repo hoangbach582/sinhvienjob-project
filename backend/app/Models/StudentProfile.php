@@ -18,12 +18,8 @@ class StudentProfile extends Model
         'user_id',
         'full_name',
         'phone',
-        'university',
-        'major',
-        'graduation_year',
-        'cv_url',
-        'expected_salary',
+        'avatar',
         'bio',
-        'avatar_url'
+        'cv_url'
     ];
 }

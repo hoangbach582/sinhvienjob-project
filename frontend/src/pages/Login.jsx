@@ -122,11 +122,11 @@ function Login() {
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
                 <label style={{ fontSize: '12px', display: 'flex', gap: '6px', alignItems: 'center', cursor: 'pointer' }}>
-                  <input 
+                  {/* <input 
                     type="checkbox" 
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                  /> Ghi nhớ đăng nhập
+                  /> Ghi nhớ đăng nhập */}
                 </label>
                 {/* Đường dẫn tới trang Quên mật khẩu */}
                 <Link to="/forgot-password" style={{ fontSize: '12px', color: '#3B6FE8', textDecoration: 'none' }}>Quên mật khẩu?</Link>

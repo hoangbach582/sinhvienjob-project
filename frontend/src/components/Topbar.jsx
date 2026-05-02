@@ -6,7 +6,6 @@ function Topbar() {
   const { isLoggedIn, userName, userRole, logout } = useAuth(); 
   const navigate = useNavigate();
 
-  // State và Ref để xử lý Dropdown
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -16,7 +15,6 @@ function Topbar() {
     navigate('/login');
   };
 
-  // Xử lý hiệu ứng click ra ngoài vùng Dropdown thì tự đóng
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -27,7 +25,6 @@ function Topbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Hàm tự động tạo Avatar từ tên
   const getInitials = (name) => {
     if (!name) return 'US';
     const words = name.trim().split(' ');
@@ -38,88 +35,86 @@ function Topbar() {
   };
 
   return (
-    <div className="mock-topbar">
-      <Link to="/" className="mock-logo" style={{ textDecoration: 'none' }}>
-        SinhVienJob
-      </Link>
-      
-      <div className="mock-nav">
-        <Link to="/jobs" style={{ textDecoration: 'none', color: 'inherit' }}>Tìm việc</Link>
-        <Link to="/companies" style={{ textDecoration: 'none', color: 'inherit' }}>Công ty</Link>
-        <Link to="/employer/login" style={{ textDecoration: 'none', color: '#10B981', fontWeight: 500 }}>
-          Dành cho Nhà tuyển dụng
-        </Link>
-        {/* Đã xóa "Việc của tôi" ở đây để đưa vào trong Dropdown */}
-      </div>
+    <div style={{ backgroundColor: '#fff', borderBottom: '1px solid #E2E8F0', position: 'sticky', top: 0, zIndex: 100 }}>
+      {/* Container 1200px để căn lề bằng đúng với Sidebar và Danh sách việc làm */}
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', height: '70px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        
+        {/* TRÁI: Logo */}
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-start' }}>
+          <Link to="/" className="mock-logo" style={{ textDecoration: 'none', fontSize: '22px', fontWeight: 'bold', color: '#3B82F6' }}>
+            SinhVienJob
+          </Link>
+        </div>
+        
+        {/* GIỮA: Menu */}
+        <div className="mock-nav" style={{ flex: 2, display: 'flex', justifyContent: 'center', gap: '30px' }}>
+          <Link to="/jobs" style={{ textDecoration: 'none', color: '#475569', fontWeight: 500, fontSize: '14px' }}>Tìm việc</Link>
+          <Link to="/companies" style={{ textDecoration: 'none', color: '#475569', fontWeight: 500, fontSize: '14px' }}>Công ty</Link>
+          <Link to="/employer/login" style={{ textDecoration: 'none', color: '#10B981', fontWeight: 500, fontSize: '14px' }}>
+            Dành cho Nhà tuyển dụng
+          </Link>
+        </div>
 
-      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-        {isLoggedIn ? (
-          // Khối chứa Avatar và Dropdown
-          <div style={{ position: 'relative' }} ref={dropdownRef}>
-            
-            {/* Nút Avatar (Đã ẩn tên đi) */}
-            <div 
-              className="avatar" 
-              onClick={() => setShowDropdown(!showDropdown)}
-              style={{ width: '36px', height: '36px', fontSize: '14px', cursor: 'pointer', userSelect: 'none', transition: 'all 0.2s' }}
-              title="Tài khoản của tôi"
-            >
-              {getInitials(userName)}
-            </div>
-
-            {/* Menu Dropdown thả xuống */}
-            {showDropdown && (
-              <div style={{ 
-                position: 'absolute', top: '48px', right: '0', 
-                backgroundColor: '#fff', borderRadius: '8px', 
-                boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)', 
-                width: '220px', zIndex: 1000, border: '1px solid #E2E8F0', overflow: 'hidden' 
-              }}>
-                
-                {/* Header Dropdown */}
-                <div style={{ padding: '12px 16px', borderBottom: '1px solid #E2E8F0', backgroundColor: '#F8FAFC' }}>
-                  <p style={{ margin: 0, fontWeight: 600, color: '#0F172A', fontSize: '14px' }}>{userName || 'Người dùng'}</p>
-                  <p style={{ margin: 0, fontSize: '12px', color: '#64748B', marginTop: '4px' }}>
-                    {userRole === 'student' ? 'Hồ sơ Sinh viên' : 'Nhà tuyển dụng'}
-                  </p>
-                </div>
-
-                {/* Các menu liên kết */}
-                <div style={{ padding: '8px 0' }}>
-                  <Link to={userRole === 'employer' ? '/employer/dashboard' : '/profile'} onClick={() => setShowDropdown(false)} style={{ display: 'block', padding: '10px 16px', color: '#334155', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>
-                    👤 Hồ sơ cá nhân
-                  </Link>
-                  
-                  {/* Mục Việc của tôi chỉ hiện ra nếu là Sinh viên */}
-                  {userRole === 'student' && (
-                    <Link to="/applied-jobs" onClick={() => setShowDropdown(false)} style={{ display: 'block', padding: '10px 16px', color: '#334155', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>
-                      💼 Việc của tôi
-                    </Link>
-                  )}
-
-                  <Link to="/settings" onClick={() => setShowDropdown(false)} style={{ display: 'block', padding: '10px 16px', color: '#334155', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>
-                    ⚙️ Cài đặt tài khoản
-                  </Link>
-                </div>
-
-                {/* Nút Đăng xuất */}
-                <div style={{ borderTop: '1px solid #E2E8F0', padding: '4px 0', backgroundColor: '#FAFAF9' }}>
-                  <button 
-                    onClick={handleLogout} 
-                    style={{ width: '100%', textAlign: 'left', padding: '10px 16px', background: 'none', border: 'none', color: '#DC2626', fontSize: '14px', cursor: 'pointer', fontWeight: 600 }}
-                  >
-                    🚪 Đăng xuất
-                  </button>
-                </div>
+        {/* PHẢI: Nút Đăng nhập/Đăng ký hoặc Avatar */}
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', gap: '16px', alignItems: 'center' }}>
+          {isLoggedIn ? (
+            <div style={{ position: 'relative' }} ref={dropdownRef}>
+              <div 
+                className="avatar" 
+                onClick={() => setShowDropdown(!showDropdown)}
+                style={{ width: '36px', height: '36px', fontSize: '14px', cursor: 'pointer', userSelect: 'none', transition: 'all 0.2s', backgroundColor: '#DBEAFE', color: '#1E3A8A', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}
+                title="Tài khoản của tôi"
+              >
+                {getInitials(userName)}
               </div>
-            )}
-          </div>
-        ) : (
-          <>
-            <Link to="/login"><button className="btn">Đăng nhập</button></Link>
-            <Link to="/register"><button className="btn btn-primary">Đăng ký</button></Link>
-          </>
-        )}
+
+              {showDropdown && (
+                <div style={{ 
+                  position: 'absolute', top: '48px', right: '0', 
+                  backgroundColor: '#fff', borderRadius: '8px', 
+                  boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)', 
+                  width: '220px', zIndex: 1000, border: '1px solid #E2E8F0', overflow: 'hidden' 
+                }}>
+                  <div style={{ padding: '12px 16px', borderBottom: '1px solid #E2E8F0', backgroundColor: '#F8FAFC' }}>
+                    <p style={{ margin: 0, fontWeight: 600, color: '#0F172A', fontSize: '14px' }}>{userName || 'Người dùng'}</p>
+                    <p style={{ margin: 0, fontSize: '12px', color: '#64748B', marginTop: '4px' }}>
+                      {userRole === 'student' ? 'Hồ sơ Sinh viên' : 'Nhà tuyển dụng'}
+                    </p>
+                  </div>
+
+                  <div style={{ padding: '8px 0' }}>
+                    <Link to={userRole === 'employer' ? '/employer/dashboard' : '/profile'} onClick={() => setShowDropdown(false)} style={{ display: 'block', padding: '10px 16px', color: '#334155', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>
+                      👤 Hồ sơ cá nhân
+                    </Link>
+                    {userRole === 'student' && (
+                      <Link to="/applied-jobs" onClick={() => setShowDropdown(false)} style={{ display: 'block', padding: '10px 16px', color: '#334155', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>
+                        💼 Việc của tôi
+                      </Link>
+                    )}
+                    <Link to="/settings" onClick={() => setShowDropdown(false)} style={{ display: 'block', padding: '10px 16px', color: '#334155', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>
+                      ⚙️ Cài đặt tài khoản
+                    </Link>
+                  </div>
+
+                  <div style={{ borderTop: '1px solid #E2E8F0', padding: '4px 0', backgroundColor: '#FAFAF9' }}>
+                    <button 
+                      onClick={handleLogout} 
+                      style={{ width: '100%', textAlign: 'left', padding: '10px 16px', background: 'none', border: 'none', color: '#DC2626', fontSize: '14px', cursor: 'pointer', fontWeight: 600 }}
+                    >
+                      🚪 Đăng xuất
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <Link to="/login" style={{ textDecoration: 'none', color: '#3B82F6', fontWeight: 600, fontSize: '14px', padding: '8px 12px' }}>Đăng nhập</Link>
+              <Link to="/register" style={{ textDecoration: 'none', backgroundColor: '#3B82F6', color: '#fff', fontWeight: 600, fontSize: '14px', padding: '8px 24px', borderRadius: '6px' }}>Đăng ký</Link>
+            </>
+          )}
+        </div>
+        
       </div>
     </div>
   );

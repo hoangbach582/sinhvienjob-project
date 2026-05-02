@@ -30,3 +30,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/applications/me', [ApplicationController::class, 'getAppliedJobs']);
 });
 
+Route::get('/jobs', [JobController::class, 'index']);
