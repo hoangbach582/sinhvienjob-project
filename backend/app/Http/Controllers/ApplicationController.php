@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Application; // Import model Application
 use App\Models\StudentProfile; // Import model StudentProfile
+use Illuminate\Support\Facades\Storage; // Nếu bạn muốn lưu file CV vào storage của Laravel
 
 class ApplicationController extends Controller
 {
@@ -34,7 +35,28 @@ class ApplicationController extends Controller
             return response()->json(['message' => 'Bạn đã nộp CV cho công việc này rồi!'], 400);
         }
 
-        // 5. Lưu vào Database với ĐÚNG id của sinh viên
+        // 5. Validate dữ liệu gửi lên từ Modal (File CV và Thư ngỏ)
+        $request->validate([
+            'cover_letter' => 'nullable|string|max:1000',
+            'cv_file' => 'nullable|mimes:pdf,doc,docx|max:5120', // Giới hạn PDF tối đa 5MB
+        ]);
+
+        $cvUrl = null;
+
+        // 6. Xử lý CV: Ưu tiên CV tải lên trực tiếp, nếu không có thì lấy CV trong Profile
+        if ($request->hasFile('cv_file')) {
+            // Lưu file vào storage/app/public/cvs
+            $path = $request->file('cv_file')->store('cvs', 'public');
+            $cvUrl = asset('storage/' . $path);
+        } else {
+            // Nếu không upload file mới, kiểm tra xem đã có CV mặc định chưa
+            if (!$studentProfile->cv_url) {
+                return response()->json(['message' => 'Bạn chưa có CV! Vui lòng cập nhật CV trong Hồ sơ cá nhân hoặc tải lên file trực tiếp.'], 400);
+            }
+            $cvUrl = $studentProfile->cv_url;
+        }
+
+        // 7. Lưu vào Database với ĐÚNG id của sinh viên và thêm Thư ngỏ
         $application = Application::create([
             'job_id' => $jobId,
             'student_id' => $studentProfile->id,

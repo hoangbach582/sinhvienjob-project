@@ -8,6 +8,8 @@ import JobDetail from './pages/JobDetail'; // Import trang chi tiết công vi�
 import StudentProfile from './pages/StudentProfile'; // Import trang hồ sơ sinh viên
 import ApplyJob from './pages/ApplyJob'; // Import Form ứng tuyển 
 import AppliedJobs from './pages/AppliedJobs'; // Import trang việc làm đã ứng tuyển của sinh viên
+import BuildCV from './pages/BuildCV';  
+
 
 import EmployerRegister from './pages/EmployerRegister'; // Import trang đăng ký cho NTD
 import EmployerLogin from './pages/EmployerLogin'; // Import trang đăng nhập cho NTD
@@ -47,14 +49,16 @@ function App() {
           <Route path="/job/:id/apply" element={<ApplyJob />} />
           {/* Trang việc làm đã ứng tuyển */}
           <Route path="/applied-jobs" element={<AppliedJobs />} />
+          {/* Trang tạo CV */}
+          <Route path="/build-cv" element={<BuildCV />} />
 
+          <Route path="/companies" element={<Companies />} />
+
+          {/* Phân hệ Nhà tuyển dụng */}
           {/* Trang đăng ký cho NTD */}
           <Route path="/employer/register" element={<EmployerRegister />} />
           {/* Trang đăng nhập cho NTD */}
           <Route path="/employer/login" element={<EmployerLogin />} />
-            
-
-          {/* Phân hệ Nhà tuyển dụng */}
           {/* Định tuyến lồng nhau cho Nhà tuyển dụng */}
           <Route path="/employer" element={<EmployerLayout />}>
             {/* Trang Quản lý của nhà tuyển dụng :Khi URL là /employer/dashboard */}

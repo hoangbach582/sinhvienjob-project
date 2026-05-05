@@ -16,7 +16,7 @@ class Application extends Model
         'job_id',
         'student_id', // Dùng đúng student_id của bạn
         'cv_url',     // Bắt buộc phải có
-        'cover_letter',
+        'cover_letter',// thư ngỏ
         'status'
     ];
 

@@ -45,9 +45,37 @@ function Login() {
 
       if (response.ok) {
         // Gọi hàm login từ Context (Lưu token và đổi trạng thái Topbar)
-        login(data.access_token, data.user.role, data.name);
-        
-        // Điều hướng dựa vào vai trò
+        // 1. Tạo gói dữ liệu cơ bản
+        let userWithInfo = { ...data.user };
+        // 2. lấy Profile nếu là sinh viên
+        if (data.user.role === 'student') {
+          try {
+            const profileRes = await fetch('http://127.0.0.1:8000/api/profile', {
+              headers: {
+                'Authorization': `Bearer ${data.access_token}`,
+                'Accept': 'application/json'
+              }
+            });
+            if (profileRes.ok) {
+              const profileData = await profileRes.json();
+              // Lắp tên và avatar thật vào gói dữ liệu
+              userWithInfo.name = profileData.full_name || data.user.email; 
+              userWithInfo.avatar = profileData.avatar || '';
+            }
+          } catch (e) {
+            console.error("Không lấy được profile phụ:", e);
+            userWithInfo.name = data.user.email; // Fallback dùng tạm email nếu lỗi
+          }
+        } else {
+          // Fallback cho Nhà tuyển dụng/Admin (Sẽ nâng cấp sau nếu cần)
+          userWithInfo.name = data.user.email;
+        }
+
+        // login(data.access_token, data.user.role, data.name);
+        // 3. Gọi hàm login thông minh từ Context
+        login(data.access_token, userWithInfo);
+
+        // 4. Điều hướng dựa vào vai trò
         if (data.user.role === 'employer') {
           navigate('/employer/dashboard');
         } else if (data.user.role === 'admin') {
@@ -142,7 +170,7 @@ function Login() {
               </button>
             </form>
 
-            <hr className="divider" />
+            <hr className="divider" /> 
             
             <button 
               type="button" 

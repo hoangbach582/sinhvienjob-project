@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function Register() {
   const navigate = useNavigate();
+  const { login } = useAuth(); // 2. LẤY HÀM LOGIN TỪ CONTEXT
   const [role, setRole] = useState('student'); // 'student' hoặc 'employer'
   
   const [email, setEmail] = useState('');
@@ -41,13 +43,18 @@ function Register() {
       const data = await response.json();
 
       if (response.ok) {
-        // Tự động đăng nhập luôn sau khi đăng ký thành công
-        localStorage.setItem('token', data.access_token);
-        localStorage.setItem('access_token', data.access_token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        // 1. Gói thêm Tên (từ dữ liệu Form người dùng vừa gõ) vào object user
+        const userWithInfo = {
+            ...data.user,
+            // Lấy full_name (nếu là sinh viên) hoặc company_name (nếu là nhà tuyển dụng)
+            name: formData.full_name || formData.company_name || '' 
+        };
         
+        // 2. Truyền object đã được độ lại vào hàm login
+        login(data.token || data.access_token, userWithInfo); 
+
         alert("🎉 Đăng ký tài khoản thành công!");
-        window.location.href = '/'; // Dùng cách này để ép React load lại toàn bộ Context
+        window.location.href = '/'; // Load lại trang để cập nhật giao diện
       } else {
         // Xử lý báo lỗi từ Laravel (ví dụ: email đã tồn tại, pass quá ngắn)
         if (data.errors) {
