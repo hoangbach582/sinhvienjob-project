@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Topbar from '../components/Topbar';
+import MainLayout from '../layouts/MainLayout';
 
 function AppliedJobs() {
   const [applications, setApplications] = useState([]);
@@ -62,8 +62,7 @@ function AppliedJobs() {
   if (loading) return <div style={{ textAlign: 'center', padding: '50px' }}>Đang tải lịch sử ứng tuyển...</div>;
 
   return (
-    <div style={{ backgroundColor: '#F8FAFC', minHeight: '100vh' }}>
-      <Topbar />
+    <MainLayout>
       
       <div style={{ maxWidth: '1000px', margin: '30px auto', padding: '0 20px' }}>
         <h2 style={{ fontSize: '24px', color: '#0F172A', marginBottom: '24px' }}>Công việc đã ứng tuyển</h2>
@@ -99,7 +98,7 @@ function AppliedJobs() {
           </div>
         )}
       </div>
-    </div>
+    </MainLayout>
   );
 }
 

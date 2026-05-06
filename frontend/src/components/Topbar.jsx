@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function Topbar() {
-  const { isLoggedIn, userName, userRole, userAvatar, logout } = useAuth(); 
+  const { isLoggedIn, userName, userRole, userAvatar, logout } = useAuth();
   const navigate = useNavigate();
 
   const [showDropdown, setShowDropdown] = useState(false);
@@ -37,14 +37,14 @@ function Topbar() {
   return (
     <div style={{ backgroundColor: '#fff', borderBottom: '1px solid #E2E8F0', position: 'sticky', top: 0, zIndex: 100 }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', height: '70px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        
+
         {/* TRÁI: Logo */}
         <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-start' }}>
           <Link to="/" className="mock-logo" style={{ textDecoration: 'none', fontSize: '22px', fontWeight: 'bold', color: '#3B82F6' }}>
             SinhVienJob
           </Link>
         </div>
-        
+
         {/* GIỮA: Menu thông minh thay đổi theo Role */}
         <div className="mock-nav" style={{ flex: 2, display: 'flex', justifyContent: 'center', gap: '30px' }}>
           <Link to="/jobs" style={{ textDecoration: 'none', color: '#475569', fontWeight: 500, fontSize: '15px' }}>Tìm việc</Link>
@@ -65,8 +65,8 @@ function Topbar() {
         <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', gap: '16px', alignItems: 'center' }}>
           {isLoggedIn ? (
             <div style={{ position: 'relative' }} ref={dropdownRef}>
-              <div 
-                className="avatar" 
+              <div
+                className="avatar"
                 onClick={() => setShowDropdown(!showDropdown)}
                 style={{ width: '38px', height: '38px', fontSize: '14px', cursor: 'pointer', userSelect: 'none', transition: 'all 0.2s', backgroundColor: '#DBEAFE', color: '#1E3A8A', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}
                 title="Tài khoản của tôi"
@@ -80,11 +80,11 @@ function Topbar() {
               </div>
 
               {showDropdown && (
-                <div style={{ 
-                  position: 'absolute', top: '50px', right: '0', 
-                  backgroundColor: '#fff', borderRadius: '12px', 
-                  boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)', 
-                  width: '240px', zIndex: 1000, border: '1px solid #E2E8F0', overflow: 'hidden' 
+                <div style={{
+                  position: 'absolute', top: '50px', right: '0',
+                  backgroundColor: '#fff', borderRadius: '12px',
+                  boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
+                  width: '240px', zIndex: 1000, border: '1px solid #E2E8F0', overflow: 'hidden'
                 }}>
                   <div style={{ padding: '16px', borderBottom: '1px solid #E2E8F0', backgroundColor: '#F8FAFC' }}>
                     <p style={{ margin: 0, fontWeight: 600, color: '#0F172A', fontSize: '15px' }}>{userName || 'Người dùng'}</p>
@@ -108,8 +108,8 @@ function Topbar() {
                   </div>
 
                   <div style={{ borderTop: '1px solid #E2E8F0', padding: '4px 0', backgroundColor: '#FAFAF9' }}>
-                    <button 
-                      onClick={handleLogout} 
+                    <button
+                      onClick={handleLogout}
                       style={{ width: '100%', textAlign: 'left', padding: '12px 16px', background: 'none', border: 'none', color: '#DC2626', fontSize: '14px', cursor: 'pointer', fontWeight: 600 }}
                     >
                       🚪 Đăng xuất
@@ -125,7 +125,7 @@ function Topbar() {
             </>
           )}
         </div>
-        
+
       </div>
     </div>
   );

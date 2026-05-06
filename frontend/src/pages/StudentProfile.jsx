@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Topbar from '../components/Topbar';
+import MainLayout from '../layouts/MainLayout';
 import { useAuth } from '../context/AuthContext';
 
 function StudentProfile() {
@@ -118,8 +118,7 @@ function StudentProfile() {
   if (loading) return <div style={{ textAlign: 'center', padding: '50px' }}>Đang tải dữ liệu...</div>;
 
   return (
-    <div style={{ backgroundColor: '#F8FAFC', minHeight: '100vh', paddingBottom: '40px' }}>
-      <Topbar />
+    <MainLayout>
 
       {/* KHU VỰC POPUP THÀNH CÔNG (Nổi giữa màn hình) */}
       {message.text && message.type === 'success' && (
@@ -225,7 +224,7 @@ function StudentProfile() {
           </form>
         </div>
       </div>
-    </div>
+    </MainLayout>
   );
 }
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import Topbar from '../components/Topbar';
+import MainLayout from '../layouts/MainLayout';
 import { useAuth } from '../context/AuthContext';
 
 function JobDetail() {
@@ -187,8 +187,7 @@ function JobDetail() {
   if (!job) return <div style={{ textAlign: 'center', padding: '50px' }}>Không tìm thấy công việc này!</div>;
 
   return (
-    <div className="app" style={{ backgroundColor: '#F8FAFC', minHeight: '100vh' }}>
-      <Topbar/>
+    <MainLayout>
 
       {/* --- KHỐI MODAL ỨNG TUYỂN CẢI TIẾN --- */}
       {showApplyModal && (
@@ -374,7 +373,7 @@ function JobDetail() {
           </div>
         </div>
       </div>
-    </div>
+    </MainLayout>
   );
 }
 

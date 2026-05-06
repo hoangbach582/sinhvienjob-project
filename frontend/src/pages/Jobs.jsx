@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import Topbar from '../components/Topbar';
+import MainLayout from '../layouts/MainLayout';
 
 function Jobs() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -79,8 +79,7 @@ function Jobs() {
   };
 
   return (
-    <div style={{ backgroundColor: '#F8FAFC', minHeight: '100vh' }}>
-      <Topbar />
+    <MainLayout>
       
       {/* Khung chứa chia 2 cột */}
       <div style={{ maxWidth: '1200px', margin: '30px auto', padding: '0 20px', display: 'flex', gap: '30px', alignItems: 'flex-start' }}>
@@ -187,7 +186,7 @@ function Jobs() {
         </div>
         
       </div>
-    </div>
+    </MainLayout>
   );
 }
 

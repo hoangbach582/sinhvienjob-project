@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Topbar from '../components/Topbar';
+import MainLayout from '../layouts/MainLayout';
 import { useAuth } from '../context/AuthContext'; // Nối với trạm phát sóng Context
 
 function Login() {
@@ -100,10 +100,7 @@ function Login() {
   };
 
   return (
-    <div className="app">
-      <div className="mock-frame">
-        <Topbar /> 
-        
+    <MainLayout>
         <div className="mock-frame" style={{ maxWidth: '400px', margin: '40px auto' }}>
           <div style={{ padding: '28px' }}>
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
@@ -189,8 +186,7 @@ function Login() {
             </p>
           </div>
         </div>
-      </div>
-    </div>
+    </MainLayout>
   );
 }
 

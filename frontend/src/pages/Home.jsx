@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Topbar from '../components/Topbar';
+import MainLayout from '../layouts/MainLayout';
 import { Link, useNavigate } from 'react-router-dom';
 
 function Home() {
@@ -61,9 +61,8 @@ function Home() {
   };
 
   return (
-    <div className="app">
-      <div className="mock-frame">
-        <Topbar />
+    <MainLayout>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         
         {/* Vùng Banner Tìm kiếm */}
         <div className="mock-frame" style={{ margin: '20px', padding: '40px', backgroundColor: '#E0F2FE', borderRadius: '12px', textAlign: 'center' }}>
@@ -155,7 +154,7 @@ function Home() {
         </div>
 
       </div>
-    </div>
+    </MainLayout>
   );
 }
 

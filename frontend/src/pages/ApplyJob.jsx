@@ -1,14 +1,12 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import Topbar from '../components/Topbar';
+import MainLayout from '../layouts/MainLayout';
 
 function ApplyJob() {
   const { id } = useParams();
 
   return (
-    <div className="app">
-      <div className="mock-frame">
-        <Topbar />
+    <MainLayout>
         
         <div style={{ maxWidth: '500px', margin: '40px auto' }}>
           <div className="card" style={{ padding: '24px' }}>
@@ -39,9 +37,8 @@ function ApplyJob() {
               <button className="btn btn-primary" style={{ flex: 1, padding: '10px' }}>Gửi đơn ứng tuyển</button>
             </div>
           </div>
-        </div>
       </div>
-    </div>
+    </MainLayout>
   );
 }
 

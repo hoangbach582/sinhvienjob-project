@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Topbar from '../components/Topbar';
+import MainLayout from '../layouts/MainLayout';
 
 function Companies() {
   const [companies, setCompanies] = useState([]);
@@ -42,8 +42,7 @@ function Companies() {
   );
 
   return (
-    <div style={{ backgroundColor: '#F8FAFC', minHeight: '100vh', paddingBottom: '60px' }}>
-      <Topbar />
+    <MainLayout>
 
       {/* HEADER BANNER CỦA TRANG CÔNG TY */}
       <div style={{ backgroundColor: '#fff', borderBottom: '1px solid #E2E8F0', padding: '40px 20px', textAlign: 'center' }}>
@@ -126,7 +125,7 @@ function Companies() {
           </div>
         )}
       </div>
-    </div>
+    </MainLayout>
   );
 }
 

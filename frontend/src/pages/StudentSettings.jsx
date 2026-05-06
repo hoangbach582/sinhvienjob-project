@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Topbar from '../components/Topbar';
+import MainLayout from '../layouts/MainLayout';
 import { useAuth } from '../context/AuthContext';
 
 function StudentSettings() {
@@ -115,8 +115,7 @@ function StudentSettings() {
   const infoRow = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 0', borderBottom: '1px solid #F1F5F9' };
 
   return (
-    <div style={{ backgroundColor: '#F8FAFC', minHeight: '100vh', paddingBottom: '40px' }}>
-      <Topbar />
+    <MainLayout>
 
       {/* POPUP THÀNH CÔNG */}
       {successPopup && (
@@ -253,7 +252,7 @@ function StudentSettings() {
           </button>
         </div>
       </div>
-    </div>
+    </MainLayout>
   );
 }
 
