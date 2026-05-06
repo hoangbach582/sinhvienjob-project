@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ProfileController; // Import sẵn ProfileController cho gọn
+use App\Http\Controllers\AccountController; // Import AccountController cho cài đặt tài khoản
 
 /*
 |--------------------------------------------------------------------------
@@ -45,4 +46,8 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // 3. Lịch sử ứng tuyển
     Route::get('/applications/me', [ApplicationController::class, 'getAppliedJobs']);
+
+    // 4. Cài đặt tài khoản
+    Route::put('/account/change-password', [AccountController::class, 'changePassword']);
+    Route::delete('/account', [AccountController::class, 'deleteAccount']);
 });

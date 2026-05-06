@@ -9,6 +9,7 @@ import StudentProfile from './pages/StudentProfile'; // Import trang hồ sơ si
 import ApplyJob from './pages/ApplyJob'; // Import Form ứng tuyển 
 import AppliedJobs from './pages/AppliedJobs'; // Import trang việc làm đã ứng tuyển của sinh viên
 import BuildCV from './pages/BuildCV';  
+import StudentSettings from './pages/StudentSettings'; // Import trang cài đặt tài khoản
 
 
 import EmployerRegister from './pages/EmployerRegister'; // Import trang đăng ký cho NTD
@@ -51,6 +52,8 @@ function App() {
           <Route path="/applied-jobs" element={<AppliedJobs />} />
           {/* Trang tạo CV */}
           <Route path="/build-cv" element={<BuildCV />} />
+          {/* Trang cài đặt tài khoản */}
+          <Route path="/settings" element={<StudentSettings />} />
 
           <Route path="/companies" element={<Companies />} />
 
