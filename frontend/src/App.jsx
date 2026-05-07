@@ -16,6 +16,7 @@ import EmployerRegister from './pages/EmployerRegister'; // Import trang đăng 
 import EmployerLogin from './pages/EmployerLogin'; // Import trang đăng nhập cho NTD
 import EmployerApplicants from './pages/EmployerApplicants'; // Import trang quản lý hồ sơ ứng viên của NTD
 import EmployerProfile from './pages/EmployerProfile'; // Import trang thông tin công ty(NTD)
+import EmployerSettings from './pages/EmployerSettings'; // Import trang cài đặt tài khoản NTD
 import Companies from './pages/Companies'; //Import trang danh sách công ty
 // Import Layout và Page
 import EmployerLayout from './layouts/EmployerLayout';
@@ -74,6 +75,8 @@ function App() {
             <Route path="applicants" element={<EmployerApplicants />} />
             {/* Trang thông tin công ty(NTD) */}
             <Route path="profile" element={<EmployerProfile />} />
+            {/* Trang cài đặt tài khoản NTD */}
+            <Route path="settings" element={<EmployerSettings />} />
           </Route>
 
           {/* Phân hệ Admin */}

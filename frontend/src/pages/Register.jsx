@@ -47,14 +47,15 @@ function Register() {
         const userWithInfo = {
             ...data.user,
             // Lấy full_name (nếu là sinh viên) hoặc company_name (nếu là nhà tuyển dụng)
-            name: formData.full_name || formData.company_name || '' 
+            name: fullName || companyName || '' 
         };
         
         // 2. Truyền object đã được độ lại vào hàm login
         login(data.token || data.access_token, userWithInfo); 
 
         alert("🎉 Đăng ký tài khoản thành công!");
-        window.location.href = '/'; // Load lại trang để cập nhật giao diện
+        // Chuyển hướng theo role: NTD vào dashboard, SV vào trang chủ
+        window.location.href = role === 'employer' ? '/employer/dashboard' : '/';
       } else {
         // Xử lý báo lỗi từ Laravel (ví dụ: email đã tồn tại, pass quá ngắn)
         if (data.errors) {
