@@ -28,6 +28,7 @@ import EmployerLayout from './layouts/EmployerLayout';
 import EmployerDashboard from './pages/EmployerDashboard'; // Import trang dashboard nhà tuyển dụng
 import PostJob from './pages/PostJob'; // Import trang Đăng tin
 import PostedJobs from './pages/PostedJobs'; // Import trang Tin đã đăng
+import EditJob from './pages/EditJob'; // Import trang Sửa tin
 import AdminLayout from './layouts/AdminLayout';
 import AdminDashboard from './pages/AdminDashboard'; // Import trang Dashboard admin
 import AdminAccounts from './pages/AdminAccounts'; // Import trang quản lý tài khoản admin
@@ -83,6 +84,8 @@ function App() {
             <Route path="dashboard" element={<EmployerDashboard />} /> 
             {/* Trang Đăng tin mới: Khi URL là /employer/post-job */}
             <Route path="post-job" element={<PostJob />} />
+            {/* Trang Sửa tin */}
+            <Route path="edit-job/:id" element={<EditJob />} />
             {/* Trang Tin đã đăng */}
             <Route path="posted-jobs" element={<PostedJobs />} />
             {/* Trang quản lý hồ sơ ứng viên của NTD */}

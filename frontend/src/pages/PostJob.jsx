@@ -1,79 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import JobForm from '../components/JobForm';
+import { jobService } from '../services/jobService';
 
 function PostJob() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
+
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
+    setError('');
+    setSuccess('');
+    try {
+      await jobService.createJob(data);
+      setSuccess('Đăng tin tuyển dụng thành công!');
+      // Navigate to posted jobs after a short delay
+      setTimeout(() => {
+        navigate('/employer/posted-jobs');
+      }, 1500);
+    } catch (err) {
+      if (err.response?.data?.errors) {
+        const errors = err.response.data.errors;
+        const firstErrorKey = Object.keys(errors)[0];
+        setError(errors[firstErrorKey][0]);
+      } else if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else {
+        setError(`Lỗi: ${err.message || 'Không thể kết nối đến máy chủ.'}`);
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div style={{ maxWidth: '640px' }}>
       <p className="section-title">Đăng tin tuyển dụng mới</p>
       
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-        <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-          <label className="form-label">Tiêu đề vị trí</label>
-          <input className="form-input" placeholder="Vd: Lập trình viên Frontend" />
-        </div>
-        
-        <div className="form-group">
-          <label className="form-label">Loại hình</label>
-          <select className="form-input">
-            <option>Part-time</option>
-            <option>Internship</option>
-            <option>Full-time</option>
-          </select>
-        </div>
-        
-        <div className="form-group">
-          <label className="form-label">Ngành nghề</label>
-          <select className="form-input">
-            <option>IT & Phần mềm</option>
-            <option>Marketing</option>
-          </select>
-        </div>
-        
-        <div className="form-group">
-          <label className="form-label">Mức lương (triệu)</label>
-          <input className="form-input" placeholder="Vd: 5-8" />
-        </div>
-        
-        <div className="form-group">
-          <label className="form-label">Địa điểm</label>
-          <select className="form-input">
-            <option>Hà Nội</option>
-            <option>TP.HCM</option>
-          </select>
-        </div>
-        
-        <div className="form-group">
-          <label className="form-label">Kinh nghiệm</label>
-          <select className="form-input">
-            <option>Không yêu cầu</option>
-            <option>Dưới 1 năm</option>
-          </select>
-        </div>
-        
-        <div className="form-group">
-          <label className="form-label">Hạn nộp hồ sơ</label>
-          <input className="form-input" type="date" />
-        </div>
-        
-        <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-          <label className="form-label">Mô tả công việc</label>
-          <textarea className="form-input" rows="4" style={{ resize: 'none' }} placeholder="Mô tả chi tiết công việc, trách nhiệm..."></textarea>
-        </div>
-        
-        <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-          <label className="form-label">Yêu cầu ứng viên</label>
-          <textarea className="form-input" rows="3" style={{ resize: 'none' }} placeholder="Kỹ năng, trình độ, điều kiện cần có..."></textarea>
-        </div>
-        
-        <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-          <label className="form-label">Quyền lợi</label>
-          <textarea className="form-input" rows="3" style={{ resize: 'none' }} placeholder="Thưởng, bảo hiểm, môi trường làm việc..."></textarea>
-        </div>
-      </div>
-      
-      <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-        <button className="btn">Lưu nháp</button>
-        <button className="btn btn-primary">Gửi duyệt</button>
-      </div>
+      {error && <div style={{ color: 'red', marginBottom: '12px', padding: '10px', backgroundColor: '#fee2e2', borderRadius: '4px' }}>{error}</div>}
+      {success && <div style={{ color: 'green', marginBottom: '12px', padding: '10px', backgroundColor: '#dcfce3', borderRadius: '4px' }}>{success}</div>}
+
+      <JobForm onSubmit={onSubmit} isSubmitting={isSubmitting} />
     </div>
   );
 }

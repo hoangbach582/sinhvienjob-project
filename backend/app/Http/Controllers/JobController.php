@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Job;
 use App\Models\Application;
 use App\Models\StudentProfile;
+use App\Http\Requests\JobRequest;
+use Illuminate\Support\Facades\Gate;
 
 class JobController extends Controller
 {
@@ -97,5 +99,124 @@ class JobController extends Controller
         $jobs = $query->orderBy('created_at', 'desc')->get();
 
         return response()->json($jobs);
+    }
+
+    // ==========================================
+    // CÁC HÀM DÀNH CHO NHÀ TUYỂN DỤNG (EMPLOYER)
+    // ==========================================
+
+    public function employerIndex(Request $request)
+    {
+        $user = $request->user();
+        if ($user->role !== 'employer') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $jobs = Job::where('employer_id', $user->employer->id)
+                   ->withCount('applications')
+                   ->orderBy('created_at', 'desc')
+                   ->get();
+
+        return response()->json($jobs);
+    }
+
+    public function store(JobRequest $request)
+    {
+        $user = $request->user();
+        
+        $job = Job::create(array_merge(
+            $request->validated(),
+            ['employer_id' => $user->employer->id, 'status' => 'pending']
+        ));
+
+        return response()->json(['message' => 'Tạo công việc thành công', 'job' => $job], 201);
+    }
+
+    public function show(Request $request, $id)
+    {
+        $job = Job::findOrFail($id);
+        
+        // Dùng Policy để check quyền (nếu muốn nhà tuyển dụng chỉ xem đc bài của họ)
+        // Gate::authorize('update', $job); // Comment lại nếu muốn ai cũng xem đc
+
+        return response()->json($job);
+    }
+
+    public function update(JobRequest $request, $id)
+    {
+        $job = Job::findOrFail($id);
+        
+        Gate::authorize('update', $job);
+
+        $job->update($request->validated());
+
+        return response()->json(['message' => 'Cập nhật công việc thành công', 'job' => $job]);
+    }
+
+    public function destroy($id)
+    {
+        $job = Job::findOrFail($id);
+
+        Gate::authorize('delete', $job);
+
+        $job->delete();
+
+        return response()->json(['message' => 'Đã xóa công việc thành công']);
+    }
+
+    public function employerStats(Request $request)
+    {
+        $user = $request->user();
+        if ($user->role !== 'employer') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $employerId = $user->employer->id;
+        
+        $totalJobs = Job::where('employer_id', $employerId)->count();
+        $totalApplications = Application::whereHas('job', function($q) use ($employerId) {
+            $q->where('employer_id', $employerId);
+        })->count();
+
+        return response()->json([
+            'total_jobs' => $totalJobs,
+            'total_applications' => $totalApplications
+        ]);
+    }
+
+    public function getJobApplicants(Request $request, $id)
+    {
+        $job = Job::findOrFail($id);
+        
+        Gate::authorize('viewApplications', $job);
+
+        $applications = Application::where('job_id', $id)
+            ->with(['student' => function($q) {
+                // studentProfile relationship or join with user
+            }])
+            ->orderBy('created_at', 'desc')
+            ->get();
+            
+        // Because Application belongsTo Job, and StudentProfile belongsTo User.
+        // Let's modify this to load student info correctly based on models.
+        // In Application model, the student_id points to StudentProfile id.
+        $applications = Application::where('job_id', $id)->get()->map(function($app) {
+            $studentProfile = StudentProfile::find($app->student_id);
+            $user = \App\Models\User::find($studentProfile->user_id);
+            $app->student_name = $user->name;
+            $app->student_email = $user->email;
+            return $app;
+        });
+
+        return response()->json($applications);
+    }
+
+    public function getCategories()
+    {
+        return response()->json([
+            'internship' => 'Thực tập sinh (Internship)',
+            'part_time' => 'Bán thời gian (Part-time)',
+            'full_time' => 'Toàn thời gian (Full-time)'
+        ]);
     }
 }

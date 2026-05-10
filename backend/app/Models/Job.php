@@ -16,11 +16,14 @@ class Job extends Model
         'employer_id',
         'title',
         'type',
+        'industry',
         'location',
+        'experience',
         'salary_min',
         'salary_max',
         'description',
         'requirements',
+        'benefits',
         'deadline',
         'status'
     ];
@@ -30,5 +33,11 @@ class Job extends Model
     {
         // Tạo mối liên kết: 1 công việc thuộc về 1 công ty
         return $this->belongsTo(Employer::class, 'employer_id');
+    }
+
+    // Một công việc có thể có nhiều đơn ứng tuyển
+    public function applications()
+    {
+        return $this->hasMany(Application::class, 'job_id');
     }
 }

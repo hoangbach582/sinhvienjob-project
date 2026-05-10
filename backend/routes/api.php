@@ -37,7 +37,7 @@ Route::post('/email/verification/resend', [EmailVerificationController::class, '
 Route::get('/jobs/latest', [JobController::class, 'getLatestJobs']);
 Route::get('/jobs/{id}', [JobController::class, 'getJobDetail']);
 Route::get('/jobs', [JobController::class, 'index']);
-
+Route::get('/categories/job-types', [JobController::class, 'getCategories']);
 
 // ==========================================
 // NHÓM 2: YÊU CẦU PHẢI CÓ TOKEN (ĐÃ ĐĂNG NHẬP)
@@ -64,4 +64,16 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     // 4. Cài đặt tài khoản
     Route::put('/account/change-password', [AccountController::class, 'changePassword']);
     Route::delete('/account', [AccountController::class, 'deleteAccount']);
+
+    // 5. Quản lý tuyển dụng (Dành cho Employer)
+    Route::prefix('employer')->group(function () {
+        Route::get('/jobs/stats', [JobController::class, 'employerStats']);
+        Route::get('/jobs', [JobController::class, 'employerIndex']);
+        Route::post('/jobs', [JobController::class, 'store']);
+        Route::get('/jobs/{id}', [JobController::class, 'show']);
+        Route::put('/jobs/{id}', [JobController::class, 'update']);
+        Route::delete('/jobs/{id}', [JobController::class, 'destroy']);
+        Route::get('/jobs/{id}/applications', [JobController::class, 'getJobApplicants']);
+        Route::patch('/applications/{id}', [ApplicationController::class, 'updateStatus']);
+    });
 });

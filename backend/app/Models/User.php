@@ -79,4 +79,14 @@ class User extends Authenticatable
             'email_verified_at' => $this->freshTimestamp(),
         ])->save();
     }
+
+    public function employer()
+    {
+        return $this->hasOne(Employer::class, 'user_id');
+    }
+
+    public function studentProfile()
+    {
+        return $this->hasOne(StudentProfile::class, 'user_id');
+    }
 }

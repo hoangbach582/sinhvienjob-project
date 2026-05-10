@@ -92,4 +92,32 @@ class ApplicationController extends Controller
 
         return response()->json($applications);
     }
+
+    // Dành cho nhà tuyển dụng: Cập nhật trạng thái hồ sơ ứng viên
+    public function updateStatus(Request $request, $id)
+    {
+        $user = $request->user();
+
+        if ($user->role !== 'employer') {
+            return response()->json(['message' => 'Chỉ nhà tuyển dụng mới có quyền này!'], 403);
+        }
+
+        $application = Application::with('job')->findOrFail($id);
+
+        // Kiểm tra xem ứng tuyển này có thuộc về công việc của nhà tuyển dụng này không
+        if ($application->job->employer_id !== $user->employer->id) {
+            return response()->json(['message' => 'Bạn không có quyền cập nhật hồ sơ này!'], 403);
+        }
+
+        $request->validate([
+            'status' => 'required|in:pending,reviewing,interviewed,rejected,hired'
+        ]);
+
+        $application->update(['status' => $request->status]);
+
+        return response()->json([
+            'message' => 'Cập nhật trạng thái thành công',
+            'application' => $application
+        ]);
+    }
 }
