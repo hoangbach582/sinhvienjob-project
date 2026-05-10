@@ -52,12 +52,25 @@ class AuthController extends Controller
         ]);
     }
 
-    $token = $user->createToken('auth_token')->plainTextToken;
+    // 5. Gửi email xác minh
+    $verificationToken = \Illuminate\Support\Str::random(64);
+    \App\Models\EmailVerification::create([
+        'email' => $user->email,
+        'token' => $verificationToken,
+        'expires_at' => \Carbon\Carbon::now()->addHours(24)
+    ]);
+    
+    try {
+        \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\EmailVerificationMail($verificationToken, $user->email));
+    } catch (\Exception $e) {
+        \Illuminate\Support\Facades\Log::error('Error sending verification email: ' . $e->getMessage());
+        // Vẫn cho phép đăng ký thành công nếu gửi mail lỗi, user có thể yêu cầu gửi lại sau
+    }
 
     return response()->json([
-        'message' => 'Đăng ký tài khoản thành công!',
-        'access_token' => $token,
-        'user' => $user
+        'message' => 'Đăng ký tài khoản thành công! Vui lòng kiểm tra email để xác minh tài khoản.',
+        'user' => $user,
+        'requires_verification' => true
     ], 201);
 }
 
@@ -78,6 +91,16 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Email hoặc mật khẩu không chính xác'
             ], 401);
+        }
+
+        // 3.5 Kiểm tra xác minh email
+        if (!$user->hasVerifiedEmail()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Email chưa được xác minh.',
+                'requires_verification' => true,
+                'email' => $user->email
+            ], 403);
         }
 
         // 4. Lấy Tên hiển thị (NẾU KHÔNG TÌM THẤY TÊN, TRẢ VỀ EMAIL)

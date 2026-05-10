@@ -43,19 +43,24 @@ function Register() {
       const data = await response.json();
 
       if (response.ok) {
-        // 1. Gói thêm Tên (từ dữ liệu Form người dùng vừa gõ) vào object user
-        const userWithInfo = {
-            ...data.user,
-            // Lấy full_name (nếu là sinh viên) hoặc company_name (nếu là nhà tuyển dụng)
-            name: fullName || companyName || '' 
-        };
-        
-        // 2. Truyền object đã được độ lại vào hàm login
-        login(data.token || data.access_token, userWithInfo); 
+        if (data.requires_verification) {
+          // Bắt buộc xác minh email mới được đăng nhập
+          navigate('/verify-email-notice', { state: { email } });
+        } else {
+          // 1. Gói thêm Tên (từ dữ liệu Form người dùng vừa gõ) vào object user
+          const userWithInfo = {
+              ...data.user,
+              // Lấy full_name (nếu là sinh viên) hoặc company_name (nếu là nhà tuyển dụng)
+              name: fullName || companyName || '' 
+          };
+          
+          // 2. Truyền object đã được độ lại vào hàm login
+          login(data.token || data.access_token, userWithInfo); 
 
-        alert("🎉 Đăng ký tài khoản thành công!");
-        // Chuyển hướng theo role: NTD vào dashboard, SV vào trang chủ
-        window.location.href = role === 'employer' ? '/employer/dashboard' : '/';
+          alert("🎉 Đăng ký tài khoản thành công!");
+          // Chuyển hướng theo role: NTD vào dashboard, SV vào trang chủ
+          window.location.href = role === 'employer' ? '/employer/dashboard' : '/';
+        }
       } else {
         // Xử lý báo lỗi từ Laravel (ví dụ: email đã tồn tại, pass quá ngắn)
         if (data.errors) {

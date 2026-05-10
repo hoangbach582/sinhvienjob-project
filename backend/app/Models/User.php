@@ -9,11 +9,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Notifications\ResetPasswordNotification;
 
 class User extends Authenticatable
 {
     use HasUuids;// Thêm trait này để tự động sinh UUID khi tạo mới bản ghi
     use HasApiTokens, HasFactory, Notifiable;
+
+    /**
+     * Ghi đè notification mặc định để dùng email tiếng Việt
+     * và link trỏ về frontend React thay vì backend Laravel
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -25,6 +35,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role', // Cực kỳ quan trọng
+        'email_verified_at',
     ];
 
     /**
@@ -46,4 +57,26 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Determine if the user has verified their email address.
+     *
+     * @return bool
+     */
+    public function hasVerifiedEmail()
+    {
+        return ! is_null($this->email_verified_at);
+    }
+
+    /**
+     * Mark the given user's email as verified.
+     *
+     * @return bool
+     */
+    public function markEmailAsVerified()
+    {
+        return $this->forceFill([
+            'email_verified_at' => $this->freshTimestamp(),
+        ])->save();
+    }
 }

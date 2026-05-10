@@ -83,6 +83,9 @@ function Login() {
         } else {
           navigate('/'); // Sinh viên về trang chủ
         }
+      } else if (response.status === 403 && data.requires_verification) {
+        // Cần xác minh email
+        navigate('/verify-email-notice', { state: { email: data.email || formData.email } });
       } else {
         // Sai email hoặc mật khẩu
         setErrorMsg(data.message || 'Đăng nhập thất bại!');
@@ -95,8 +98,23 @@ function Login() {
     }
   };
 
-  const handleGoogleLogin = () => {
-    alert("Chức năng Đăng nhập bằng Google đang được tích hợp với Laravel Socialite!");
+  const handleGoogleLogin = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/auth/google/url', {
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setErrorMsg(data.message || 'Không thể lấy đường dẫn đăng nhập Google.');
+      }
+    } catch (error) {
+      console.error("Lỗi kết nối:", error);
+      setErrorMsg('Không thể kết nối đến máy chủ.');
+    }
   };
 
   return (

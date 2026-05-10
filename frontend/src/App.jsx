@@ -3,6 +3,10 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login'; // Import trang đăng nhập
 import Register from './pages/Register'; // Import trang đăng ký
+import ForgotPassword from './pages/ForgotPassword'; // Import trang quên mật khẩu
+import ResetPassword from './pages/ResetPassword'; // Import trang đặt lại mật khẩu
+import EmailVerificationNotice from './pages/EmailVerificationNotice';
+import VerifyEmail from './pages/VerifyEmail';
 import Jobs from './pages/Jobs'; // Import trang danh sách việc làm
 import JobDetail from './pages/JobDetail'; // Import trang chi tiết công việc
 import StudentProfile from './pages/StudentProfile'; // Import trang hồ sơ sinh viên
@@ -10,6 +14,7 @@ import ApplyJob from './pages/ApplyJob'; // Import Form ứng tuyển
 import AppliedJobs from './pages/AppliedJobs'; // Import trang việc làm đã ứng tuyển của sinh viên
 import BuildCV from './pages/BuildCV';  
 import StudentSettings from './pages/StudentSettings'; // Import trang cài đặt tài khoản
+import GoogleCallback from './pages/GoogleCallback'; // Import trang xử lý đăng nhập Google
 
 
 import EmployerRegister from './pages/EmployerRegister'; // Import trang đăng ký cho NTD
@@ -41,6 +46,15 @@ function App() {
           <Route path="/login" element={<Login />} />
           {/* Trang đăng ký */}
           <Route path="/register" element={<Register />} />
+          {/* Trang quên mật khẩu */}
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          {/* Trang đặt lại mật khẩu */}
+          <Route path="/reset-password" element={<ResetPassword />} />
+          {/* Xác minh email */}
+          <Route path="/verify-email-notice" element={<EmailVerificationNotice />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          {/* Callback của Google */}
+          <Route path="/auth/google/callback" element={<GoogleCallback />} />
           {/* Trang danh sách việc làm */}
           <Route path="/jobs" element={<Jobs />} />
           {/* Trang chi tiết công việc */}
