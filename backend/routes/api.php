@@ -9,6 +9,7 @@ use App\Http\Controllers\ProfileController; // Import sẵn ProfileController ch
 use App\Http\Controllers\AccountController; // Import AccountController cho cài đặt tài khoản
 use App\Http\Controllers\PasswordResetController; // Import controller quên mật khẩu
 use App\Http\Controllers\EmailVerificationController;
+use App\Http\Controllers\EmployerProfileController; // Import EmployerProfileController
 
 /*
 |--------------------------------------------------------------------------
@@ -67,6 +68,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
     // 5. Quản lý tuyển dụng (Dành cho Employer)
     Route::prefix('employer')->group(function () {
+        Route::get('/profile', [EmployerProfileController::class, 'show']);
+        Route::post('/profile', [EmployerProfileController::class, 'update']);
+        
         Route::get('/jobs/stats', [JobController::class, 'employerStats']);
         Route::get('/jobs', [JobController::class, 'employerIndex']);
         Route::post('/jobs', [JobController::class, 'store']);
