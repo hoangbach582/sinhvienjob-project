@@ -34,6 +34,7 @@ import AdminDashboard from './pages/AdminDashboard'; // Import trang Dashboard a
 import AdminAccounts from './pages/AdminAccounts'; // Import trang quản lý tài khoản admin
 import AdminJobs from './pages/AdminJobs'; // Import trang quản lý tin tuyển dụng admin
 import AdminIndustries from './pages/AdminIndustries'; // Import trang quản lý ngành nghề admin
+import AdminLogin from './pages/AdminLogin'; // Import trang đăng nhập admin
 
 import { AuthProvider } from './context/AuthContext'; // Import trạm phát sóng Context để quản lý đăng nhập
 function App() {
@@ -97,6 +98,7 @@ function App() {
           </Route>
 
           {/* Phân hệ Admin */}
+          <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard" element={<AdminDashboard />} /> 
             <Route path="accounts" element={<AdminAccounts />} />

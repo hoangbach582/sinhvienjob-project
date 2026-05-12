@@ -10,6 +10,7 @@ use App\Http\Controllers\AccountController; // Import AccountController cho cài
 use App\Http\Controllers\PasswordResetController; // Import controller quên mật khẩu
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\EmployerProfileController; // Import EmployerProfileController
+use App\Http\Controllers\Admin\AdminJobController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,5 +80,13 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::delete('/jobs/{id}', [JobController::class, 'destroy']);
         Route::get('/jobs/{id}/applications', [JobController::class, 'getJobApplicants']);
         Route::patch('/applications/{id}', [ApplicationController::class, 'updateStatus']);
+    });
+
+    // 6. Quản lý Admin
+    Route::middleware(['admin'])->prefix('admin')->group(function () {
+        Route::get('/jobs/pending', [AdminJobController::class, 'pending']);
+        Route::get('/jobs', [AdminJobController::class, 'index']);
+        Route::post('/jobs/{id}/approve', [AdminJobController::class, 'approve']);
+        Route::post('/jobs/{id}/reject', [AdminJobController::class, 'reject']);
     });
 });

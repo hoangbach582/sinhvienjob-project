@@ -30,4 +30,20 @@ class JobPolicy
     {
         return $user->role === 'employer' && $user->employer->id === $job->employer_id;
     }
+
+    /**
+     * Determine whether the user can approve the model.
+     */
+    public function approve(User $user, Job $job): bool
+    {
+        return $user->role === 'admin';
+    }
+
+    /**
+     * Determine whether the user can reject the model.
+     */
+    public function reject(User $user, Job $job): bool
+    {
+        return $user->role === 'admin';
+    }
 }

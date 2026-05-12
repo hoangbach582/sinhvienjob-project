@@ -25,7 +25,10 @@ class Job extends Model
         'requirements',
         'benefits',
         'deadline',
-        'status'
+        'status',
+        'rejected_reason',
+        'reviewed_at',
+        'reviewed_by'
     ];
 
     // Rất quan trọng: Báo cho Laravel biết Job này thuộc về Employer nào
@@ -39,5 +42,11 @@ class Job extends Model
     public function applications()
     {
         return $this->hasMany(Application::class, 'job_id');
+    }
+
+    // Người duyệt tin (Admin)
+    public function reviewer()
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
     }
 }
