@@ -25,4 +25,9 @@ class Application extends Model
     {
         return $this->belongsTo(Job::class, 'job_id');
     }
+
+    public function student()
+    {
+        return $this->belongsTo(StudentProfile::class, 'student_id');
+    }
 }

@@ -60,9 +60,15 @@ class ApplicationController extends Controller
         $application = Application::create([
             'job_id' => $jobId,
             'student_id' => $studentProfile->id,
-            'cv_url' => 'https://example.com/cv-mac-dinh.pdf', 
+            'cv_url' => $cvUrl, 
+            'cover_letter' => $request->cover_letter,
             'status' => 'pending' 
         ]);
+
+        // 8. Thông báo cho nhà tuyển dụng
+        $job = $application->job;
+        $employerUser = $job->employer->user;
+        $employerUser->notify(new \App\Notifications\JobAppliedNotification($application));
 
         return response()->json([
             'message' => '🎉 Ứng tuyển thành công! Nhà tuyển dụng sẽ sớm liên hệ với bạn.'
@@ -114,6 +120,10 @@ class ApplicationController extends Controller
         ]);
 
         $application->update(['status' => $request->status]);
+
+        // Thông báo cho sinh viên
+        $studentUser = $application->student->user;
+        $studentUser->notify(new \App\Notifications\JobStatusChangedNotification($application));
 
         return response()->json([
             'message' => 'Cập nhật trạng thái thành công',

@@ -11,7 +11,9 @@ use App\Http\Controllers\PasswordResetController; // Import controller quên m�
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\EmployerProfileController; // Import EmployerProfileController
 use App\Http\Controllers\Admin\AdminJobController;
+use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\SavedJobController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -99,5 +101,16 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/jobs', [AdminJobController::class, 'index']);
         Route::post('/jobs/{id}/approve', [AdminJobController::class, 'approve']);
         Route::post('/jobs/{id}/reject', [AdminJobController::class, 'reject']);
+
+        // Báo cáo & Thống kê
+        Route::get('/reports/stats', [AdminReportController::class, 'getDashboardStats']);
+        Route::get('/reports/export', [AdminReportController::class, 'exportReport']);
     });
+
+    // 8. Thông báo
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
 });

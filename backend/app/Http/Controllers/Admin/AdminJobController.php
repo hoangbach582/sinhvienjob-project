@@ -61,6 +61,10 @@ class AdminJobController extends Controller
         // Sử dụng email thay vì name vì database hiện tại không có cột name trong bảng users
         Log::info("Admin {$request->user()->email} đã duyệt job: {$job->title} (ID: {$job->id})");
 
+        // Thông báo cho nhà tuyển dụng
+        $employerUser = $job->employer->user;
+        $employerUser->notify(new \App\Notifications\JobApprovedNotification($job, 'approved'));
+
         return response()->json([
             'message' => 'Duyệt tin tuyển dụng thành công.',
             'job' => $job
@@ -89,6 +93,10 @@ class AdminJobController extends Controller
 
         // Sử dụng email thay vì name
         Log::info("Admin {$request->user()->email} đã từ chối job: {$job->title} (ID: {$job->id}). Lý do: {$request->reason}");
+
+        // Thông báo cho nhà tuyển dụng
+        $employerUser = $job->employer->user;
+        $employerUser->notify(new \App\Notifications\JobApprovedNotification($job, 'rejected'));
 
         return response()->json([
             'message' => 'Đã từ chối tin tuyển dụng.',

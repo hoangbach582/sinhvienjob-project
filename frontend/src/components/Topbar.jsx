@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import NotificationBell from './notifications/NotificationBell';
 
 function Topbar() {
   const { isLoggedIn, userName, userRole, userAvatar, logout } = useAuth();
@@ -64,10 +65,12 @@ function Topbar() {
         {/* PHẢI: Nút Đăng nhập/Đăng ký hoặc Avatar */}
         <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', gap: '16px', alignItems: 'center' }}>
           {isLoggedIn ? (
-            <div style={{ position: 'relative' }} ref={dropdownRef}>
-              <div
-                className="avatar"
-                onClick={() => setShowDropdown(!showDropdown)}
+            <>
+              <NotificationBell />
+              <div style={{ position: 'relative' }} ref={dropdownRef}>
+                <div
+                  className="avatar"
+                  onClick={() => setShowDropdown(!showDropdown)}
                 style={{ width: '38px', height: '38px', fontSize: '14px', cursor: 'pointer', userSelect: 'none', transition: 'all 0.2s', backgroundColor: '#DBEAFE', color: '#1E3A8A', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}
                 title="Tài khoản của tôi"
               >
@@ -123,6 +126,7 @@ function Topbar() {
                 </div>
               )}
             </div>
+            </>
           ) : (
             <>
               <Link to="/login" style={{ textDecoration: 'none', color: '#3B82F6', fontWeight: 600, fontSize: '15px', padding: '8px 12px' }}>Đăng nhập</Link>

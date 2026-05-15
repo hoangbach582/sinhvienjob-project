@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; // Import trạm phát sóng
+import NotificationBell from '../components/notifications/NotificationBell';
 
 function EmployerLayout() {
   const { userName, logout } = useAuth(); // Lấy Tên và hàm Đăng xuất
@@ -66,7 +67,8 @@ function EmployerLayout() {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         
         {/* HEADER TOP CỦA NHÀ TUYỂN DỤNG */}
-        <div style={{ height: '64px', backgroundColor: '#fff', borderBottom: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 24px' }}>
+        <div style={{ height: '64px', backgroundColor: '#fff', borderBottom: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 24px', gap: '20px' }}>
+          <NotificationBell />
           <div style={{ position: 'relative' }} ref={dropdownRef}>
             <div
               onClick={() => setShowDropdown(!showDropdown)}

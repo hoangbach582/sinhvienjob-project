@@ -20,4 +20,9 @@ class Employer extends Model
         'website',
         'description'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

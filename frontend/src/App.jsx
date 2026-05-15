@@ -17,6 +17,7 @@ import SavedJobs from './pages/SavedJobs';
 import BuildCV from './pages/BuildCV';  
 import StudentSettings from './pages/StudentSettings'; 
 import GoogleCallback from './pages/GoogleCallback'; 
+import Notifications from './pages/Notifications';
 
 
 import EmployerRegister from './pages/EmployerRegister'; 
@@ -40,12 +41,14 @@ import AdminLogin from './pages/AdminLogin';
 
 import { AuthProvider } from './context/AuthContext'; 
 import { SavedJobsProvider } from './context/SavedJobsContext';
+import { NotificationProvider } from './context/NotificationContext';
 
 function App() {
   return (
     <AuthProvider>  
-      <SavedJobsProvider>
-        <BrowserRouter>
+      <NotificationProvider>
+        <SavedJobsProvider>
+          <BrowserRouter>
           <Toaster position="top-center" reverseOrder={false} /> {/* Thêm Toaster ở đây */}
           <Routes>
             {/* Phân hệ Ứng viên */}
@@ -66,6 +69,7 @@ function App() {
             <Route path="/build-cv" element={<BuildCV />} />
             <Route path="/settings" element={<StudentSettings />} />
             <Route path="/companies" element={<Companies />} />
+            <Route path="/notifications" element={<Notifications />} />
 
             {/* Phân hệ Nhà tuyển dụng */}
             <Route path="/employer/register" element={<EmployerRegister />} />
@@ -91,6 +95,7 @@ function App() {
           </Routes>
         </BrowserRouter>
       </SavedJobsProvider>
+      </NotificationProvider>
     </AuthProvider>
   );
 }
