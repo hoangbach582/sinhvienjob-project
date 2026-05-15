@@ -49,4 +49,9 @@ class Job extends Model
     {
         return $this->belongsTo(User::class, 'reviewed_by');
     }
+
+    public function savedJobs()
+    {
+        return $this->hasMany(SavedJob::class, 'job_id');
+    }
 }

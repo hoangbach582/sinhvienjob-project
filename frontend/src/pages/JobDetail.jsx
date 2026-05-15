@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import { useAuth } from '../context/AuthContext';
+import SaveButton from '../components/SaveButton'; // Import SaveButton
 
 function JobDetail() {
   const { id } = useParams();
@@ -312,7 +313,10 @@ function JobDetail() {
         <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
           <div style={{ flex: 2 }}>
             <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', marginBottom: '24px' }}>
-              <h1 style={{ fontSize: '24px', color: '#0F172A', marginBottom: '16px' }}>{job.title}</h1>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                <h1 style={{ fontSize: '24px', color: '#0F172A', margin: 0, fontWeight: 700 }}>{job.title}</h1>
+                <SaveButton jobId={job.id} size={28} />
+              </div>
               <div style={{ display: 'flex', gap: '24px', marginBottom: '20px', borderBottom: '1px solid #E2E8F0', paddingBottom: '20px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <span style={{ color: '#64748B', fontSize: '13px' }}>Mức lương</span>
@@ -328,24 +332,29 @@ function JobDetail() {
                 </div>
               </div>
 
-              <button 
-                onClick={handleOpenApply} 
-                disabled={isApplying || hasApplied}
-                style={{ 
-                  width: '100%', 
-                  padding: '14px', 
-                  backgroundColor: (isApplying || hasApplied) ? '#94A3B8' : '#3B82F6', 
-                  color: '#fff', 
-                  border: 'none', 
-                  borderRadius: '8px', 
-                  fontSize: '16px', 
-                  fontWeight: 600, 
-                  cursor: (isApplying || hasApplied) ? 'not-allowed' : 'pointer',
-                  transition: 'background-color 0.3s'
-                }}
-              >
-                {hasApplied ? '✅ Đã ứng tuyển' : (isApplying ? 'Đang gửi hồ sơ...' : 'Ứng tuyển ngay')}
-              </button>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button 
+                  onClick={handleOpenApply} 
+                  disabled={isApplying || hasApplied}
+                  style={{ 
+                    flex: 1, 
+                    padding: '14px', 
+                    backgroundColor: (isApplying || hasApplied) ? '#94A3B8' : '#3B82F6', 
+                    color: '#fff', 
+                    border: 'none', 
+                    borderRadius: '8px', 
+                    fontSize: '16px', 
+                    fontWeight: 600, 
+                    cursor: (isApplying || hasApplied) ? 'not-allowed' : 'pointer',
+                    transition: 'background-color 0.3s'
+                  }}
+                >
+                  {hasApplied ? '✅ Đã ứng tuyển' : (isApplying ? 'Đang gửi hồ sơ...' : 'Ứng tuyển ngay')}
+                </button>
+                <div style={{ display: 'flex', alignItems: 'center', padding: '0 4px', border: '1px solid #E2E8F0', borderRadius: '8px' }}>
+                  <SaveButton jobId={job.id} size={24} showText={true} />
+                </div>
+              </div>
             </div>
 
             <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
@@ -359,10 +368,10 @@ function JobDetail() {
 
           <div style={{ flex: 1, backgroundColor: '#fff', padding: '24px', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
-              <div style={{ width: '64px', height: '64px', backgroundColor: '#F1F5F9', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', fontWeight: 700, color: '#94A3B8' }}>
+              <div style={{ width: '64px', height: '64px', backgroundColor: '#F1F5F9', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', fontWeight: 700, color: '#3B82F6' }}>
                 {job.employer?.company_name?.substring(0, 2).toUpperCase() || 'CT'}
               </div>
-              <h3 style={{ fontSize: '16px', color: '#0F172A', margin: 0 }}>{job.employer?.company_name || 'Đang cập nhật'}</h3>
+              <h3 style={{ fontSize: '16px', color: '#0F172A', margin: 0, fontWeight: 700 }}>{job.employer?.company_name || 'Đang cập nhật'}</h3>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px', color: '#475569' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>

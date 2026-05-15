@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import MainLayout from '../layouts/MainLayout';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import SaveButton from '../components/SaveButton';
 
 function Home() {
   // 1. Tạo State để lưu trữ dữ liệu từ API
@@ -113,23 +114,28 @@ function Home() {
               {jobs.map((job) => (
                 <div 
                   key={job.id} 
-                  onClick={() => navigate(`/job/${job.id}`)} // THÊM DÒNG NÀY
-                  style={{ border: '1px solid #E2E8F0', padding: '16px', borderRadius: '8px', display: 'flex', gap: '16px', backgroundColor: '#fff', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}
+                  onClick={() => navigate(`/job/${job.id}`)} 
+                  style={{ border: '1px solid #E2E8F0', padding: '16px', borderRadius: '8px', display: 'flex', gap: '16px', backgroundColor: '#fff', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', position: 'relative' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#3B82F6'; e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.1)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.05)'; }}
                 >  
                   {/* Cột Logo */}
-                  <div style={{ width: '56px', height: '56px', backgroundColor: '#F1F5F9', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 600, color: '#94A3B8' }}>
+                  <div style={{ width: '56px', height: '56px', backgroundColor: '#F1F5F9', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 600, color: '#94A3B8', flexShrink: 0 }}>
                     {job.employer?.company_name?.substring(0, 2).toUpperCase() || 'CT'}
                   </div>
 
                   {/* Cột Thông tin */}
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <h4 style={{ margin: '0 0 6px 0', fontSize: '15px', color: '#0F172A', lineHeight: '1.4' }}>
+                      <h4 style={{ margin: '0 0 6px 0', fontSize: '15px', color: '#0F172A', lineHeight: '1.4', fontWeight: 700 }}>
                         {job.title}
                       </h4>
-                      <span style={{ fontSize: '11px', padding: '4px 8px', backgroundColor: '#ECFDF5', color: '#10B981', borderRadius: '12px', fontWeight: 500, whiteSpace: 'nowrap' }}>
-                        {translateType(job.type)}
-                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <span style={{ fontSize: '11px', padding: '2px 8px', backgroundColor: '#ECFDF5', color: '#10B981', borderRadius: '12px', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                          {translateType(job.type)}
+                        </span>
+                        <SaveButton jobId={job.id} size={16} />
+                      </div>
                     </div>
 
                     <div style={{ fontSize: '13px', color: '#64748B', marginBottom: '12px', fontWeight: 500 }}>
@@ -140,7 +146,7 @@ function Home() {
                       <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                         📍 {job.location}
                       </span>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#F59E0B', fontWeight: 500 }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#F59E0B', fontWeight: 600 }}>
                         💰 {formatSalary(job.salary_min, job.salary_max)}
                       </span>
                     </div>

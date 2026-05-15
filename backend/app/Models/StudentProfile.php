@@ -22,4 +22,9 @@ class StudentProfile extends Model
         'bio',
         'cv_url'
     ];
+
+    public function savedJobs()
+    {
+        return $this->hasMany(SavedJob::class, 'student_id');
+    }
 }

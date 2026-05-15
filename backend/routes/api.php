@@ -11,11 +11,17 @@ use App\Http\Controllers\PasswordResetController; // Import controller quên m�
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\EmployerProfileController; // Import EmployerProfileController
 use App\Http\Controllers\Admin\AdminJobController;
+use App\Http\Controllers\SavedJobController;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "api" middleware group. Make something great!
+|
 */
 
 // ==========================================
@@ -37,6 +43,7 @@ Route::post('/email/verification/verify', [EmailVerificationController::class, '
 Route::post('/email/verification/resend', [EmailVerificationController::class, 'resend']);
 
 Route::get('/jobs/latest', [JobController::class, 'getLatestJobs']);
+// Chi tiết công việc (Hỗ trợ check is_saved nếu có token)
 Route::get('/jobs/{id}', [JobController::class, 'getJobDetail']);
 Route::get('/jobs', [JobController::class, 'index']);
 Route::get('/categories/job-types', [JobController::class, 'getCategories']);
@@ -63,11 +70,15 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     // 3. Lịch sử ứng tuyển
     Route::get('/applications/me', [ApplicationController::class, 'getAppliedJobs']);
 
-    // 4. Cài đặt tài khoản
+    // 4. Việc làm đã lưu
+    Route::post('/jobs/{jobId}/save', [SavedJobController::class, 'toggle']);
+    Route::get('/saved-jobs', [SavedJobController::class, 'index']);
+
+    // 5. Cài đặt tài khoản
     Route::put('/account/change-password', [AccountController::class, 'changePassword']);
     Route::delete('/account', [AccountController::class, 'deleteAccount']);
 
-    // 5. Quản lý tuyển dụng (Dành cho Employer)
+    // 6. Quản lý tuyển dụng (Dành cho Employer)
     Route::prefix('employer')->group(function () {
         Route::get('/profile', [EmployerProfileController::class, 'show']);
         Route::post('/profile', [EmployerProfileController::class, 'update']);
@@ -82,7 +93,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::patch('/applications/{id}', [ApplicationController::class, 'updateStatus']);
     });
 
-    // 6. Quản lý Admin
+    // 7. Quản lý Admin
     Route::middleware(['admin'])->prefix('admin')->group(function () {
         Route::get('/jobs/pending', [AdminJobController::class, 'pending']);
         Route::get('/jobs', [AdminJobController::class, 'index']);

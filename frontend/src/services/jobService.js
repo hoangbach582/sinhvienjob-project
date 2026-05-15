@@ -71,5 +71,17 @@ export const jobService = {
   getJobTypes: async () => {
     const response = await api.get('/categories/job-types');
     return response.data;
+  },
+
+  // Lưu/Bỏ lưu công việc
+  toggleSaveJob: async (jobId) => {
+    const response = await api.post(`/jobs/${jobId}/save`);
+    return response.data;
+  },
+
+  // Lấy danh sách việc làm đã lưu
+  getSavedJobs: async (page = 1) => {
+    const response = await api.get(`/saved-jobs?page=${page}`);
+    return response.data;
   }
 };

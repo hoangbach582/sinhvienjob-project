@@ -98,9 +98,14 @@ function Topbar() {
                       👤 Hồ sơ cá nhân
                     </Link>
                     {userRole === 'student' && (
-                      <Link to="/applied-jobs" onClick={() => setShowDropdown(false)} style={{ display: 'block', padding: '12px 16px', color: '#334155', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>
-                        💼 Việc của tôi
-                      </Link>
+                      <>
+                        <Link to="/applied-jobs" onClick={() => setShowDropdown(false)} style={{ display: 'block', padding: '12px 16px', color: '#334155', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>
+                          💼 Việc đã ứng tuyển
+                        </Link>
+                        <Link to="/saved-jobs" onClick={() => setShowDropdown(false)} style={{ display: 'block', padding: '12px 16px', color: '#334155', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>
+                          ❤️ Việc làm đã lưu
+                        </Link>
+                      </>
                     )}
                     <Link to="/settings" onClick={() => setShowDropdown(false)} style={{ display: 'block', padding: '12px 16px', color: '#334155', textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>
                       ⚙️ Cài đặt tài khoản

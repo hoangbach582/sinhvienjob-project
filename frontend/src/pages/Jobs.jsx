@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
+import SaveButton from '../components/SaveButton';
 
 function Jobs() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -157,29 +158,36 @@ function Jobs() {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {jobs.map((job) => (
-                <Link to={`/job/${job.id}`} key={job.id} style={{ textDecoration: 'none', display: 'block' }}>
-                  <div style={{ backgroundColor: '#fff', padding: '24px', borderRadius: '12px', border: '1px solid #E2E8F0', display: 'flex', gap: '20px', transition: 'all 0.2s', cursor: 'pointer' }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#3B82F6'; e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.1)'; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.boxShadow = 'none'; }}>
-                    
-                    <div style={{ width: '64px', height: '64px', backgroundColor: '#F8FAFC', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', fontWeight: 700, color: '#94A3B8', border: '1px solid #E2E8F0', flexShrink: 0 }}>
-                      {job.employer?.company_name?.substring(0, 2).toUpperCase() || 'CT'}
-                    </div>
-
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                        <h3 style={{ fontSize: '18px', color: '#0F172A', fontWeight: 600, margin: 0 }}>{job.title}</h3>
-                        <span style={{ padding: '4px 10px', backgroundColor: '#ECFDF5', color: '#10B981', borderRadius: '20px', fontSize: '12px', fontWeight: 600, whiteSpace: 'nowrap', marginLeft: '12px' }}>
-                          {translateType(job.type)}
-                        </span>
+                <div key={job.id} style={{ position: 'relative' }}>
+                  <Link to={`/job/${job.id}`} style={{ textDecoration: 'none', display: 'block' }}>
+                    <div style={{ backgroundColor: '#fff', padding: '24px', borderRadius: '12px', border: '1px solid #E2E8F0', display: 'flex', gap: '20px', transition: 'all 0.2s', cursor: 'pointer' }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#3B82F6'; e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.1)'; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.boxShadow = 'none'; }}>
+                      
+                      <div style={{ width: '64px', height: '64px', backgroundColor: '#F8FAFC', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', fontWeight: 700, color: '#3B82F6', border: '1px solid #E2E8F0', flexShrink: 0 }}>
+                        {job.employer?.company_name?.substring(0, 2).toUpperCase() || 'CT'}
                       </div>
-                      <div style={{ color: '#64748B', fontSize: '15px', marginBottom: '16px' }}>{job.employer?.company_name || 'Đang cập nhật'}</div>
-                      <div style={{ display: 'flex', gap: '24px', fontSize: '14px' }}>
-                        <span style={{ color: '#64748B', display: 'flex', alignItems: 'center', gap: '4px' }}><span style={{ color: '#EF4444' }}>📍</span> {job.location}</span>
-                        <span style={{ color: '#D97706', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>💰 {formatSalary(job.salary_min, job.salary_max)}</span>
-                      </div>
-                    </div>
 
-                  </div>
-                </Link>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                          <h3 style={{ fontSize: '18px', color: '#0F172A', fontWeight: 700, margin: 0 }}>{job.title}</h3>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <span style={{ padding: '4px 10px', backgroundColor: '#ECFDF5', color: '#10B981', borderRadius: '20px', fontSize: '12px', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                              {translateType(job.type)}
+                            </span>
+                            <div onClick={(e) => e.preventDefault()}>
+                              <SaveButton jobId={job.id} />
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ color: '#3B82F6', fontSize: '15px', marginBottom: '16px', fontWeight: 500 }}>{job.employer?.company_name || 'Đang cập nhật'}</div>
+                        <div style={{ display: 'flex', gap: '24px', fontSize: '14px' }}>
+                          <span style={{ color: '#64748B', display: 'flex', alignItems: 'center', gap: '4px' }}>📍 {job.location}</span>
+                          <span style={{ color: '#D97706', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>💰 {formatSalary(job.salary_min, job.salary_max)}</span>
+                        </div>
+                      </div>
+
+                    </div>
+                  </Link>
+                </div>
               ))}
             </div>
           )}
