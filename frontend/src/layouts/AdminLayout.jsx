@@ -1,7 +1,26 @@
 import React from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 function AdminLayout() {
+  // Đồng bộ kiểm tra token từ localStorage để tránh bị chớp màn hình (flicker)
+  const token = localStorage.getItem('access_token') || localStorage.getItem('token');
+  let role = localStorage.getItem('role');
+  try {
+    const userData = JSON.parse(localStorage.getItem('user'));
+    if (userData && userData.role) {
+      role = userData.role;
+    }
+  } catch (e) {}
+
+  // Lấy hàm logout từ context nếu cần làm nút đăng xuất
+  const { logout } = useAuth();
+
+  // Nếu không có token hoặc không phải admin thì đẩy về trang login
+  if (!token || role !== 'admin') {
+    return <Navigate to="/admin/login" replace />;
+  }
+
   return (
     <div className="app">
       <div className="mock-frame">

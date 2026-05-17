@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast'; // Import Toaster
 import Home from './pages/Home';
 import Login from './pages/Login'; 
@@ -87,6 +87,7 @@ function App() {
             {/* Phân hệ Admin */}
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="dashboard" element={<AdminDashboard />} /> 
               <Route path="accounts" element={<AdminAccounts />} />
               <Route path="jobs" element={<AdminJobs />} />
