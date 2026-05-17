@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, Outlet, Navigate } from 'react-router-dom';
+import { NavLink, Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function AdminLayout() {
@@ -21,6 +21,16 @@ function AdminLayout() {
     return <Navigate to="/admin/login" replace />;
   }
 
+  const navLinkStyle = ({ isActive }) => ({
+    color: isActive ? '#fff' : 'inherit',
+    textDecoration: 'none',
+    fontWeight: isActive ? 600 : 400,
+    background: isActive ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
+    padding: '6px 12px',
+    borderRadius: '6px',
+    transition: 'all 0.2s ease-in-out'
+  });
+
   return (
     <div className="app">
       <div className="mock-frame">
@@ -28,11 +38,11 @@ function AdminLayout() {
         <div className="mock-topbar" style={{ background: '#1e3a6e' }}>
           <span style={{ color: '#fff', fontWeight: 600, fontSize: '15px' }}>SinhVienJob Admin</span>
           
-          <div style={{ display: 'flex', gap: '16px', fontSize: '13px', color: '#aad4f7' }}>
-            <Link to="/admin/dashboard" style={{ color: 'inherit', textDecoration: 'none' }}>Tổng quan</Link>
-            <Link to="/admin/accounts" style={{ color: 'inherit', textDecoration: 'none' }}>Tài khoản</Link>
-            <Link to="/admin/jobs" style={{ color: 'inherit', textDecoration: 'none' }}>Tin tuyển dụng</Link>
-            <Link to="/admin/industries" style={{ color: 'inherit', textDecoration: 'none' }}>Ngành nghề</Link>
+          <div style={{ display: 'flex', gap: '8px', fontSize: '13px', color: '#aad4f7' }}>
+            <NavLink to="/admin/dashboard" style={navLinkStyle}>Tổng quan</NavLink>
+            <NavLink to="/admin/accounts" style={navLinkStyle}>Tài khoản</NavLink>
+            <NavLink to="/admin/jobs" style={navLinkStyle}>Tin tuyển dụng</NavLink>
+            <NavLink to="/admin/industries" style={navLinkStyle}>Ngành nghề</NavLink>
           </div>
           
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
