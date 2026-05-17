@@ -12,6 +12,7 @@ use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\EmployerProfileController; // Import EmployerProfileController
 use App\Http\Controllers\Admin\AdminJobController;
 use App\Http\Controllers\Admin\AdminReportController;
+use App\Http\Controllers\Admin\AdminAccountController;
 use App\Http\Controllers\SavedJobController;
 use App\Http\Controllers\NotificationController;
 
@@ -105,6 +106,15 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         // Báo cáo & Thống kê
         Route::get('/reports/stats', [AdminReportController::class, 'getDashboardStats']);
         Route::get('/reports/export', [AdminReportController::class, 'exportReport']);
+
+        // Quản lý Tài khoản (Employer & Student)
+        Route::get('/accounts/export', [AdminAccountController::class, 'export']);
+        Route::post('/accounts/bulk-action', [AdminAccountController::class, 'bulkAction']);
+        Route::get('/accounts', [AdminAccountController::class, 'index']);
+        Route::get('/accounts/{id}', [AdminAccountController::class, 'show']);
+        Route::patch('/accounts/{id}/approve', [AdminAccountController::class, 'approve']);
+        Route::patch('/accounts/{id}/status', [AdminAccountController::class, 'updateStatus']);
+        Route::delete('/accounts/{id}', [AdminAccountController::class, 'destroy']);
     });
 
     // 8. Thông báo

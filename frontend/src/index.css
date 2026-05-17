@@ -75,3 +75,24 @@ td{padding:9px 12px;border-top:0.5px solid var(--color-border-tertiary)}
 .kpi{background:var(--color-background-secondary);border-radius:10px;padding:14px;text-align:center}
 .kpi-num{font-size:24px;font-weight:600}
 .kpi-lbl{font-size:11px;color:var(--color-text-secondary)}
+
+/* ==============================
+   Animations (dùng cho AdminAccounts, Modals, Skeletons)
+   ============================== */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.animate-spin { animation: spin 1s linear infinite; }

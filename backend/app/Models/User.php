@@ -34,7 +34,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role', // Cực kỳ quan trọng
+        'role',           // Cực kỳ quan trọng
+        'status',         // active | pending | locked | rejected
         'email_verified_at',
     ];
 
@@ -88,5 +89,11 @@ class User extends Authenticatable
     public function studentProfile()
     {
         return $this->hasOne(StudentProfile::class, 'user_id');
+    }
+
+    // Quan hệ với bảng ứng tuyển (applications)
+    public function applications()
+    {
+        return $this->hasMany(\App\Models\Application::class, 'student_id');
     }
 }

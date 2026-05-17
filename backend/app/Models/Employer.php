@@ -25,4 +25,10 @@ class Employer extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    // Một nhà tuyển dụng có thể đăng nhiều tin tuyển dụng
+    public function jobs()
+    {
+        return $this->hasMany(\App\Models\Job::class, 'employer_id');
+    }
 }
