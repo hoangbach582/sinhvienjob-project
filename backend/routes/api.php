@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\Admin\AdminAccountController;
 use App\Http\Controllers\SavedJobController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\EmployerDashboardController; // Thêm import này
 
 /*
 |--------------------------------------------------------------------------
@@ -85,6 +86,11 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::prefix('employer')->group(function () {
         Route::get('/profile', [EmployerProfileController::class, 'show']);
         Route::post('/profile', [EmployerProfileController::class, 'update']);
+        
+        // Dashboard Stats & Recent Data
+        Route::get('/dashboard/stats', [EmployerDashboardController::class, 'stats']);
+        Route::get('/jobs/recent', [EmployerDashboardController::class, 'recentJobs']);
+        Route::get('/applications/recent', [EmployerDashboardController::class, 'recentApplications']);
         
         Route::get('/jobs/stats', [JobController::class, 'employerStats']);
         Route::get('/jobs', [JobController::class, 'employerIndex']);

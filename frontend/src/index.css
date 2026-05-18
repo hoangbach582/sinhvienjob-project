@@ -96,3 +96,67 @@ td{padding:9px 12px;border-top:0.5px solid var(--color-border-tertiary)}
   to   { transform: rotate(360deg); }
 }
 .animate-spin { animation: spin 1s linear infinite; }
+
+/* ==============================
+   Employer Dashboard
+   ============================== */
+
+/* Animation entry cho cards */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Pulse dot cho trạng thái "Đang mở" */
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(0.8); }
+}
+
+/* Stats grid – responsive */
+.stats-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+@media (max-width: 1100px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .stats-grid { grid-template-columns: 1fr; }
+}
+
+/* Mid section: Quick Actions + Activity Feed */
+.mid-grid {
+  grid-template-columns: 1fr 1.4fr;
+}
+@media (max-width: 900px) {
+  .mid-grid { grid-template-columns: 1fr; }
+}
+
+/* Charts grid – responsive */
+.dashboard-charts-grid {
+  grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 900px) {
+  .dashboard-charts-grid { grid-template-columns: 1fr; }
+}
+
+/* Employer layout responsive */
+@media (max-width: 768px) {
+  /* Ẩn sidebar trên mobile (có thể mở rộng sau với toggle) */
+  .employer-sidebar-collapsed {
+    display: none;
+  }
+}
+
+/* Color variables bổ sung */
+:root {
+  --color-primary: #10B981;
+  --color-primary-dark: #059669;
+  --color-primary-light: #ECFDF5;
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #475569;
+  --color-border-tertiary: #E2E8F0;
+  --color-background-primary: #FFFFFF;
+  --color-background-secondary: #F8FAFC;
+  --color-border-secondary: #CBD5E1;
+}

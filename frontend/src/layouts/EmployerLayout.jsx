@@ -1,11 +1,35 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; // Import trạm phát sóng
+import {
+  LayoutDashboard, PlusCircle, List, Users, Building2, Settings
+} from 'lucide-react';
 import NotificationBell from '../components/notifications/NotificationBell';
 
 function EmployerLayout() {
   const { userName, logout } = useAuth(); // Lấy Tên và hàm Đăng xuất
   const navigate = useNavigate();
+  const location = useLocation(); // Dùng để xác định route hiện tại
+
+  // Kiểm tra path có đang active không (dùng startsWith để match cả sub-routes)
+  const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
+
+  // Style cho sidebar item dựa trên active state
+  const sidebarItemStyle = (path) => ({
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    padding: '10px 16px',
+    marginBottom: '2px',
+    textDecoration: 'none',
+    borderRadius: '10px',
+    fontSize: '14px',
+    fontWeight: isActive(path) ? 600 : 400,
+    color: isActive(path) ? '#10B981' : '#475569',
+    background: isActive(path) ? '#ECFDF5' : 'transparent',
+    transition: 'all 0.15s ease',
+    borderLeft: isActive(path) ? '3px solid #10B981' : '3px solid transparent',
+  });
 
   // State & Ref cho dropdown avatar
   const [showDropdown, setShowDropdown] = useState(false);
@@ -41,18 +65,78 @@ function EmployerLayout() {
     <div className="app" style={{ display: 'flex', height: '100vh', backgroundColor: '#F8FAFC' }}>
       
       {/* ===== CỘT SIDEBAR BÊN TRÁI ===== */}
-      <div style={{ width: '250px', backgroundColor: '#fff', borderRight: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ padding: '20px', borderBottom: '1px solid #E2E8F0' }}>
-          <Link to="/" style={{ fontSize: '20px', fontWeight: 700, color: '#10B981', textDecoration: 'none' }}>SinhVienJob Pro</Link>
+      <div style={{ width: '260px', backgroundColor: '#fff', borderRight: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+        {/* Logo */}
+        <div style={{ padding: '18px 20px', borderBottom: '1px solid #E2E8F0' }}>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
+            <div style={{
+              width: '34px', height: '34px',
+              background: 'linear-gradient(135deg, #10B981, #059669)',
+              borderRadius: '10px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <span style={{ color: '#fff', fontSize: '16px', fontWeight: 800 }}>S</span>
+            </div>
+            <div>
+              <div style={{ fontSize: '15px', fontWeight: 700, color: '#0F172A', lineHeight: 1.2 }}>SinhVienJob</div>
+              <div style={{ fontSize: '10px', color: '#10B981', fontWeight: 600, letterSpacing: '0.5px', textTransform: 'uppercase' }}>Nhà tuyển dụng</div>
+            </div>
+          </Link>
         </div>
-        
+
         {/* Menu điều hướng */}
-        <div style={{ flex: 1, padding: '16px 0' }}>
-          <Link to="/employer/dashboard" className="sidebar-item" style={{ display: 'block', padding: '12px 20px', textDecoration: 'none', color: '#334155' }}>Tổng quan</Link>
-          <Link to="/employer/post-job" className="sidebar-item" style={{ display: 'block', padding: '12px 20px', textDecoration: 'none', color: '#334155' }}>Đăng tin mới</Link>
-          <Link to="/employer/posted-jobs" className="sidebar-item" style={{ display: 'block', padding: '12px 20px', textDecoration: 'none', color: '#334155' }}>Tin đã đăng</Link>
-          <Link to="/employer/applicants" className="sidebar-item" style={{ display: 'block', padding: '12px 20px', textDecoration: 'none', color: '#334155' }}>Hồ sơ ứng viên</Link>
-          <Link to="/employer/profile" className="sidebar-item" style={{ display: 'block', padding: '12px 20px', textDecoration: 'none', color: '#334155' }}>Thông tin công ty</Link>
+        <div style={{ flex: 1, padding: '12px 10px' }}>
+          <p style={{ fontSize: '10px', fontWeight: 600, color: '#94A3B8', letterSpacing: '0.8px', textTransform: 'uppercase', padding: '6px 10px', margin: '0 0 4px' }}>MENU CHÍNH</p>
+
+          <Link to="/employer/dashboard" style={sidebarItemStyle('/employer/dashboard')}
+            onMouseEnter={e => { if (!isActive('/employer/dashboard')) { e.currentTarget.style.background = '#F8FAFC'; e.currentTarget.style.color = '#10B981'; } }}
+            onMouseLeave={e => { if (!isActive('/employer/dashboard')) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#475569'; } }}
+          >
+            <LayoutDashboard size={17} />
+            Tổng quan
+          </Link>
+
+          <Link to="/employer/post-job" style={sidebarItemStyle('/employer/post-job')}
+            onMouseEnter={e => { if (!isActive('/employer/post-job')) { e.currentTarget.style.background = '#F8FAFC'; e.currentTarget.style.color = '#10B981'; } }}
+            onMouseLeave={e => { if (!isActive('/employer/post-job')) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#475569'; } }}
+          >
+            <PlusCircle size={17} />
+            Đăng tin mới
+          </Link>
+
+          <Link to="/employer/posted-jobs" style={sidebarItemStyle('/employer/posted-jobs')}
+            onMouseEnter={e => { if (!isActive('/employer/posted-jobs')) { e.currentTarget.style.background = '#F8FAFC'; e.currentTarget.style.color = '#10B981'; } }}
+            onMouseLeave={e => { if (!isActive('/employer/posted-jobs')) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#475569'; } }}
+          >
+            <List size={17} />
+            Tin đã đăng
+          </Link>
+
+          <Link to="/employer/applicants" style={sidebarItemStyle('/employer/applicants')}
+            onMouseEnter={e => { if (!isActive('/employer/applicants')) { e.currentTarget.style.background = '#F8FAFC'; e.currentTarget.style.color = '#10B981'; } }}
+            onMouseLeave={e => { if (!isActive('/employer/applicants')) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#475569'; } }}
+          >
+            <Users size={17} />
+            Hồ sơ ứng viên
+          </Link>
+
+          <p style={{ fontSize: '10px', fontWeight: 600, color: '#94A3B8', letterSpacing: '0.8px', textTransform: 'uppercase', padding: '6px 10px', margin: '12px 0 4px' }}>TÀI KHOẢN</p>
+
+          <Link to="/employer/profile" style={sidebarItemStyle('/employer/profile')}
+            onMouseEnter={e => { if (!isActive('/employer/profile')) { e.currentTarget.style.background = '#F8FAFC'; e.currentTarget.style.color = '#10B981'; } }}
+            onMouseLeave={e => { if (!isActive('/employer/profile')) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#475569'; } }}
+          >
+            <Building2 size={17} />
+            Thông tin công ty
+          </Link>
+
+          <Link to="/employer/settings" style={sidebarItemStyle('/employer/settings')}
+            onMouseEnter={e => { if (!isActive('/employer/settings')) { e.currentTarget.style.background = '#F8FAFC'; e.currentTarget.style.color = '#10B981'; } }}
+            onMouseLeave={e => { if (!isActive('/employer/settings')) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#475569'; } }}
+          >
+            <Settings size={17} />
+            Cài đặt
+          </Link>
         </div>
         
         {/* Nút Đăng xuất ở cuối Sidebar */}

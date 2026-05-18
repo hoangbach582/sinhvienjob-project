@@ -19,6 +19,28 @@ api.interceptors.request.use(config => {
 });
 
 export const jobService = {
+  // ============ DASHBOARD ============
+
+  // Lấy thống kê tổng quan dashboard
+  getDashboardStats: async () => {
+    const response = await api.get('/employer/dashboard/stats');
+    return response.data;
+  },
+
+  // Lấy 5 tin tuyển dụng gần đây nhất
+  getRecentJobs: async () => {
+    const response = await api.get('/employer/jobs/recent');
+    return response.data;
+  },
+
+  // Lấy 5 hoạt động ứng tuyển gần đây nhất
+  getRecentApplications: async () => {
+    const response = await api.get('/employer/applications/recent');
+    return response.data;
+  },
+
+  // ============ JOBS ============
+
   // Lấy danh sách công việc của employer đang đăng nhập
   getEmployerJobs: async () => {
     const response = await api.get('/employer/jobs');
