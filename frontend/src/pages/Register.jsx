@@ -1,11 +1,22 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function Register() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth(); // 2. LẤY HÀM LOGIN TỪ CONTEXT
-  const [role, setRole] = useState('student'); // 'student' hoặc 'employer'
+  
+  // Khởi tạo role từ URL query parameter (?role=employer) hoặc navigation state, mặc định là 'student'
+  const getInitialRole = () => {
+    if (location.state?.role) return location.state.role;
+    const params = new URLSearchParams(location.search);
+    const roleParam = params.get('role');
+    if (roleParam === 'employer' || roleParam === 'student') return roleParam;
+    return 'student';
+  };
+
+  const [role, setRole] = useState(getInitialRole()); // 'student' hoặc 'employer'
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -146,7 +157,7 @@ function Register() {
         </form>
 
         <div style={{ textAlign: 'center', marginTop: '24px', fontSize: '14px', color: '#64748B' }}>
-          Đã có tài khoản? <Link to="/login" style={{ color: role === 'student' ? '#3B82F6' : '#10B981', textDecoration: 'none', fontWeight: 500 }}>Đăng nhập</Link>
+          Đã có tài khoản? <Link to={role === 'student' ? '/login' : '/employer/login'} style={{ color: role === 'student' ? '#3B82F6' : '#10B981', textDecoration: 'none', fontWeight: 500 }}>Đăng nhập</Link>
         </div>
         <div style={{ textAlign: 'center', marginTop: '12px' }}>
             <Link to="/" style={{ color: '#94A3B8', fontSize: '13px', textDecoration: 'none' }}>← Quay lại trang chủ</Link>

@@ -53,7 +53,7 @@ function Footer() {
             <h4 className="footer-col-title">Nhà tuyển dụng</h4>
             <ul className="footer-link-list">
               <li><Link to="/employer/login">Đăng nhập NTD</Link></li>
-              <li><Link to="/employer/register">Đăng ký tuyển dụng</Link></li>
+              <li><Link to="/register?role=employer">Đăng ký tuyển dụng</Link></li>
               {/* <li><Link to="/employer/post-job">Đăng tin tuyển dụng</Link></li>
               <li><Link to="/employer/posted-jobs">Quản lý tin đăng</Link></li> */}
             </ul>

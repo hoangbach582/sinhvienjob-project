@@ -121,7 +121,7 @@ function EmployerLogin() {
 
             <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '13px', color: 'var(--color-text-secondary)' }}>
               Chưa có tài khoản doanh nghiệp?{' '}
-              <Link to="/employer/register" style={{ color: '#10B981', textDecoration: 'none', fontWeight: 500 }}>
+              <Link to="/register?role=employer" style={{ color: '#10B981', textDecoration: 'none', fontWeight: 500 }}>
                 Đăng ký ngay
               </Link>
             </p>
