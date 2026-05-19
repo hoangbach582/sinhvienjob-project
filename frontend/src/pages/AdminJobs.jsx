@@ -10,10 +10,7 @@ function AdminJobs() {
   const [rejectingJobId, setRejectingJobId] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
   const [submitting, setSubmitting] = useState(false);
-
-  useEffect(() => {
-    fetchJobs();
-  }, [activeTab]);
+  const [actionLoadingId, setActionLoadingId] = useState(null);
 
   const fetchJobs = async (page = 1) => {
     setLoading(true);
@@ -38,14 +35,22 @@ function AdminJobs() {
     }
   };
 
+  useEffect(() => {
+    // eslint-disable-next-line
+    fetchJobs();
+  }, [activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleApprove = async (id) => {
     if (!window.confirm('Bạn có chắc chắn muốn duyệt tin này?')) return;
+    setActionLoadingId(id);
     try {
       await adminJobService.approveJob(id);
       alert('Đã duyệt tin thành công!');
       fetchJobs();
     } catch (error) {
       alert('Lỗi: ' + (error.response?.data?.message || 'Không thể duyệt tin.'));
+    } finally {
+      setActionLoadingId(null);
     }
   };
 
@@ -157,13 +162,15 @@ function AdminJobs() {
                         <button 
                           className="btn" 
                           onClick={() => handleApprove(job.id)}
+                          disabled={actionLoadingId !== null}
                           style={{ fontSize: '11px', padding: '3px 8px', borderColor: '#3B6D11', color: '#3B6D11' }}
                         >
-                          Duyệt
+                          {actionLoadingId === job.id ? 'Đang duyệt...' : 'Duyệt'}
                         </button>
                         <button 
                           className="btn" 
                           onClick={() => openRejectModal(job.id)}
+                          disabled={actionLoadingId !== null}
                           style={{ fontSize: '11px', padding: '3px 8px', borderColor: '#E24B4A', color: '#E24B4A' }}
                         >
                           Từ chối

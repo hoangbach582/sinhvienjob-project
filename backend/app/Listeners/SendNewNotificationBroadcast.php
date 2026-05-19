@@ -14,7 +14,12 @@ class SendNewNotificationBroadcast
     {
         // Only broadcast if it's stored in the database
         if ($event->channel === 'database') {
-            event(new NewNotification($event->response));
+            try {
+                event(new NewNotification($event->response));
+            } catch (\Exception $e) {
+                // Log warning and continue instead of crashing the application
+                \Illuminate\Support\Facades\Log::warning("Could not broadcast notification: " . $e->getMessage());
+            }
         }
     }
 }
