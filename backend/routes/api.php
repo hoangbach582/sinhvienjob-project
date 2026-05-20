@@ -51,6 +51,7 @@ Route::get('/jobs/latest', [JobController::class, 'getLatestJobs']);
 Route::get('/jobs/{id}', [JobController::class, 'getJobDetail']);
 Route::get('/jobs', [JobController::class, 'index']);
 Route::get('/categories/job-types', [JobController::class, 'getCategories']);
+Route::get('/categories/industries', [JobController::class, 'getIndustries']);
 
 // ==========================================
 // NHÓM 2: YÊU CẦU PHẢI CÓ TOKEN (ĐÃ ĐĂNG NHẬP)
@@ -108,6 +109,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/jobs', [AdminJobController::class, 'index']);
         Route::post('/jobs/{id}/approve', [AdminJobController::class, 'approve']);
         Route::post('/jobs/{id}/reject', [AdminJobController::class, 'reject']);
+
+        // Quản lý Ngành nghề
+        Route::patch('/industries/{industry}/toggle', [\App\Http\Controllers\Admin\AdminIndustryController::class, 'toggleStatus']);
+        Route::apiResource('industries', \App\Http\Controllers\Admin\AdminIndustryController::class);
 
         // Báo cáo & Thống kê
         Route::get('/reports/stats', [AdminReportController::class, 'getDashboardStats']);

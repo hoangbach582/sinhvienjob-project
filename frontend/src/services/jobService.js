@@ -95,6 +95,12 @@ export const jobService = {
     return response.data;
   },
 
+  // Lấy danh mục ngành nghề đang hoạt động
+  getIndustries: async () => {
+    const response = await api.get('/categories/industries');
+    return response.data;
+  },
+
   // Lưu/Bỏ lưu công việc
   toggleSaveJob: async (jobId) => {
     const response = await api.post(`/jobs/${jobId}/save`);

@@ -18,7 +18,9 @@ class SocialAuthController extends Controller
     public function getGoogleUrl()
     {
         try {
-            $url = Socialite::driver('google')->stateless()->redirect()->getTargetUrl();
+            /** @var \Laravel\Socialite\Two\GoogleProvider $provider */
+            $provider = Socialite::driver('google');
+            $url = $provider->stateless()->redirect()->getTargetUrl();
             return response()->json(['url' => $url]);
         } catch (\Exception $e) {
             Log::error('Error getting Google auth URL: ' . $e->getMessage());
@@ -34,7 +36,9 @@ class SocialAuthController extends Controller
         try {
             // The frontend should send the code in the JSON body.
             // Socialite stateless reads from the current request instance.
-            $googleUser = Socialite::driver('google')->stateless()->user();
+            /** @var \Laravel\Socialite\Two\GoogleProvider $provider */
+            $provider = Socialite::driver('google');
+            $googleUser = $provider->stateless()->user();
 
             // Find existing user by email or google_id
             $user = User::where('email', $googleUser->getEmail())->first();

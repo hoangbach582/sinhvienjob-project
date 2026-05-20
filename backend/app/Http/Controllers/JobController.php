@@ -233,4 +233,12 @@ class JobController extends Controller
             'full_time' => 'Toàn thời gian (Full-time)'
         ]);
     }
+
+    public function getIndustries()
+    {
+        $industries = \App\Models\Industry::where('is_active', true)
+                        ->orderBy('name', 'asc')
+                        ->get(['id', 'name']);
+        return response()->json($industries);
+    }
 }

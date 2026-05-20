@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import ConfirmDialog from './ConfirmDialog';
+import { jobService } from '../services/jobService';
 
 /**
  * JobForm component - Form dùng chung cho Đăng tuyển (PostJob) và Sửa tin (EditJob)
@@ -12,6 +13,24 @@ import ConfirmDialog from './ConfirmDialog';
 function JobForm({ defaultValues, onSubmit, isSubmitting }) {
   const navigate = useNavigate();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [industries, setIndustries] = useState([]);
+  const [isLoadingIndustries, setIsLoadingIndustries] = useState(true);
+
+  // Lấy danh sách ngành nghề
+  useEffect(() => {
+    const fetchIndustries = async () => {
+      try {
+        const data = await jobService.getIndustries();
+        setIndustries(data);
+      } catch (error) {
+        console.error('Error fetching industries:', error);
+        toast.error('Không thể tải danh sách ngành nghề');
+      } finally {
+        setIsLoadingIndustries(false);
+      }
+    };
+    fetchIndustries();
+  }, []);
 
   // Chuẩn hóa defaultValues để tránh sai lệch khi kiểm tra isDirty (ví dụ: các trường null từ database)
   const sanitizedDefaultValues = useMemo(() => {
@@ -121,11 +140,16 @@ function JobForm({ defaultValues, onSubmit, isSubmitting }) {
         
         <div className="form-group">
           <label className="form-label">Ngành nghề</label>
-          <select className="form-input" {...register('industry')}>
-            <option value="IT & Phần mềm">IT & Phần mềm</option>
-            <option value="Marketing">Marketing</option>
-            <option value="Thiết kế">Thiết kế</option>
-            <option value="Kinh doanh">Kinh doanh</option>
+          <select className="form-input" {...register('industry')} disabled={isLoadingIndustries}>
+            {isLoadingIndustries ? (
+              <option value="">Đang tải...</option>
+            ) : industries.length > 0 ? (
+              industries.map(ind => (
+                <option key={ind.id} value={ind.name}>{ind.name}</option>
+              ))
+            ) : (
+              <option value="Khác">Khác</option>
+            )}
           </select>
         </div>
         
