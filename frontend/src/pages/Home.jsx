@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import MainLayout from '../layouts/MainLayout';
 import { useNavigate } from 'react-router-dom';
 import SaveButton from '../components/SaveButton';
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, 
@@ -161,10 +162,10 @@ function HeroSection({
   handleSuggestionClick
 }) {
   return (
-    <section style={{ width: '100%', textAlign: 'center' }} className="relative bg-gradient-to-br from-blue-50/70 via-indigo-50/40 to-purple-50/60 py-24 lg:py-32 border-b border-slate-200/40">
+    <section style={{ width: '100%', textAlign: 'center' }} className="relative bg-linear-to-br from-blue-50/70 via-indigo-50/40 to-purple-50/60 py-24 lg:py-32 border-b border-slate-200/40">
       {/* Vòng tròn gradient trang trí nền */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-tr from-blue-200/20 to-purple-200/20 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-br from-indigo-200/20 to-purple-200/20 rounded-full blur-3xl" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-linear-to-tr from-blue-200/20 to-purple-200/20 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 left-0 w-80 h-80 bg-linear-to-br from-indigo-200/20 to-purple-200/20 rounded-full blur-3xl" />
 
       <div style={{ maxWidth: '896px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 10 }}>
         {/* Huy hiệu nhỏ trên tiêu đề */}
@@ -184,12 +185,29 @@ function HeroSection({
             initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            style={{ fontSize: 'clamp(2rem, 5vw, 3.75rem)', fontWeight: 900, color: '#0f172a', lineHeight: 1.12, letterSpacing: '-0.02em', marginBottom: '20px' }}
+            style={{ 
+              fontSize: 'clamp(1.5rem, 4.5vw, 3.25rem)', 
+              fontWeight: 900, 
+              color: '#0f172a', 
+              lineHeight: 1.2, 
+              letterSpacing: '-0.02em', 
+              marginBottom: '20px',
+              textAlign: 'center'
+            }}
           >
-            Tìm kiếm việc làm phù hợp cho{' '}
-            <span className="bg-gradient-to-r from-brand-blue via-brand-indigo to-brand-purple bg-clip-text text-transparent">
+            Tìm kiếm việc làm phù hợp cho <br />
+            <motion.span 
+              whileHover={{ 
+                scale: 1.06,
+                y: -4,
+                filter: "drop-shadow(0px 10px 15px rgba(99, 102, 241, 0.25))"
+              }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 400, damping: 12 }}
+              className="inline-block bg-linear-to-r from-brand-blue via-brand-indigo to-brand-purple bg-clip-text text-transparent cursor-pointer select-none"
+            >
               Sinh Viên
-            </span>
+            </motion.span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 15 }}
@@ -276,7 +294,7 @@ function HeroSection({
               type="submit" 
               whileHover={{ scale: 1.02, boxShadow: '0 12px 20px -3px rgba(59, 130, 246, 0.35)' }}
               whileTap={{ scale: 0.98 }}
-              className="px-10 py-4 bg-gradient-to-r from-brand-blue via-brand-indigo to-brand-purple hover:opacity-95 text-white font-extrabold text-base rounded-2xl transition-all shadow-md shadow-blue-500/10 flex items-center justify-center gap-2 border-none cursor-pointer"
+              className="px-10 py-4 bg-linear-to-r from-brand-blue via-brand-indigo to-brand-purple hover:opacity-95 text-white font-extrabold text-base rounded-2xl transition-all shadow-md shadow-blue-500/10 flex items-center justify-center gap-2 border-none cursor-pointer"
             >
               Tìm kiếm
               <ArrowRight className="w-4.5 h-4.5" />
@@ -346,7 +364,7 @@ function CategoriesSection({ categories, navigate }) {
               }}
               className="bg-white rounded-3xl p-6 border border-slate-200/60 text-center cursor-pointer transition-all duration-300 flex flex-col items-center justify-center aspect-square gap-4 group"
             >
-              <div className={`w-14 h-14 rounded-2xl bg-gradient-to-tr ${cat.color} flex items-center justify-center shadow-lg shadow-indigo-500/10 text-white group-hover:scale-110 transition-transform duration-300`}>
+              <div className={`w-14 h-14 rounded-2xl bg-linear-to-tr ${cat.color} flex items-center justify-center shadow-lg shadow-indigo-500/10 text-white group-hover:scale-110 transition-transform duration-300`}>
                 <IconComponent className="w-6 h-6" />
               </div>
               <div className="space-y-1">
@@ -381,7 +399,7 @@ function JobCard({ job, navigate, formatSalary, translateType, getTypeBadgeStyle
       <div>
         {/* Logo công ty và Nút lưu tin */}
         <div className="flex justify-between items-start gap-4 mb-5">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200/60 flex items-center justify-center font-black text-base text-slate-500 group-hover:border-indigo-200 transition-colors overflow-hidden shrink-0 shadow-inner">
+          <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-slate-50 to-slate-100 border border-slate-200/60 flex items-center justify-center font-black text-base text-slate-500 group-hover:border-indigo-200 transition-colors overflow-hidden shrink-0 shadow-inner">
             {job.employer?.company_name?.substring(0, 2).toUpperCase() || 'CT'}
           </div>
           <div onClick={(e) => e.stopPropagation()}>
@@ -390,7 +408,7 @@ function JobCard({ job, navigate, formatSalary, translateType, getTypeBadgeStyle
         </div>
 
         {/* Tiêu đề việc làm */}
-        <h3 className="text-base sm:text-lg font-extrabold text-slate-900 group-hover:text-brand-indigo transition-colors line-clamp-2 mb-1.5 leading-snug min-h-[3.5rem] flex items-start">
+        <h3 className="text-base sm:text-lg font-extrabold text-slate-900 group-hover:text-brand-indigo transition-colors line-clamp-2 mb-1.5 leading-snug min-h-14 flex items-start">
           {job.title}
         </h3>
 
@@ -438,6 +456,7 @@ function LatestJobsSection({
   formatSalary,
   translateType,
   getTypeBadgeStyles,
+  // eslint-disable-next-line no-unused-vars
   JobSkeleton
 }) {
   return (
@@ -668,24 +687,24 @@ function Home() {
   const [activeTab, setActiveTab] = useState('all'); // all, part_time, internship, full_time
   const navigate = useNavigate();
 
-  const fetchJobs = async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:8000/api/jobs/latest');
-      if (response.ok) {
-        const data = await response.json();
-        setJobs(data);
-      } else {
-        setJobs(mockJobs);
-      }
-    } catch (error) {
-      console.error("Lỗi khi tải việc làm:", error);
-      setJobs(mockJobs);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/jobs/latest');
+        if (response.ok) {
+          const data = await response.json();
+          setJobs(data);
+        } else {
+          setJobs(mockJobs);
+        }
+      } catch (error) {
+        console.error("Lỗi khi tải việc làm:", error);
+        setJobs(mockJobs);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchJobs();
   }, []);
 
