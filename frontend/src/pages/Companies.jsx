@@ -9,32 +9,33 @@ function Companies() {
 
   // Lấy danh sách công ty từ API
   useEffect(() => {
+    const fetchCompanies = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/employers', {
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          // Giả sử API trả về mảng trực tiếp hoặc data.data
+          setCompanies(Array.isArray(data) ? data : (data.data || []));
+        } else {
+          // Fallback Mock Data để bạn test giao diện nếu Backend chưa viết xong API
+          setCompanies(mockCompanies);
+        }
+      } catch (error) {
+        console.error("Lỗi kết nối:", error);
+        setCompanies(mockCompanies); // Dùng data giả nếu chưa bật server
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchCompanies();
   }, []);
 
-  const fetchCompanies = async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:8000/api/employers', {
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        // Giả sử API trả về mảng trực tiếp hoặc data.data
-        setCompanies(Array.isArray(data) ? data : (data.data || []));
-      } else {
-        // Fallback Mock Data để bạn test giao diện nếu Backend chưa viết xong API
-        setCompanies(mockCompanies);
-      }
-    } catch (error) {
-      console.error("Lỗi kết nối:", error);
-      setCompanies(mockCompanies); // Dùng data giả nếu chưa bật server
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Lọc công ty theo ô tìm kiếm
   const filteredCompanies = companies.filter(company => 

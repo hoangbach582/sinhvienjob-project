@@ -1,3 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-blue: #3B82F6;
+  --color-brand-indigo: #6366F1;
+  --color-brand-purple: #A855F7;
+  --color-brand-orange: #F97316;
+  --color-brand-yellow: #FBBF24;
+}
+
 /* file CSS tổng của React */
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter', system-ui, -apple-system, sans-serif;font-size:14px;color:var(--color-text-primary);background:#F8FAFC}

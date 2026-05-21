@@ -8,38 +8,39 @@ function AppliedJobs() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchMyApplications();
-  }, []);
-
-  const fetchMyApplications = async () => {
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-      alert("Bạn cần đăng nhập để xem trang này!");
-      navigate('/login');
-      return;
-    }
-
-    try {
-      const response = await fetch('http://127.0.0.1:8000/api/applications/me', {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setApplications(data);
-      } else {
-        console.error("Lỗi khi tải lịch sử ứng tuyển");
+    const fetchMyApplications = async () => {
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        alert("Bạn cần đăng nhập để xem trang này!");
+        navigate('/login');
+        return;
       }
-    } catch (error) {
-      console.error("Lỗi kết nối:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/applications/me', {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setApplications(data);
+        } else {
+          console.error("Lỗi khi tải lịch sử ứng tuyển");
+        }
+      } catch (error) {
+        console.error("Lỗi kết nối:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMyApplications();
+  }, [navigate]);
+
 
   const getStatusBadge = (status) => {
     const badges = {
