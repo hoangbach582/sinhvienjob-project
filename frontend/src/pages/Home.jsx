@@ -23,7 +23,13 @@ import {
   ChevronRight,
   ShieldCheck,
   FileSpreadsheet,
-  Clock
+  Clock,
+  Flame,
+  Zap,
+  Monitor,
+  Palette,
+  ShoppingBag,
+  GraduationCap as GradCap
 } from 'lucide-react';
 
 // ==========================================
@@ -32,12 +38,20 @@ import {
 
 // Gợi ý tìm kiếm nhanh
 const searchSuggestions = [
-  { text: 'ReactJS', category: 'IT' },
-  { text: 'Marketing', category: 'Truyền thông' },
-  { text: 'Thiết kế đồ họa', category: 'Design' },
-  { text: 'Bán hàng', category: 'Sales' },
-  { text: 'Thực tập sinh', category: 'Hình thức' },
-  { text: 'Part-time', category: 'Hình thức' }
+  { text: 'ReactJS Developer', category: 'IT', icon: Code, gradient: 'linear-gradient(135deg, #3b82f6, #6366f1)', trending: true },
+  { text: 'Digital Marketing', category: 'Marketing', icon: Megaphone, gradient: 'linear-gradient(135deg, #8b5cf6, #a855f7)', trending: true },
+  { text: 'UI/UX Designer', category: 'Design', icon: Palette, gradient: 'linear-gradient(135deg, #ec4899, #f43f5e)', trending: false },
+  { text: 'Nhân viên Bán hàng', category: 'Sales', icon: ShoppingBag, gradient: 'linear-gradient(135deg, #f59e0b, #f97316)', trending: false },
+  { text: 'Thực tập sinh IT', category: 'Internship', icon: GradCap, gradient: 'linear-gradient(135deg, #10b981, #14b8a6)', trending: true },
+  { text: 'Part-time Sinh viên', category: 'Flexible', icon: Clock, gradient: 'linear-gradient(135deg, #06b6d4, #3b82f6)', trending: false }
+];
+
+// Danh mục nhanh cho popup gợi ý
+const quickCategories = [
+  { label: 'Công nghệ', icon: Monitor, color: '#6366f1', bg: '#eef2ff', searchKey: 'React' },
+  { label: 'Marketing', icon: Megaphone, color: '#8b5cf6', bg: '#f5f3ff', searchKey: 'Marketing' },
+  { label: 'Thiết kế', icon: Palette, color: '#ec4899', bg: '#fdf2f8', searchKey: 'Thiết kế' },
+  { label: 'Kinh doanh', icon: ShoppingBag, color: '#f59e0b', bg: '#fffbeb', searchKey: 'Bán hàng' },
 ];
 
 // Danh mục ngành nghề nổi bật
@@ -162,15 +176,18 @@ function HeroSection({
   handleSuggestionClick
 }) {
   return (
-    <section className="relative overflow-hidden py-28 lg:py-36" style={{ width: '100%', textAlign: 'center', background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 40%, #312e81 70%, #1e1b4b 100%)' }}>
-      {/* Animated gradient orbs */}
-      <div style={{ position: 'absolute', top: '-120px', right: '-80px', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(60px)', animation: 'float 8s ease-in-out infinite' }} />
-      <div style={{ position: 'absolute', bottom: '-100px', left: '-60px', width: '450px', height: '450px', background: 'radial-gradient(circle, rgba(168,85,247,0.25) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(60px)', animation: 'float 10s ease-in-out infinite reverse' }} />
-      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(80px)' }} />
-      {/* Grid pattern overlay */}
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.6 }} />
+    <section className="relative py-28 lg:py-36" style={{ width: '100%', textAlign: 'center', background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 40%, #312e81 70%, #1e1b4b 100%)', zIndex: 30 }}>
+      {/* Background container with overflow-hidden to prevent horizontal scroll from orbs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Animated gradient orbs */}
+        <div style={{ position: 'absolute', top: '-120px', right: '-80px', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(60px)', animation: 'float 8s ease-in-out infinite' }} />
+        <div style={{ position: 'absolute', bottom: '-100px', left: '-60px', width: '450px', height: '450px', background: 'radial-gradient(circle, rgba(168,85,247,0.25) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(60px)', animation: 'float 10s ease-in-out infinite reverse' }} />
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(80px)' }} />
+        {/* Grid pattern overlay */}
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.6 }} />
+      </div>
 
-      <div style={{ maxWidth: '896px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 10 }}>
+      <div style={{ maxWidth: '896px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 30 }}>
         {/* Badge */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }}
@@ -215,14 +232,14 @@ function HeroSection({
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.3 }}
-          style={{ padding: '24px 0', width: '100%' }}
+          style={{ padding: '24px 0', width: '100%', position: 'relative', zIndex: 50 }}
         >
           <form 
             onSubmit={handleSearch}
             style={{ width: '100%', background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)', padding: '8px', borderRadius: '20px', boxShadow: '0 25px 50px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'row', gap: '0', alignItems: 'center', position: 'relative', zIndex: 20 }}
             className="flex-col md:flex-row"
           >
-            <div className="flex-1 flex items-center gap-3 px-4 py-3 relative" style={{ borderRight: '1px solid #e2e8f0' }}>
+            <div className="flex-1 flex items-center gap-3 px-4 py-3" style={{ borderRight: '1px solid #e2e8f0' }}>
               <Search style={{ width: '20px', height: '20px', color: '#94a3b8', flexShrink: 0 }} />
               <input 
                 type="text" 
@@ -233,30 +250,6 @@ function HeroSection({
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 250)}
                 style={{ width: '100%', fontSize: '15px', color: '#1e293b', border: 'none', background: 'transparent', outline: 'none' }}
               />
-              <AnimatePresence>
-                {showSuggestions && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 8 }}
-                    style={{ position: 'absolute', left: 0, top: 'calc(100% + 12px)', width: '420px', maxWidth: '90vw', background: 'white', borderRadius: '16px', boxShadow: '0 20px 40px rgba(0,0,0,0.15)', border: '1px solid #e2e8f0', textAlign: 'left', padding: '16px', zIndex: 9999 }}
-                  >
-                    <p style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '0 8px', marginBottom: '10px' }}>Gợi ý tìm kiếm</p>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
-                      {searchSuggestions.map((sug, i) => (
-                        <button key={i} type="button" onClick={() => handleSuggestionClick(sug.text)}
-                          style={{ textAlign: 'left', padding: '10px 12px', borderRadius: '10px', border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', transition: 'background 0.15s' }}
-                          onMouseEnter={e => e.currentTarget.style.background = '#f1f5f9'}
-                          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                        >
-                          <span style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>{sug.text}</span>
-                          <span style={{ fontSize: '10px', background: '#ede9fe', color: '#7c3aed', padding: '2px 8px', borderRadius: '6px', fontWeight: 700 }}>{sug.category}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </div>
 
             <div className="flex-1 flex items-center gap-3 px-4 py-3">
@@ -281,6 +274,107 @@ function HeroSection({
               <ArrowRight style={{ width: '18px', height: '18px' }} />
             </motion.button>
           </form>
+
+          {/* Search Suggestions Dropdown - Full width, positioned relative to form wrapper */}
+          <AnimatePresence>
+            {showSuggestions && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.98 }}
+                transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
+                style={{ position: 'absolute', left: 0, right: 0, top: '100%', marginTop: '8px', background: 'white', borderRadius: '20px', boxShadow: '0 25px 60px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.04)', textAlign: 'left', padding: '0', zIndex: 9999, overflow: 'hidden' }}
+              >
+                {/* Header with gradient accent */}
+                <div style={{ padding: '16px 20px 12px', borderBottom: '1px solid #f1f5f9', background: 'linear-gradient(135deg, #fafbff 0%, #f8fafc 100%)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ width: '22px', height: '22px', borderRadius: '7px', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Flame style={{ width: '12px', height: '12px', color: 'white' }} />
+                    </div>
+                    <span style={{ fontSize: '12px', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Xu hướng tìm kiếm</span>
+                    <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '4px', padding: '3px 10px', borderRadius: '20px', background: '#fef3c7', border: '1px solid #fde68a' }}>
+                      <Zap style={{ width: '10px', height: '10px', color: '#f59e0b' }} />
+                      <span style={{ fontSize: '10px', fontWeight: 700, color: '#b45309' }}>HOT</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Suggestion items - 2 columns for full width */}
+                <div style={{ padding: '8px 8px 4px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px 8px' }}>
+                  {searchSuggestions.map((sug, i) => {
+                    const SugIcon = sug.icon;
+                    return (
+                      <motion.button 
+                        key={i} 
+                        type="button" 
+                        onClick={() => handleSuggestionClick(sug.text)}
+                        initial={{ opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.2, delay: i * 0.04 }}
+                        style={{ width: '100%', textAlign: 'left', padding: '10px 14px', borderRadius: '12px', border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', transition: 'all 0.2s ease', position: 'relative' }}
+                        onMouseEnter={e => { 
+                          e.currentTarget.style.background = '#f8fafc'; 
+                          e.currentTarget.style.transform = 'translateX(4px)';
+                        }}
+                        onMouseLeave={e => { 
+                          e.currentTarget.style.background = 'transparent'; 
+                          e.currentTarget.style.transform = 'translateX(0)';
+                        }}
+                      >
+                        <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: sug.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+                          <SugIcon style={{ width: '16px', height: '16px', color: 'white' }} />
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>{sug.text}</span>
+                            {sug.trending && (
+                              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', fontSize: '9px', fontWeight: 800, color: '#dc2626', background: '#fef2f2', border: '1px solid #fecaca', padding: '1px 6px', borderRadius: '6px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                                <TrendingUp style={{ width: '8px', height: '8px' }} />
+                                Hot
+                              </span>
+                            )}
+                          </div>
+                          <span style={{ fontSize: '11px', fontWeight: 600, color: '#94a3b8' }}>{sug.category}</span>
+                        </div>
+                        <ChevronRight style={{ width: '14px', height: '14px', color: '#cbd5e1', flexShrink: 0, transition: 'color 0.2s' }} />
+                      </motion.button>
+                    );
+                  })}
+                </div>
+
+                {/* Quick categories footer */}
+                <div style={{ padding: '12px 20px 16px', borderTop: '1px solid #f1f5f9', background: '#fafbff' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '10px', display: 'block', padding: '0 4px' }}>Danh mục phổ biến</span>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                    {quickCategories.map((cat, i) => {
+                      const CatIcon = cat.icon;
+                      return (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => handleSuggestionClick(cat.searchKey)}
+                          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '12px 8px', borderRadius: '12px', border: '1px solid transparent', background: cat.bg, cursor: 'pointer', transition: 'all 0.2s ease' }}
+                          onMouseEnter={e => { 
+                            e.currentTarget.style.borderColor = cat.color + '40';
+                            e.currentTarget.style.transform = 'translateY(-2px)';
+                            e.currentTarget.style.boxShadow = '0 4px 12px ' + cat.color + '15';
+                          }}
+                          onMouseLeave={e => { 
+                            e.currentTarget.style.borderColor = 'transparent';
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = 'none';
+                          }}
+                        >
+                          <CatIcon style={{ width: '18px', height: '18px', color: cat.color }} />
+                          <span style={{ fontSize: '11px', fontWeight: 700, color: cat.color }}>{cat.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         {/* Quick search tags */}
