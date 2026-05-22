@@ -10,7 +10,7 @@ function Topbar() {
   const { isLoggedIn, userName, userRole, userAvatar, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const isHomePage = location.pathname === '/';
+  const isHomePage = location.pathname === '/'; // eslint-disable-line no-unused-vars
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -132,7 +132,7 @@ function Topbar() {
 
           {/* RIGHT: Login/Register buttons or User dropdown */}
           <div className="flex-1 flex justify-end items-center gap-4">
-            {isLoggedIn && !isHomePage ? (
+            {isLoggedIn ? (
               <div className="flex items-center gap-3">
                 <NotificationBell />
                 
