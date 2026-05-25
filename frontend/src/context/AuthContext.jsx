@@ -4,6 +4,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
   const [userName, setUserName] = useState('');
   const [userRole, setUserRole] = useState('');
   const [userAvatar, setUserAvatar] = useState('');
@@ -25,6 +26,7 @@ export const AuthProvider = ({ children }) => {
 
     if (token && (role || name)) {
       setIsLoggedIn(true);
+      setUser(userData || null);
       setUserName(name || '');
       setUserRole(role || '');
       setUserAvatar(avatar || '');
@@ -61,6 +63,7 @@ export const AuthProvider = ({ children }) => {
     if (avatar) localStorage.setItem('avatar', avatar);
 
     setIsLoggedIn(true);
+    setUser(userObj);
     setUserRole(role);
     setUserName(name);
     setUserAvatar(avatar);
@@ -76,6 +79,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('avatar');
     
     setIsLoggedIn(false);
+    setUser(null);
     setUserName('');
     setUserRole('');
     setUserAvatar('');
@@ -105,7 +109,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, userName, userRole, userAvatar, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, userName, userRole, userAvatar, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

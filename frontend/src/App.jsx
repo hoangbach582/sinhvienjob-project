@@ -25,6 +25,7 @@ import EmployerLogin from './pages/EmployerLogin';
 import EmployerApplicants from './pages/EmployerApplicants'; 
 import EmployerProfile from './pages/EmployerProfile'; 
 import EmployerSettings from './pages/EmployerSettings'; 
+import EmployerNotifications from './pages/EmployerNotifications';
 import Companies from './pages/Companies'; 
 
 import EmployerLayout from './layouts/EmployerLayout';
@@ -81,6 +82,7 @@ function App() {
               <Route path="posted-jobs" element={<PostedJobs />} />
               <Route path="applicants" element={<EmployerApplicants />} />
               <Route path="profile" element={<EmployerProfile />} />
+              <Route path="notifications" element={<EmployerNotifications />} />
               <Route path="settings" element={<EmployerSettings />} />
             </Route>
 

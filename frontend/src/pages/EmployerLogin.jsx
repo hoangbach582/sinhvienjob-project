@@ -39,8 +39,12 @@ function EmployerLogin() {
       const data = await response.json();
 
       if (response.ok) {
-        // Lưu thông tin vào Context
-        login(data.access_token, data.user.role, data.name);
+        // Lưu thông tin vào Context (truyền toàn bộ user object bao gồm id)
+        const userObj = {
+          ...data.user,
+          name: data.name || data.user.name || data.user.email,
+        };
+        login(data.access_token, userObj);
         
         // Bắt buộc role phải là employer hoặc admin mới cho vào
         if (data.user.role === 'employer' || data.user.role === 'admin') {

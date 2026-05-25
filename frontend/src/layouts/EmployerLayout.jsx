@@ -2,12 +2,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; // Import trạm phát sóng
 import {
-  LayoutDashboard, PlusCircle, List, Users, Building2, Settings
+  LayoutDashboard, PlusCircle, List, Users, Building2, Settings, Bell
 } from 'lucide-react';
 import NotificationBell from '../components/notifications/NotificationBell';
+import { useNotifications } from '../context/NotificationContext';
 
 function EmployerLayout() {
   const { userName, logout } = useAuth(); // Lấy Tên và hàm Đăng xuất
+  const { unreadCount } = useNotifications();
   const navigate = useNavigate();
   const location = useLocation(); // Dùng để xác định route hiện tại
 
@@ -118,6 +120,36 @@ function EmployerLayout() {
           >
             <Users size={17} />
             Hồ sơ ứng viên
+          </Link>
+
+          <Link to="/employer/notifications" style={sidebarItemStyle('/employer/notifications')}
+            onMouseEnter={e => { if (!isActive('/employer/notifications')) { e.currentTarget.style.background = '#F8FAFC'; e.currentTarget.style.color = '#10B981'; } }}
+            onMouseLeave={e => { if (!isActive('/employer/notifications')) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#475569'; } }}
+          >
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <Bell size={17} />
+              {unreadCount > 0 && (
+                <span style={{
+                  position: 'absolute',
+                  top: '-6px',
+                  right: '-8px',
+                  width: '16px',
+                  height: '16px',
+                  background: 'linear-gradient(135deg, #EF4444, #DC2626)',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '9px',
+                  fontWeight: '700',
+                  color: 'white',
+                  border: '2px solid white',
+                }}>
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+            </div>
+            Thông báo
           </Link>
 
           <p style={{ fontSize: '10px', fontWeight: 600, color: '#94A3B8', letterSpacing: '0.8px', textTransform: 'uppercase', padding: '6px 10px', margin: '12px 0 4px' }}>TÀI KHOẢN</p>
