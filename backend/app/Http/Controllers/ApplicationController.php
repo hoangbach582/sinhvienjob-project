@@ -171,6 +171,7 @@ class ApplicationController extends Controller
         $formattedApplications = $applications->map(function($app) {
             $app->student_name = $app->student->user->name ?? 'Ứng viên';
             $app->student_email = $app->student->user->email ?? 'Email';
+            $app->student_avatar = $app->student->avatar ?? null;
             return $app;
         });
 
