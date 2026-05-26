@@ -130,4 +130,50 @@ class ApplicationController extends Controller
             'application' => $application
         ]);
     }
+
+    // Lấy danh sách tất cả hồ sơ ứng tuyển của nhà tuyển dụng
+    public function getEmployerApplications(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->role !== 'employer') {
+            return response()->json(['message' => 'Chỉ nhà tuyển dụng mới có quyền này!'], 403);
+        }
+
+        $employerId = $user->employer->id;
+
+        $query = Application::with(['job:id,title', 'student.user:id,name,email'])
+                            ->whereHas('job', function($q) use ($employerId) {
+                                $q->where('employer_id', $employerId);
+                            });
+
+        // Filter theo job_id
+        if ($request->has('job_id') && $request->job_id != '') {
+            $query->where('job_id', $request->job_id);
+        }
+
+        // Filter theo status
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        // Filter theo search (tên ứng viên)
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->whereHas('student.user', function($q) use ($search) {
+                $q->where('name', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        $applications = $query->orderBy('created_at', 'desc')->get();
+
+        // Định dạng lại dữ liệu trả về cho frontend giống với dạng hiện tại
+        $formattedApplications = $applications->map(function($app) {
+            $app->student_name = $app->student->user->name ?? 'Ứng viên';
+            $app->student_email = $app->student->user->email ?? 'Email';
+            return $app;
+        });
+
+        return response()->json($formattedApplications);
+    }
 }

@@ -83,6 +83,12 @@ export const jobService = {
     return response.data;
   },
 
+  // Lấy toàn bộ ứng viên của nhà tuyển dụng (có filter)
+  getAllEmployerApplications: async (params = {}) => {
+    const response = await api.get('/employer/applications', { params });
+    return response.data;
+  },
+
   // Cập nhật trạng thái ứng viên
   updateApplicationStatus: async (applicationId, status) => {
     const response = await api.patch(`/employer/applications/${applicationId}`, { status });

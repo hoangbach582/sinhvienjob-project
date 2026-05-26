@@ -100,6 +100,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::put('/jobs/{id}', [JobController::class, 'update']);
         Route::delete('/jobs/{id}', [JobController::class, 'destroy']);
         Route::get('/jobs/{id}/applications', [JobController::class, 'getJobApplicants']);
+        Route::get('/applications', [ApplicationController::class, 'getEmployerApplications']);
         Route::patch('/applications/{id}', [ApplicationController::class, 'updateStatus']);
     });
 
