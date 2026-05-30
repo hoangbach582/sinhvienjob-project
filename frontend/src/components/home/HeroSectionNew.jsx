@@ -8,11 +8,11 @@ function HeroSectionNew({ keyword, setKeyword, location, setLocation, handleSear
 
   const stars = useMemo(
     () =>
-      Array.from({ length: 40 }, (_, i) => ({
+      Array.from({ length: 50 }, (_, i) => ({
         id: i,
         left: `${(i * 17 + 7) % 100}%`,
-        top: `${(i * 23 + 11) % 85}%`,
-        size: i % 3 === 0 ? 3 : 2,
+        top: `${(i * 23 + 11) % 90}%`,
+        size: i % 4 === 0 ? 3 : i % 3 === 0 ? 2 : 1.5,
         delay: `${(i % 8) * 0.4}s`,
         duration: `${2.5 + (i % 5) * 0.6}s`,
       })),
@@ -27,10 +27,52 @@ function HeroSectionNew({ keyword, setKeyword, location, setLocation, handleSear
   };
 
   return (
-    <section className="relative overflow-hidden bg-navy-deep pb-40 pt-28 sm:pt-32">
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-navy-deep via-navy to-navy-deep" />
-      <div className="pointer-events-none absolute -right-20 top-10 h-[28rem] w-[28rem] rounded-full bg-brand/30 blur-[120px]" />
-      <div className="pointer-events-none absolute -left-24 top-40 h-80 w-80 rounded-full bg-brand-light/20 blur-[120px]" />
+    <section
+      className="relative overflow-hidden"
+      style={{
+        background: 'linear-gradient(135deg, #08051c 0%, #120e2d 40%, #1a1050 70%, #0d0828 100%)',
+        paddingTop: '88px',
+        paddingBottom: '64px',
+        minHeight: '580px',
+      }}
+    >
+      {/* Background glow blobs */}
+      <div
+        className="pointer-events-none absolute"
+        style={{
+          right: '-80px',
+          top: '0',
+          width: '500px',
+          height: '500px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(130,63,235,0.35) 0%, transparent 70%)',
+          filter: 'blur(60px)',
+        }}
+      />
+      <div
+        className="pointer-events-none absolute"
+        style={{
+          left: '-100px',
+          top: '150px',
+          width: '400px',
+          height: '400px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(173,116,255,0.2) 0%, transparent 70%)',
+          filter: 'blur(80px)',
+        }}
+      />
+      <div
+        className="pointer-events-none absolute"
+        style={{
+          right: '30%',
+          bottom: '0',
+          width: '300px',
+          height: '300px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%)',
+          filter: 'blur(60px)',
+        }}
+      />
 
       {/* Star particles */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
@@ -50,47 +92,81 @@ function HeroSectionNew({ keyword, setKeyword, location, setLocation, handleSear
         ))}
       </div>
 
-      <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+      <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+        {/* Left: text content */}
         <div className="text-center lg:text-left">
-          <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/90 lg:mx-0">
+          {/* Badge pill */}
+          <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/8 px-4 py-2 lg:mx-0"
+            style={{ background: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(8px)' }}
+          >
             <Star className="h-3.5 w-3.5 fill-warning text-warning" aria-hidden="true" />
-            Nền Tảng Tìm Việc Làm Sinh Viên Số 1 Việt Nam
+            <span className="text-xs font-medium text-white/90">
+              Nền Tảng Tìm Việc Làm Sinh Viên Số 1 Việt Nam
+            </span>
           </div>
 
-          <h1 className="text-pretty text-4xl font-extrabold leading-[1.15] text-white sm:text-5xl lg:text-6xl">
+          {/* Heading */}
+          <h1
+            className="font-extrabold text-white leading-tight"
+            style={{ fontSize: 'clamp(2.4rem, 5vw, 3.75rem)', lineHeight: '1.12' }}
+          >
             Tìm kiếm việc làm
             <br />
-            phù hợp cho
-            <br />
-            <span className="bg-gradient-to-r from-brand-light to-brand bg-clip-text text-transparent">
+            phù hợp cho{' '}
+            <span
+              style={{
+                background: 'linear-gradient(135deg, #ad74ff 0%, #823feb 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
               Sinh Viên
             </span>
           </h1>
 
-          <p className="mx-auto mt-5 max-w-xl text-pretty text-base leading-relaxed text-white/70 lg:mx-0">
+          {/* Subtext */}
+          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-white/70 lg:mx-0">
             Khám phá hàng ngàn công việc Part-time, Internship và cơ hội việc làm mới ra trường đã được kiểm duyệt nghiêm ngặt.
           </p>
 
-          <form onSubmit={handleSearch} className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur">
-            <div className="flex flex-col gap-2 md:flex-row">
-              <div className="flex flex-1 items-center gap-2 rounded-xl bg-white px-4 py-3">
-                <Search className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+          {/* Search form */}
+          <form
+            onSubmit={handleSearch}
+            className="mt-8 search-form-glow"
+            style={{
+              background: 'rgba(255,255,255,0.07)',
+              backdropFilter: 'blur(12px)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              borderRadius: '20px',
+              padding: '14px',
+            }}
+          >
+            <div className="flex flex-col gap-2.5 md:flex-row">
+              {/* Keyword input */}
+              <div
+                className="flex flex-1 items-center gap-2.5 rounded-xl bg-white px-4 py-3"
+              >
+                <Search className="h-4.5 w-4.5 shrink-0" style={{ color: '#9ca3af' }} aria-hidden="true" />
                 <input
                   type="text"
                   placeholder="Vị trí tuyển dụng, kỹ năng, công ty..."
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
-                  className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+                  className="w-full bg-transparent text-sm text-gray-800 outline-none placeholder:text-gray-400"
+                  style={{ fontSize: '14px' }}
                 />
               </div>
 
-              <div className="relative flex items-center justify-between gap-2 rounded-xl bg-white px-4 py-3 md:w-52">
-                <div className="pointer-events-none flex items-center gap-2">
-                  <MapPin className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
-                  <span className="truncate text-sm text-foreground">
-                    {location || 'Tất cả địa điểm'}
-                  </span>
-                </div>
+              {/* Location select */}
+              <div
+                className="relative flex items-center gap-2 rounded-xl bg-white px-4 py-3 md:w-52"
+              >
+                <MapPin className="h-4 w-4 shrink-0" style={{ color: '#9ca3af' }} aria-hidden="true" />
+                <span className="flex-1 truncate text-sm text-gray-800">
+                  {location || 'Tất cả địa điểm'}
+                </span>
+                <ChevronDown className="h-4 w-4 shrink-0" style={{ color: '#9ca3af' }} aria-hidden="true" />
                 <select
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
@@ -103,26 +179,39 @@ function HeroSectionNew({ keyword, setKeyword, location, setLocation, handleSear
                   <option value="Đà Nẵng">Đà Nẵng</option>
                   <option value="Remote">Remote</option>
                 </select>
-                <ChevronDown className="pointer-events-none h-4 w-4 text-muted-foreground" aria-hidden="true" />
               </div>
 
+              {/* Search button */}
               <button
                 type="submit"
-                className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand to-brand-light px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-opacity hover:opacity-90 cursor-pointer border-none"
+                className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border-none px-7 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                style={{
+                  background: 'linear-gradient(135deg, #823feb 0%, #ad74ff 100%)',
+                  boxShadow: '0 8px 24px rgba(130,63,235,0.4)',
+                  whiteSpace: 'nowrap',
+                }}
               >
                 Tìm kiếm
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </button>
             </div>
 
-            <div className="mt-3 flex flex-wrap items-center gap-2 px-1 pb-1">
-              <span className="text-xs font-medium text-white/60">Phổ biến:</span>
+            {/* Popular tags */}
+            <div className="mt-3 flex flex-wrap items-center gap-2 px-1">
+              <span className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                Phổ biến:
+              </span>
               {popularTags.map((tag) => (
                 <button
                   key={tag}
                   type="button"
                   onClick={() => handleTagClick(tag)}
-                  className="rounded-lg border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/80 transition-colors hover:bg-white/15 cursor-pointer"
+                  className="cursor-pointer rounded-lg px-3 py-1 text-xs font-medium transition-colors hover:bg-white/15"
+                  style={{
+                    border: '1px solid rgba(255,255,255,0.18)',
+                    background: 'rgba(255,255,255,0.05)',
+                    color: 'rgba(255,255,255,0.8)',
+                  }}
                 >
                   {tag}
                 </button>
@@ -131,17 +220,40 @@ function HeroSectionNew({ keyword, setKeyword, location, setLocation, handleSear
           </form>
         </div>
 
-        <div className="relative hidden lg:block">
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center" aria-hidden="true">
-            <div className="h-72 w-72 rounded-full border border-brand/25 opacity-50" />
-            <div className="absolute h-96 w-96 rounded-full border border-brand-light/15 opacity-40" />
-          </div>
+        {/* Right: 3D illustration */}
+        <div className="relative hidden lg:flex lg:items-center lg:justify-center">
+          {/* Orbit rings */}
+          <div
+            className="pointer-events-none absolute"
+            style={{
+              width: '320px',
+              height: '320px',
+              borderRadius: '50%',
+              border: '1.5px solid rgba(130,63,235,0.25)',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+            }}
+          />
+          <div
+            className="pointer-events-none absolute"
+            style={{
+              width: '440px',
+              height: '440px',
+              borderRadius: '50%',
+              border: '1px solid rgba(173,116,255,0.12)',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+            }}
+          />
           <img
             alt="Minh họa tìm kiếm việc làm cho sinh viên"
-            width="640"
-            height="640"
+            width="600"
+            height="600"
             decoding="async"
-            className="relative mx-auto h-auto w-full max-w-lg drop-shadow-2xl float-element"
+            className="relative float-element drop-shadow-2xl"
+            style={{ maxWidth: '480px', width: '100%', height: 'auto' }}
             src="/images/home/hero-briefcase.png"
           />
         </div>
