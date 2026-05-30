@@ -6,16 +6,30 @@ import NotificationBell from './notifications/NotificationBell';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ChevronDown, User, LogOut, Settings, Briefcase, GraduationCap, FileText, Heart, ShieldAlert } from 'lucide-react';
 
-function Topbar() {
+function Topbar({ transparentTop = false }) {
   const { isLoggedIn, userName, userRole, userAvatar, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const isHomePage = location.pathname === '/'; // eslint-disable-line no-unused-vars
-
   const [showDropdown, setShowDropdown] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef(null);
+
+  const isHomeDesign = transparentTop && location.pathname === '/';
+  const isTransparent = isHomeDesign && !scrolled;
+
+  const headerPositionClass = isHomeDesign && !scrolled
+    ? 'absolute inset-x-0 top-0'
+    : 'fixed top-0 left-0 w-full';
+
+  const headerStyleClass = isTransparent
+    ? 'py-5 bg-transparent border-transparent'
+    : isHomeDesign && scrolled
+      ? 'py-3 bg-navy-deep/95 backdrop-blur-md shadow-lg border-b border-white/10'
+      : scrolled
+        ? 'py-3 bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-200'
+        : 'py-4 bg-white/80 backdrop-blur-md border-b border-slate-100';
 
   const handleLogout = () => {
     logout();
@@ -65,45 +79,46 @@ function Topbar() {
 
   return (
     <header 
-      className={`sticky top-0 w-full z-[100] transition-all duration-300 ${
-        scrolled 
-          ? 'py-3 bg-white/90 backdrop-blur-md shadow-md border-b border-slate-200/60' 
-          : 'py-4 bg-white/70 backdrop-blur-md border-b border-slate-100/50'
-      }`}
+      className={`${headerPositionClass} z-50 transition-all duration-300 ${headerStyleClass}`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-12">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
           {/* LEFT: Logo */}
-          <div className="flex-1 flex justify-start items-center">
-            <Link to="/" className="flex items-center gap-2 group text-decoration-none">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-blue to-brand-purple flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
-                <GraduationCap className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-brand-blue via-brand-indigo to-brand-purple bg-clip-text text-transparent group-hover:opacity-90 transition-opacity">
-                SinhVienJob
-              </span>
-            </Link>
-          </div>
+          <Link to="/" className="flex items-center gap-2.5 text-decoration-none">
+            <span className={`flex h-10 w-10 items-center justify-center rounded-xl shadow-lg ${
+              isHomeDesign
+                ? 'bg-gradient-to-br from-brand to-brand-light shadow-brand/30'
+                : 'bg-linear-to-tr from-brand-blue to-brand-purple shadow-md shadow-blue-500/20'
+            }`}>
+              <GraduationCap className="h-5 w-5 text-white" />
+            </span>
+            <span className={`text-lg font-bold ${
+              isTransparent || (isHomeDesign && scrolled)
+                ? 'text-white'
+                : 'bg-linear-to-r from-brand-blue via-brand-indigo to-brand-purple bg-clip-text text-transparent'
+            }`}>
+              SinhVienJob
+            </span>
+          </Link>
 
           {/* MIDDLE: Desktop Navigation Menu */}
-          <nav className="hidden md:flex flex-2 justify-center items-center gap-8">
+          <div className="hidden items-center gap-8 lg:flex">
             <Link 
               to="/jobs" 
-              className={`text-sm font-semibold transition-colors duration-200 text-decoration-none ${
+              className={`text-sm font-medium transition-colors duration-200 text-decoration-none ${
                 isLinkActive('/jobs') 
-                  ? 'text-brand-blue' 
-                  : 'text-slate-600 hover:text-brand-blue'
+                  ? (isTransparent || (isHomeDesign && scrolled) ? 'text-white' : 'text-brand-blue')
+                  : (isTransparent || (isHomeDesign && scrolled) ? 'text-white/80 hover:text-white' : 'text-slate-600 hover:text-brand-blue')
               }`}
             >
               Tìm việc
             </Link>
             <Link 
               to="/companies" 
-              className={`text-sm font-semibold transition-colors duration-200 text-decoration-none ${
+              className={`text-sm font-medium transition-colors duration-200 text-decoration-none ${
                 isLinkActive('/companies') 
-                  ? 'text-brand-blue' 
-                  : 'text-slate-600 hover:text-brand-blue'
+                  ? (isTransparent || (isHomeDesign && scrolled) ? 'text-white' : 'text-brand-blue')
+                  : (isTransparent || (isHomeDesign && scrolled) ? 'text-white/80 hover:text-white' : 'text-slate-600 hover:text-brand-blue')
               }`}
             >
               Công ty
@@ -112,26 +127,30 @@ function Topbar() {
             {isLoggedIn && userRole === 'student' ? (
               <Link 
                 to="/build-cv" 
-                className={`text-sm font-bold transition-all duration-200 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 text-decoration-none flex items-center gap-1.5`}
+                className={`text-sm font-medium transition-all duration-200 px-3 py-1.5 rounded-lg text-decoration-none flex items-center gap-1.5 ${
+                  isTransparent || (isHomeDesign && scrolled)
+                    ? 'bg-white/10 text-white hover:bg-white/20'
+                    : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'
+                }`}
               >
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                </span>
                 Tạo CV Online
               </Link>
             ) : (
               <Link 
                 to="/employer/login" 
-                className={`text-sm font-semibold transition-colors duration-200 text-decoration-none text-emerald-600 hover:text-emerald-700 flex items-center gap-1`}
+                className={`text-sm font-medium transition-colors duration-200 text-decoration-none ${
+                  isTransparent || (isHomeDesign && scrolled)
+                    ? 'text-white/80 hover:text-white'
+                    : 'text-emerald-600 hover:text-emerald-700'
+                }`}
               >
-                <Briefcase className="w-4 h-4" /> Dành cho Nhà tuyển dụng
+                Dành cho Nhà tuyển dụng
               </Link>
             )}
-          </nav>
+          </div>
 
           {/* RIGHT: Login/Register buttons or User dropdown */}
-          <div className="flex-1 flex justify-end items-center gap-4">
+          <div className="hidden items-center gap-3 lg:flex">
             {isLoggedIn ? (
               <div className="flex items-center gap-3">
                 <NotificationBell />
@@ -159,7 +178,7 @@ function Topbar() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 10 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-[200]"
+                        className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-200"
                       >
                         <div className="p-4 border-b border-slate-100 bg-slate-50">
                           <p className="font-semibold text-slate-900 truncate">{userName || 'Người dùng'}</p>
@@ -222,32 +241,46 @@ function Topbar() {
                 </div>
               </div>
             ) : (
-              <div className="hidden md:flex items-center gap-3">
+              <>
                 <Link 
                   to="/login" 
-                  className="px-4 py-2 text-sm font-bold text-brand-blue hover:text-brand-indigo transition-colors text-decoration-none"
+                  className={`rounded-lg px-5 py-2 text-sm font-medium transition-colors text-decoration-none ${
+                    isTransparent
+                      ? 'border border-white/20 text-white hover:bg-white/10'
+                      : isHomeDesign && scrolled
+                        ? 'border border-white/20 text-white hover:bg-white/10'
+                        : 'text-brand-blue hover:text-brand-indigo'
+                  }`}
                 >
                   Đăng nhập
                 </Link>
                 <Link 
                   to="/register" 
-                  className="px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-brand-blue to-brand-indigo hover:opacity-90 shadow-md shadow-blue-500/20 rounded-xl transition-all hover:scale-105 active:scale-95 text-decoration-none"
+                  className={`rounded-lg px-5 py-2 text-sm font-semibold transition-colors text-decoration-none ${
+                    isTransparent
+                      ? 'bg-white text-brand hover:bg-white/90'
+                      : isHomeDesign && scrolled
+                        ? 'bg-white text-brand hover:bg-white/90'
+                        : 'text-white bg-linear-to-r from-brand-blue to-brand-indigo shadow-md hover:opacity-90'
+                  }`}
                 >
                   Đăng ký
                 </Link>
-              </div>
+              </>
             )}
-
-            {/* Mobile Menu Toggle Button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 focus:outline-none transition-colors border-none bg-transparent cursor-pointer"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
           </div>
-        </div>
-      </div>
+
+          {/* Mobile Menu Toggle Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className={`lg:hidden border-none bg-transparent cursor-pointer ${
+              isTransparent || (isHomeDesign && scrolled) ? 'text-white' : 'text-slate-600'
+            }`}
+            aria-label="Mở menu"
+          >
+            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+      </nav>
 
       {/* MOBILE DRAWER */}
       <AnimatePresence>
@@ -257,7 +290,7 @@ function Topbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25 }}
-            className="md:hidden bg-white/95 backdrop-blur-lg border-b border-slate-200 overflow-hidden"
+            className="lg:hidden bg-white/95 backdrop-blur-lg border-b border-slate-200 overflow-hidden"
           >
             <div className="px-4 pt-2 pb-6 space-y-4">
               <div className="space-y-1.5">
@@ -306,7 +339,7 @@ function Topbar() {
                   <Link 
                     to="/register" 
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-brand-blue to-brand-indigo text-decoration-none"
+                    className="flex items-center justify-center py-2.5 rounded-xl text-sm font-bold text-white bg-linear-to-r from-brand-blue to-brand-indigo text-decoration-none"
                   >
                     Đăng ký
                   </Link>

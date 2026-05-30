@@ -3,7 +3,7 @@ import { useSavedJobs } from '../context/SavedJobsContext';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-hot-toast';
 
-const SaveButton = ({ jobId, size = 20, showText = false }) => {
+const SaveButton = ({ jobId, size = 20, showText = false, variant = 'default' }) => {
   const { isSaved, toggleSave } = useSavedJobs();
   const { isLoggedIn, userRole } = useAuth(); // Fix: use correct context values
   const [isToggling, setIsToggling] = useState(false);
@@ -34,6 +34,34 @@ const SaveButton = ({ jobId, size = 20, showText = false }) => {
       setIsToggling(false);
     }
   };
+
+  if (variant === 'minimal') {
+    return (
+      <button
+        onClick={handleToggle}
+        disabled={isToggling}
+        aria-label="Lưu việc làm"
+        className={`border-none bg-transparent cursor-pointer p-0 transition-colors ${
+          saved ? 'text-brand' : 'text-muted-foreground hover:text-brand'
+        }`}
+        title={saved ? 'Bỏ lưu' : 'Lưu việc làm'}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width={size}
+          height={size}
+          viewBox="0 0 24 24"
+          fill={saved ? 'currentColor' : 'none'}
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />
+        </svg>
+      </button>
+    );
+  }
 
   return (
     <button
