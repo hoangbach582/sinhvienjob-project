@@ -30,19 +30,19 @@ const stats = [
 
 function StatsSection() {
   return (
-    <div className="relative z-20 mx-auto -mt-24 max-w-6xl px-4 sm:px-6 lg:px-8">
-      <div className="rounded-2xl border border-white/10 bg-navy/90 p-6 shadow-2xl shadow-navy-deep/40 backdrop-blur sm:p-8">
-        <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
+    <div className="home-stats relative z-20 mx-auto">
+      <div className="home-stats-panel rounded-2xl border border-white/10 bg-navy/90 shadow-2xl shadow-navy-deep/40 backdrop-blur">
+        <div className="home-stats-grid grid grid-cols-2 lg:grid-cols-4">
           {stats.map((stat) => (
-            <div key={stat.label} className="flex items-center gap-3 sm:gap-4">
-              <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${stat.gradient} shadow-lg sm:h-14 sm:w-14`}>
+            <div key={stat.label} className="home-stat-item flex items-center">
+              <span className={`home-stat-icon flex shrink-0 items-center justify-center rounded-xl ${stat.gradient} shadow-lg`}>
                 {React.createElement(stat.icon, { className: 'h-6 w-6 text-white sm:h-7 sm:w-7', 'aria-hidden': true })}
               </span>
               <div>
-                <div className="text-xl font-extrabold text-white sm:text-2xl">
+                <div className="home-stat-value font-extrabold text-white">
                   {stat.value}
                 </div>
-                <div className="text-xs text-white/60 sm:text-sm">
+                <div className="home-stat-label text-white/60">
                   {stat.label}
                 </div>
               </div>

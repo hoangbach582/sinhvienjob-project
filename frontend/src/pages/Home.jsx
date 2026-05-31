@@ -90,7 +90,7 @@ function Home() {
 
   return (
     <MainLayout hideTopbar showFooter={false}>
-      <main ref={mainRef} className="relative min-h-screen bg-background">
+      <main ref={mainRef} className="home-page relative min-h-screen bg-background">
         <HomeNavbar />
 
         <HeroSectionNew

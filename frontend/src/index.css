@@ -791,6 +791,890 @@ td{padding:9px 12px;border-top:0.5px solid var(--color-border-tertiary)}
   transition: transform 0.1s linear;
 }
 
+/* ==============================
+   Homepage mockup lock
+   Scoped fixes so legacy global CSS cannot stretch the landing page.
+   ============================== */
+.home-page {
+  --home-shell: min(1680px, calc(100vw - 140px));
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(130, 63, 235, 0.08), transparent 34rem),
+    #f8f7ff;
+  color: #191731;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.home-page a {
+  text-decoration: none;
+}
+
+.home-page button,
+.home-page input,
+.home-page select {
+  font: inherit;
+}
+
+.home-page > header > nav,
+.home-page > section > div,
+.home-page > div > section,
+.home-page > div > div,
+.home-page > footer > div {
+  width: var(--home-shell);
+  max-width: var(--home-shell);
+}
+
+.home-page > header > nav {
+  padding-top: 32px;
+  padding-bottom: 18px;
+}
+
+.home-page > header .h-10 {
+  width: 42px;
+  height: 42px;
+}
+
+.home-page > header span.text-lg {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.home-page > header .lg\:flex {
+  gap: 56px;
+}
+
+.home-page > header a,
+.home-page > header button {
+  font-size: 15px;
+}
+
+.home-page > header button {
+  min-height: 44px;
+  border-radius: 14px;
+}
+
+.home-page > section:first-of-type {
+  min-height: 690px;
+  padding-top: 118px;
+  padding-bottom: 165px;
+}
+
+.home-page > section:first-of-type > div.relative.mx-auto {
+  grid-template-columns: minmax(0, 1.03fr) minmax(520px, 0.97fr);
+  gap: 70px;
+}
+
+.home-page > section:first-of-type .mb-6.inline-flex {
+  margin-bottom: 56px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 11px 34px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 18px 46px rgba(82, 56, 181, 0.25);
+  font-size: 13px;
+}
+
+.home-page > section:first-of-type h1 {
+  max-width: 760px;
+  font-size: clamp(42px, 4.35vw, 70px);
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.home-page > section:first-of-type p {
+  margin-top: 22px;
+  max-width: 660px;
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+.home-page > section:first-of-type form {
+  margin-top: 42px;
+  max-width: 930px;
+  border-radius: 22px;
+  padding: 0;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 28px 70px rgba(6, 9, 38, 0.32);
+}
+
+.home-page > section:first-of-type form > div:first-child {
+  min-height: 76px;
+  gap: 0;
+}
+
+.home-page > section:first-of-type form > div:first-child > div {
+  border-radius: 0;
+  background: transparent;
+  color: #ffffff;
+}
+
+.home-page > section:first-of-type form input,
+.home-page > section:first-of-type form span {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.home-page > section:first-of-type form input::placeholder {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.home-page > section:first-of-type form svg {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.home-page > section:first-of-type form > div:first-child > div:first-child,
+.home-page > section:first-of-type form > div:first-child > div:nth-child(2) {
+  border-right: 1px solid rgba(255, 255, 255, 0.16);
+  padding-left: 28px;
+  padding-right: 28px;
+}
+
+.home-page > section:first-of-type form button[type="submit"] {
+  min-width: 190px;
+  min-height: 56px;
+  margin: 10px 12px;
+  border-radius: 14px;
+  font-size: 16px;
+}
+
+.home-page > section:first-of-type form > div:last-child {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 14px 28px 16px;
+}
+
+.home-page > section:first-of-type form > div:last-child span,
+.home-page > section:first-of-type form > div:last-child button {
+  font-size: 13px;
+}
+
+.home-page > section:first-of-type form > div:last-child button {
+  border-radius: 999px;
+  padding: 8px 18px;
+}
+
+.home-page > section:first-of-type img {
+  max-width: 640px;
+  transform: translateX(16px);
+}
+
+.home-page > div.relative.z-10 {
+  margin-top: -90px;
+  border-top-left-radius: 46px;
+  border-top-right-radius: 46px;
+  padding-top: 0;
+}
+
+.home-page > div > div.relative.z-20 {
+  margin-top: -86px;
+}
+
+.home-page > div > div.relative.z-20 > div {
+  border-radius: 22px;
+  padding: 34px 48px;
+  background: linear-gradient(100deg, rgba(45, 38, 91, 0.96), rgba(50, 40, 108, 0.94));
+}
+
+.home-page > div > div.relative.z-20 .grid {
+  gap: 48px;
+}
+
+.home-page > div > div.relative.z-20 .h-12 {
+  width: 74px;
+  height: 74px;
+  border-radius: 18px;
+}
+
+.home-page > div > div.relative.z-20 .text-xl {
+  font-size: 34px;
+  line-height: 1;
+}
+
+.home-page > div > div.relative.z-20 .text-xs {
+  margin-top: 9px;
+  font-size: 14px;
+}
+
+.home-page #tim-viec {
+  padding-top: 70px;
+  padding-bottom: 44px;
+}
+
+.home-page #tim-viec > .mx-auto.mb-6 {
+  margin-bottom: 34px;
+}
+
+.home-page #tim-viec h2 {
+  font-size: 34px;
+  line-height: 1.15;
+}
+
+.home-page #tim-viec p {
+  font-size: 15px;
+}
+
+.home-page #tim-viec > .mb-8 {
+  justify-content: flex-end;
+  margin-bottom: 18px;
+}
+
+.home-page #tim-viec > .mb-8 button {
+  min-height: 34px;
+  border-radius: 10px;
+  padding: 7px 18px;
+  font-size: 13px;
+}
+
+.home-page #tim-viec > .grid {
+  gap: 24px 34px;
+}
+
+.home-page #tim-viec article {
+  min-height: 190px;
+  border-radius: 18px;
+  padding: 22px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 18px 52px rgba(92, 64, 166, 0.12);
+}
+
+.home-page #tim-viec article .h-11 {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  background: #ede6ff;
+  font-size: 15px;
+}
+
+.home-page #tim-viec article h3 {
+  min-height: 46px;
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.home-page #tim-viec article p,
+.home-page #tim-viec article span {
+  font-size: 13px;
+}
+
+.home-page #tim-viec article > div:nth-of-type(2) {
+  margin-top: 10px;
+}
+
+.home-page #tim-viec article > div:last-child {
+  margin-top: 16px;
+}
+
+.home-page #tim-viec > .mt-10 {
+  margin-top: 34px;
+}
+
+.home-page #tim-viec > .mt-10 button,
+.home-page #cong-ty .mt-8 button {
+  min-height: 54px;
+  border-radius: 14px;
+  padding: 0 34px;
+  font-size: 15px;
+}
+
+.home-page #tim-viec + section {
+  padding-top: 4px;
+}
+
+.home-page #tim-viec + section > div {
+  min-height: 360px;
+  border-radius: 24px;
+  padding: 50px 70px;
+}
+
+.home-page #tim-viec + section h2 {
+  font-size: 34px;
+}
+
+.home-page #tim-viec + section p {
+  font-size: 16px;
+}
+
+.home-page #tim-viec + section img {
+  max-width: 520px;
+}
+
+.home-page #cong-ty {
+  padding-top: 34px;
+  padding-bottom: 34px;
+}
+
+.home-page #cong-ty > div {
+  border-radius: 24px;
+  padding: 36px 42px;
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: 0 20px 60px rgba(72, 60, 140, 0.08);
+}
+
+.home-page #cong-ty h2 {
+  font-size: 31px;
+}
+
+.home-page #cong-ty p {
+  font-size: 15px;
+}
+
+.home-page #cong-ty button.h-16 {
+  width: 74px;
+  height: 74px;
+  font-size: 16px;
+}
+
+.home-page footer {
+  background: linear-gradient(90deg, #07103f 0%, #0a1658 55%, #06103a 100%);
+}
+
+.home-page footer > div {
+  padding-top: 36px;
+  padding-bottom: 28px;
+}
+
+@media (max-width: 1280px) {
+  .home-page {
+    --home-shell: min(1180px, calc(100vw - 48px));
+  }
+
+  .home-page > section:first-of-type > div.relative.mx-auto {
+    gap: 36px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .home-page {
+    --home-shell: min(720px, calc(100vw - 32px));
+  }
+
+  .home-page > section:first-of-type {
+    min-height: auto;
+  }
+
+  .home-page > section:first-of-type > div.relative.mx-auto {
+    grid-template-columns: 1fr;
+  }
+
+  .home-page > section:first-of-type h1,
+  .home-page > section:first-of-type p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .home-page > section:first-of-type form {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .home-page > div > div.relative.z-20 > div {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .home-page {
+    --home-shell: calc(100vw - 28px);
+  }
+
+  .home-page > section:first-of-type h1 {
+    font-size: 40px;
+  }
+
+  .home-page > section:first-of-type form > div:first-child {
+    min-height: auto;
+  }
+
+  .home-page > section:first-of-type form > div:first-child > div:first-child,
+  .home-page > section:first-of-type form > div:first-child > div:nth-child(2) {
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+}
+
+/* Homepage v6 target layout */
+.home-page {
+  --home-shell: min(1660px, calc(100vw - 128px));
+}
+
+.home-page > header > nav,
+.home-hero-shell,
+.home-stats,
+.home-jobs,
+.home-benefits,
+.home-partners,
+.home-page > footer > div {
+  width: var(--home-shell);
+  max-width: var(--home-shell);
+}
+
+.home-hero {
+  min-height: 650px;
+  padding-top: 76px;
+  padding-bottom: 136px;
+}
+
+.home-hero-shell {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.home-hero-badge {
+  display: flex;
+  width: fit-content;
+  margin: 0 auto 52px;
+  padding: 10px 32px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 18px 46px rgba(82, 56, 181, 0.25);
+}
+
+.home-hero-grid {
+  grid-template-columns: minmax(0, 0.94fr) minmax(500px, 0.9fr);
+  gap: 72px;
+}
+
+.home-hero-copy h1 {
+  max-width: 650px;
+  font-size: clamp(44px, 3.5vw, 62px);
+  line-height: 1.14;
+  letter-spacing: 0;
+}
+
+.home-hero-copy p {
+  max-width: 620px;
+  margin-top: 22px;
+  font-size: 16px;
+  line-height: 1.72;
+}
+
+.home-search {
+  width: min(850px, 100%);
+  margin-top: 42px;
+  padding: 0;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 24px 58px rgba(6, 9, 38, 0.28);
+}
+
+.home-search-row {
+  min-height: 68px;
+  gap: 0;
+}
+
+.home-search-field,
+.home-search-location {
+  min-height: 68px;
+  padding: 0 26px;
+  color: #ffffff;
+  border-right: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.home-search-location {
+  width: 270px;
+}
+
+.home-search input,
+.home-search span {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.home-search input::placeholder {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.home-search svg {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.home-search-submit {
+  min-width: 174px;
+  height: 52px;
+  margin: 8px 12px;
+  border-radius: 14px;
+  font-size: 15px;
+}
+
+.home-popular {
+  min-height: 48px;
+  padding: 10px 26px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.home-popular button {
+  padding: 6px 16px;
+  border-radius: 999px;
+}
+
+.home-hero-art img {
+  width: min(100%, 575px);
+  max-width: 575px;
+  transform: translate(18px, -8px);
+}
+
+.home-page > div.relative.z-10 {
+  margin-top: -82px;
+  border-top-left-radius: 44px;
+  border-top-right-radius: 44px;
+  padding-top: 0;
+}
+
+.home-stats {
+  margin-top: -72px;
+  padding: 0;
+}
+
+.home-stats-panel {
+  min-height: 118px;
+  padding: 28px 50px;
+  border-radius: 22px;
+  background: linear-gradient(100deg, rgba(56, 48, 112, 0.96), rgba(62, 48, 124, 0.94));
+}
+
+.home-stats-grid {
+  gap: 46px;
+}
+
+.home-stat-item {
+  gap: 20px;
+}
+
+.home-stat-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 18px;
+}
+
+.home-stat-value {
+  font-size: 30px;
+  line-height: 1;
+}
+
+.home-stat-label {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.home-jobs {
+  padding: 62px 0 42px;
+}
+
+.home-jobs > .mx-auto.mb-6 {
+  margin-bottom: 26px;
+}
+
+.home-jobs h2 {
+  font-size: 31px;
+  line-height: 1.15;
+}
+
+.home-jobs p {
+  font-size: 14px;
+}
+
+.home-job-tabs {
+  margin-bottom: 18px;
+}
+
+.home-job-tabs button {
+  min-height: 32px;
+  padding: 6px 16px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.home-job-grid {
+  gap: 22px 34px;
+}
+
+.home-job-card {
+  min-height: 174px;
+  padding: 18px 20px 16px;
+  border-radius: 17px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 16px 46px rgba(92, 64, 166, 0.12);
+}
+
+.home-job-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 13px;
+  background: #ede6ff;
+}
+
+.home-job-card h3 {
+  min-height: 40px;
+  font-size: 14px;
+  line-height: 1.22;
+}
+
+.home-job-card p,
+.home-job-card span,
+.home-job-card button {
+  font-size: 12px;
+}
+
+.home-job-card > div:nth-of-type(2) {
+  margin-top: 8px;
+}
+
+.home-job-card > div:last-child {
+  margin-top: 13px;
+  padding-top: 12px;
+}
+
+.home-jobs-cta {
+  margin-top: 30px;
+}
+
+.home-jobs-cta button,
+.home-partners .mt-8 button {
+  min-height: 48px;
+  padding: 0 30px;
+  border-radius: 13px;
+  font-size: 13px;
+}
+
+.home-benefits {
+  padding: 4px 0 22px;
+}
+
+.home-benefits-panel {
+  min-height: 320px;
+  padding: 42px 70px;
+  border-radius: 22px;
+}
+
+.home-benefits-panel h2 {
+  font-size: 31px;
+}
+
+.home-benefits-panel p {
+  font-size: 14px;
+}
+
+.home-benefits-panel img {
+  max-width: 455px;
+}
+
+.home-partners {
+  padding: 18px 0 32px;
+}
+
+.home-partners-panel {
+  padding: 32px 40px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow: 0 18px 55px rgba(72, 60, 140, 0.08);
+}
+
+.home-partners h2 {
+  font-size: 29px;
+}
+
+.home-partners p {
+  font-size: 14px;
+}
+
+.home-partners button.h-16 {
+  width: 66px;
+  height: 66px;
+  font-size: 14px;
+}
+
+.home-page footer > div {
+  padding-top: 34px;
+  padding-bottom: 24px;
+}
+
+@media (max-width: 1280px) {
+  .home-page {
+    --home-shell: min(1140px, calc(100vw - 48px));
+  }
+
+  .home-hero-grid {
+    gap: 34px;
+  }
+
+  .home-hero-copy h1 {
+    font-size: clamp(42px, 5.2vw, 58px);
+  }
+
+  .home-search {
+    width: min(760px, 100%);
+  }
+}
+
+@media (max-width: 1023px) {
+  .home-page {
+    --home-shell: min(720px, calc(100vw - 32px));
+  }
+
+  .home-hero {
+    min-height: auto;
+    padding-bottom: 120px;
+  }
+
+  .home-hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-hero-copy h1,
+  .home-hero-copy p,
+  .home-search {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .home-stats-panel {
+    padding: 24px;
+  }
+
+  .home-stats-grid {
+    gap: 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .home-page {
+    --home-shell: calc(100vw - 28px);
+  }
+
+  .home-hero-copy h1 {
+    font-size: 38px;
+  }
+
+  .home-search-row {
+    min-height: auto;
+  }
+
+  .home-search-field,
+  .home-search-location {
+    width: 100%;
+    min-height: 58px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .home-search-submit {
+    width: calc(100% - 24px);
+  }
+
+  .home-benefits-panel,
+  .home-partners-panel {
+    padding: 28px 22px;
+  }
+}
+
+.home-page > section.home-hero {
+  min-height: 650px;
+  padding-top: 76px;
+  padding-bottom: 136px;
+}
+
+.home-page > section.home-hero > .home-hero-shell {
+  width: var(--home-shell);
+  max-width: var(--home-shell);
+}
+
+.home-page > section.home-hero .home-hero-grid {
+  grid-template-columns: minmax(0, 0.94fr) minmax(500px, 0.9fr);
+  gap: 72px;
+}
+
+.home-page > section.home-hero .home-hero-badge {
+  margin: 0 auto 52px;
+}
+
+.home-page > section.home-hero .home-hero-copy h1 {
+  max-width: 650px;
+  font-size: clamp(44px, 3.5vw, 62px);
+  line-height: 1.14;
+}
+
+.home-page > section.home-hero .home-hero-copy p {
+  max-width: 620px;
+  margin-top: 22px;
+  font-size: 16px;
+  line-height: 1.72;
+}
+
+.home-page > section.home-hero .home-search {
+  width: min(850px, 100%);
+  margin-top: 42px;
+}
+
+.home-page > section.home-hero .home-search-submit {
+  min-width: 174px;
+  min-height: 52px;
+  height: 52px;
+}
+
+.home-page > section.home-hero .home-hero-art img {
+  max-width: 575px;
+  transform: translate(18px, -8px);
+}
+
+.home-page .home-stats {
+  width: var(--home-shell);
+  max-width: var(--home-shell);
+  margin-top: -72px;
+}
+
+.home-page .home-stats-panel {
+  padding: 28px 50px;
+}
+
+.home-page .home-stat-icon {
+  width: 70px;
+  height: 70px;
+}
+
+.home-page .home-stat-value {
+  font-size: 30px;
+}
+
+.home-page section.home-jobs {
+  width: var(--home-shell);
+  max-width: var(--home-shell);
+  padding: 62px 0 42px;
+}
+
+.home-page section.home-jobs h2 {
+  font-size: 31px;
+}
+
+.home-page section.home-jobs .home-job-grid {
+  gap: 22px 34px;
+}
+
+.home-page section.home-jobs .home-job-card {
+  min-height: 174px;
+  padding: 18px 20px 16px;
+}
+
+.home-page section.home-benefits,
+.home-page section.home-partners {
+  width: var(--home-shell);
+  max-width: var(--home-shell);
+}
+
+.home-page section.home-benefits .home-benefits-panel {
+  min-height: 320px;
+  padding: 42px 70px;
+}
+
+.home-page section.home-benefits .home-benefits-panel img {
+  max-width: 455px;
+}
+
+.home-page section.home-partners .home-partners-panel {
+  padding: 32px 40px;
+}
+
 
 /* ====== ADVANCED 3D EFFECTS ====== */
 

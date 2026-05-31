@@ -20,11 +20,11 @@ function JobCard({ job, navigate, formatSalary, translateType }) {
 
   return (
     <article
-      className="group flex cursor-pointer flex-col rounded-2xl border border-border bg-card p-5 transition-all hover:-translate-y-1 hover:border-brand/40 hover:shadow-xl hover:shadow-brand/10"
+      className="home-job-card group flex cursor-pointer flex-col rounded-2xl border border-border bg-card transition-transform hover:-translate-y-1 hover:border-brand/40 hover:shadow-xl hover:shadow-brand/10"
       onClick={() => navigate(`/job/${job.id}`)}
     >
       <div className="mb-4 flex items-start justify-between">
-        <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand/10 text-sm font-bold text-brand">
+        <span className="home-job-logo flex items-center justify-center rounded-xl bg-brand/10 text-sm font-bold text-brand">
           {companyName.slice(0, 2).toUpperCase()}
         </span>
         <div onClick={(event) => event.stopPropagation()}>
@@ -90,7 +90,7 @@ function JobSkeleton() {
 
 function LatestJobsSectionNew({ loading, filteredJobs, activeTab, setActiveTab, navigate, formatSalary, translateType }) {
   return (
-    <section id="tim-viec" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+    <section id="tim-viec" className="home-jobs mx-auto">
       <div className="mx-auto mb-6 max-w-2xl text-center">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-brand">
           <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
@@ -104,7 +104,7 @@ function LatestJobsSectionNew({ loading, filteredJobs, activeTab, setActiveTab, 
         </p>
       </div>
 
-      <div className="mb-8 flex flex-wrap justify-center gap-2 lg:justify-end">
+      <div className="home-job-tabs mb-8 flex flex-wrap justify-center gap-2 lg:justify-end">
         {tabs.map((tab) => (
           <button
             key={tab.key}
@@ -114,7 +114,7 @@ function LatestJobsSectionNew({ loading, filteredJobs, activeTab, setActiveTab, 
               activeTab === tab.key
                 ? 'bg-brand text-white shadow-md shadow-brand/30 border border-transparent'
                 : 'border border-border bg-card text-muted-foreground hover:border-brand/40 hover:text-brand'
-            }`}
+            } focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand`}
           >
             {tab.label}
           </button>
@@ -122,7 +122,7 @@ function LatestJobsSectionNew({ loading, filteredJobs, activeTab, setActiveTab, 
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="home-job-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((item) => <JobSkeleton key={item} />)}
         </div>
       ) : filteredJobs.length === 0 ? (
@@ -132,7 +132,7 @@ function LatestJobsSectionNew({ loading, filteredJobs, activeTab, setActiveTab, 
           <p className="text-sm text-muted-foreground">Hiện tại chưa có công việc mới nào thuộc hình thức này.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="home-job-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {filteredJobs.slice(0, 6).map((job) => (
             <JobCard
               key={job.id}
@@ -145,11 +145,11 @@ function LatestJobsSectionNew({ loading, filteredJobs, activeTab, setActiveTab, 
         </div>
       )}
 
-      <div className="mt-10 flex justify-center">
+      <div className="home-jobs-cta mt-10 flex justify-center">
         <button
           type="button"
           onClick={() => navigate('/jobs')}
-          className="flex items-center gap-2 rounded-xl border-none bg-gradient-to-r from-brand to-brand-light px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-opacity hover:opacity-90 cursor-pointer"
+          className="flex items-center gap-2 rounded-xl border-none bg-gradient-to-r from-brand to-brand-light px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-opacity hover:opacity-90 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
         >
           Khám phá tất cả công việc
           <ArrowRight className="h-4 w-4" aria-hidden="true" />

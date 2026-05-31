@@ -6,8 +6,8 @@ function BenefitsSectionNew() {
   const navigate = useNavigate();
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-navy via-navy-deep to-navy p-8 sm:p-12">
+    <section className="home-benefits mx-auto">
+      <div className="home-benefits-panel relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-navy via-navy-deep to-navy">
         <div className="pointer-events-none absolute -right-10 top-0 h-72 w-72 rounded-full bg-brand/30 blur-[100px]" aria-hidden="true" />
 
         <div className="relative grid grid-cols-1 items-center gap-8 lg:grid-cols-2">
@@ -25,7 +25,7 @@ function BenefitsSectionNew() {
             <button
               type="button"
               onClick={() => navigate('/jobs')}
-              className="mt-6 rounded-xl border-none bg-white px-6 py-3 text-sm font-semibold text-brand transition-colors hover:bg-white/90 cursor-pointer"
+              className="mt-6 rounded-xl border-none bg-white px-6 py-3 text-sm font-semibold text-brand transition-colors hover:bg-white/90 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               Xem chi tiết
             </button>
