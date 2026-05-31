@@ -101,9 +101,9 @@ function Home() {
           handleSearch={handleSearch}
         />
 
-        <StatsSection />
+        <div className="relative z-10 -mt-12 rounded-t-[2.5rem] bg-background pt-2">
+          <StatsSection />
 
-        <div className="relative bg-background">
           <LatestJobsSectionNew
             loading={loading}
             filteredJobs={filteredJobs}
