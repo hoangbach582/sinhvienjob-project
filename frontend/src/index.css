@@ -1208,6 +1208,8 @@ td{padding:9px 12px;border-top:0.5px solid var(--color-border-tertiary)}
 .home-page > footer > div {
   width: var(--home-shell);
   max-width: var(--home-shell);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .home-hero {
@@ -1673,6 +1675,445 @@ td{padding:9px 12px;border-top:0.5px solid var(--color-border-tertiary)}
 
 .home-page section.home-partners .home-partners-panel {
   padding: 32px 40px;
+}
+
+/* Homepage reference compact layout */
+.home-page {
+  --home-shell: min(1280px, calc(100vw - 148px));
+  background:
+    linear-gradient(180deg, #0a1238 0 34rem, #f7f5ff 34rem 100%),
+    #f7f5ff;
+}
+
+.home-page > header > nav,
+.home-hero-shell,
+.home-stats,
+.home-jobs,
+.home-benefits,
+.home-partners,
+.home-page > footer > div {
+  width: var(--home-shell);
+  max-width: var(--home-shell);
+}
+
+.home-page > header > nav {
+  padding-top: 22px;
+  padding-bottom: 14px;
+}
+
+.home-page > header span.text-lg {
+  font-size: 20px;
+}
+
+.home-page > header .lg\:flex {
+  gap: 42px;
+}
+
+.home-page > section.home-hero {
+  min-height: 575px;
+  padding-top: 86px;
+  padding-bottom: 104px;
+}
+
+.home-page > section.home-hero .home-hero-badge {
+  margin-bottom: 48px;
+  padding: 9px 30px;
+  font-size: 12px;
+}
+
+.home-page > section.home-hero .home-hero-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(390px, 0.78fr);
+  gap: 48px;
+}
+
+.home-page > section.home-hero .home-hero-copy h1 {
+  max-width: 640px;
+  font-size: clamp(46px, 4vw, 64px);
+  line-height: 1.12;
+}
+
+.home-page > section.home-hero .home-hero-copy p {
+  max-width: 610px;
+  margin-top: 20px;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.home-page > section.home-hero .home-search {
+  width: min(760px, var(--home-shell));
+  margin-top: 36px;
+  border-radius: 20px;
+}
+
+.home-search-row {
+  min-height: 64px;
+}
+
+.home-search-field,
+.home-search-location {
+  min-height: 64px;
+  padding: 0 24px;
+}
+
+.home-search-location {
+  width: 260px;
+}
+
+.home-page > section.home-hero .home-search-submit {
+  min-width: 170px;
+  min-height: 50px;
+  height: 50px;
+  margin: 7px 10px;
+}
+
+.home-popular {
+  min-height: 46px;
+  padding: 10px 24px 13px;
+}
+
+.home-page > section.home-hero .home-hero-art img {
+  width: min(100%, 500px);
+  max-width: 500px;
+  transform: translate(6px, -10px);
+}
+
+.home-page > div.relative.z-10 {
+  margin-top: -60px;
+  border-top-left-radius: 42px;
+  border-top-right-radius: 42px;
+  background:
+    radial-gradient(circle at 50% 15rem, rgba(132, 73, 255, 0.1), transparent 42rem),
+    #f7f5ff;
+}
+
+.home-page .home-stats {
+  margin-top: -70px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.home-page .home-stats-panel {
+  min-height: 112px;
+  padding: 22px 36px;
+  border-radius: 18px;
+  background: linear-gradient(100deg, rgba(48, 43, 101, 0.98), rgba(61, 50, 128, 0.96), rgba(42, 36, 91, 0.98));
+  box-shadow: 0 22px 58px rgba(46, 29, 116, 0.28);
+}
+
+.home-stats-grid {
+  gap: 30px;
+}
+
+.home-stat-item {
+  gap: 18px;
+}
+
+.home-page .home-stat-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+}
+
+.home-page .home-stat-value {
+  font-size: 28px;
+}
+
+.home-stat-label {
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+.home-page section.home-jobs {
+  padding: 52px 0 34px;
+}
+
+.home-jobs > .mx-auto.mb-6 {
+  margin-bottom: 22px;
+}
+
+.home-page section.home-jobs h2 {
+  font-size: 30px;
+}
+
+.home-jobs p {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.home-job-tabs {
+  margin-bottom: 18px;
+  padding-right: 18px;
+}
+
+.home-job-tabs button {
+  min-height: 30px;
+  padding: 5px 15px;
+  font-size: 12px;
+}
+
+.home-page section.home-jobs .home-job-grid {
+  gap: 20px 30px;
+}
+
+.home-page section.home-jobs .home-job-card {
+  min-height: 164px;
+  padding: 18px 18px 15px;
+  border-radius: 16px;
+  border-color: rgba(130, 63, 235, 0.18);
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 16px 42px rgba(89, 65, 158, 0.11);
+}
+
+.home-job-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+}
+
+.home-job-card h3 {
+  min-height: 38px;
+  font-size: 14px;
+  line-height: 1.22;
+}
+
+.home-job-card p,
+.home-job-card span,
+.home-job-card button {
+  font-size: 12px;
+}
+
+.home-job-card > div:nth-of-type(2) {
+  margin-top: 8px;
+}
+
+.home-job-card > div:last-child {
+  margin-top: 12px;
+  padding-top: 12px;
+}
+
+.home-jobs-cta {
+  margin-top: 28px;
+}
+
+.home-jobs-cta button,
+.home-partners .mt-8 button {
+  min-height: 44px;
+  padding: 0 28px;
+  border-radius: 11px;
+  font-size: 12px;
+}
+
+.home-benefits {
+  padding: 0 0 26px;
+}
+
+.home-page section.home-benefits .home-benefits-panel {
+  min-height: 292px;
+  padding: 34px 58px;
+  border-radius: 18px;
+}
+
+.home-benefits-panel h2 {
+  font-size: 29px;
+}
+
+.home-benefits-panel p {
+  max-width: 440px;
+  font-size: 14px;
+}
+
+.home-page section.home-benefits .home-benefits-panel img {
+  max-width: 430px;
+}
+
+.home-partners {
+  padding: 2px 0 34px;
+}
+
+.home-page section.home-partners .home-partners-panel {
+  padding: 28px 36px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.home-partners h2 {
+  font-size: 27px;
+}
+
+.home-partners p {
+  font-size: 13px;
+}
+
+.home-partners button.h-16 {
+  width: 60px;
+  height: 60px;
+  font-size: 13px;
+}
+
+.home-page footer > div {
+  padding-top: 30px;
+  padding-bottom: 22px;
+}
+
+@media (max-width: 1440px) {
+  .home-page {
+    --home-shell: min(1160px, calc(100vw - 150px));
+  }
+
+  .home-page > section.home-hero {
+    min-height: 500px;
+    padding-top: 72px;
+    padding-bottom: 72px;
+  }
+
+  .home-page > section.home-hero .home-hero-badge {
+    margin-bottom: 30px;
+  }
+
+  .home-page > section.home-hero .home-hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(310px, 0.62fr);
+    gap: 20px;
+  }
+
+  .home-page > section.home-hero .home-hero-copy h1 {
+    max-width: 560px;
+    font-size: clamp(42px, 4.8vw, 52px);
+    line-height: 1.08;
+  }
+
+  .home-page > section.home-hero .home-hero-copy p {
+    max-width: 550px;
+    margin-top: 16px;
+    font-size: 15px;
+    line-height: 1.62;
+  }
+
+  .home-page > section.home-hero .home-search {
+    margin-top: 24px;
+  }
+
+  .home-page > section.home-hero .home-hero-art img {
+    max-width: 390px;
+    transform: translate(8px, -4px);
+  }
+
+  .home-page > div.relative.z-10 {
+    margin-top: -48px;
+  }
+
+  .home-page .home-stats {
+    margin-top: -54px;
+    width: min(884px, var(--home-shell));
+    max-width: min(884px, var(--home-shell));
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .home-page .home-stats-panel {
+    min-height: 98px;
+    padding: 20px 28px;
+  }
+
+  .home-stats-grid {
+    gap: 18px;
+  }
+
+  .home-stat-item {
+    gap: 12px;
+  }
+
+  .home-page .home-stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+  }
+
+  .home-page .home-stat-value {
+    font-size: 24px;
+  }
+
+  .home-stat-label {
+    margin-top: 5px;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .home-page section.home-jobs {
+    padding-top: 28px;
+    padding-bottom: 28px;
+  }
+
+  .home-jobs > .mx-auto.mb-6 {
+    margin-bottom: 16px;
+  }
+
+  .home-page section.home-jobs .home-job-card {
+    min-height: 168px;
+    padding: 15px 16px 13px;
+  }
+
+  .home-job-card h3 {
+    min-height: 34px;
+    font-size: 13px;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .home-job-card > div:first-child {
+    margin-bottom: 10px;
+  }
+
+  .home-job-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .home-job-card p,
+  .home-job-card span,
+  .home-job-card button {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .home-page {
+    --home-shell: min(720px, calc(100vw - 32px));
+  }
+
+  .home-page > section.home-hero {
+    min-height: auto;
+    padding-bottom: 112px;
+  }
+
+  .home-page > section.home-hero .home-hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-page .home-stats-panel {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 767px) {
+  .home-page {
+    --home-shell: calc(100vw - 28px);
+  }
+
+  .home-page > section.home-hero .home-hero-copy h1 {
+    font-size: 38px;
+  }
+
+  .home-search-location,
+  .home-search-field {
+    width: 100%;
+  }
+
+  .home-page section.home-benefits .home-benefits-panel,
+  .home-page section.home-partners .home-partners-panel {
+    padding: 26px 20px;
+  }
 }
 
 
