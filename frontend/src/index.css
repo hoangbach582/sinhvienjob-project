@@ -1006,6 +1006,10 @@ td{padding:9px 12px;border-top:0.5px solid var(--color-border-tertiary)}
   margin-bottom: 34px;
 }
 
+.mx-auto.mb-6.max-w-2xl.text-center {
+  margin: 0 auto;
+}
+
 .home-page #tim-viec h2 {
   font-size: 34px;
   line-height: 1.15;
@@ -1250,6 +1254,11 @@ td{padding:9px 12px;border-top:0.5px solid var(--color-border-tertiary)}
   margin-top: 22px;
   font-size: 16px;
   line-height: 1.72;
+}
+
+.home-hero-copy.text-center.lg\:text-left {
+  width: 50rem;
+  z-index: 1;
 }
 
 .home-search {
@@ -2658,7 +2667,7 @@ td{padding:9px 12px;border-top:0.5px solid var(--color-border-tertiary)}
   width: min(72rem, calc(100% - 2rem));
   max-width: 72rem;
   margin: -5.5rem auto 0;
-  padding: 0 1rem;
+  padding: 2rem 1rem;
 }
 
 .home-stats-glass {
