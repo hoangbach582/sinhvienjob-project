@@ -18,8 +18,8 @@ function HomeNavbar() {
     <header className="absolute inset-x-0 top-0 z-50">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-2.5 no-underline">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand to-brand-light shadow-lg shadow-brand/30">
-            <GraduationCap className="h-5 w-5 text-white" aria-hidden="true" />
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-lg">
+            <GraduationCap className="h-5 w-5 text-brand" aria-hidden="true" />
           </span>
           <span className="text-lg font-bold text-white">SinhVienJob</span>
         </Link>
@@ -41,7 +41,7 @@ function HomeNavbar() {
             <button
               type="button"
               onClick={() => navigate('/profile')}
-              className="rounded-lg border border-white/20 bg-transparent px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10 cursor-pointer"
+              className="inline-flex min-h-[46px] items-center justify-center rounded-2xl border border-white/25 bg-transparent px-8 text-[15px] font-medium text-white transition-colors hover:bg-white/10 cursor-pointer"
             >
               Tài khoản
             </button>
@@ -50,14 +50,14 @@ function HomeNavbar() {
               <button
                 type="button"
                 onClick={() => navigate('/login')}
-                className="rounded-lg border border-white/20 bg-transparent px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10 cursor-pointer"
+                className="inline-flex min-h-[46px] min-w-[132px] items-center justify-center rounded-2xl border border-white/25 bg-transparent px-8 text-[15px] font-medium text-white transition-colors hover:bg-white/10 cursor-pointer"
               >
                 Đăng nhập
               </button>
               <button
                 type="button"
                 onClick={() => navigate('/register')}
-                className="rounded-lg border-none bg-white px-5 py-2 text-sm font-semibold text-brand transition-colors hover:bg-white/90 cursor-pointer"
+                className="inline-flex min-h-[46px] min-w-[132px] items-center justify-center rounded-2xl border-none bg-white px-9 text-[15px] font-semibold text-brand shadow-sm transition-colors hover:bg-white/90 cursor-pointer"
               >
                 Đăng ký
               </button>
@@ -93,14 +93,14 @@ function HomeNavbar() {
                 <button
                   type="button"
                   onClick={() => navigate('/login')}
-                  className="rounded-lg border border-white/20 bg-transparent px-5 py-2.5 text-sm font-medium text-white hover:bg-white/10 cursor-pointer"
+                  className="inline-flex min-h-[46px] w-full items-center justify-center rounded-2xl border border-white/25 bg-transparent text-[15px] font-medium text-white hover:bg-white/10 cursor-pointer"
                 >
                   Đăng nhập
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate('/register')}
-                  className="rounded-lg border-none bg-white px-5 py-2.5 text-sm font-semibold text-brand hover:bg-white/90 cursor-pointer"
+                  className="inline-flex min-h-[46px] w-full items-center justify-center rounded-2xl border-none bg-white text-[15px] font-semibold text-brand hover:bg-white/90 cursor-pointer"
                 >
                   Đăng ký
                 </button>

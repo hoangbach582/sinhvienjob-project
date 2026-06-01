@@ -796,7 +796,7 @@ td{padding:9px 12px;border-top:0.5px solid var(--color-border-tertiary)}
    Scoped fixes so legacy global CSS cannot stretch the landing page.
    ============================== */
 .home-page {
-  --home-shell: min(1680px, calc(100vw - 140px));
+  --home-shell: min(1280px, calc(100vw - 64px));
   overflow-x: hidden;
   background:
     radial-gradient(circle at 50% 0%, rgba(130, 63, 235, 0.08), transparent 34rem),
@@ -817,12 +817,14 @@ td{padding:9px 12px;border-top:0.5px solid var(--color-border-tertiary)}
 }
 
 .home-page > header > nav,
-.home-page > section > div,
+.home-page > section > .home-hero-shell,
 .home-page > div > section,
-.home-page > div > div,
+.home-page > div > div.home-stats,
 .home-page > footer > div {
   width: var(--home-shell);
   max-width: var(--home-shell);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .home-page > header > nav {
@@ -850,8 +852,7 @@ td{padding:9px 12px;border-top:0.5px solid var(--color-border-tertiary)}
 }
 
 .home-page > header button {
-  min-height: 44px;
-  border-radius: 14px;
+  /* removed fixed height and border radius to let Tailwind handle it */
 }
 
 .home-page > section:first-of-type {
@@ -860,9 +861,9 @@ td{padding:9px 12px;border-top:0.5px solid var(--color-border-tertiary)}
   padding-bottom: 165px;
 }
 
-.home-page > section:first-of-type > div.relative.mx-auto {
-  grid-template-columns: minmax(0, 1.03fr) minmax(520px, 0.97fr);
-  gap: 70px;
+.home-page > section:first-of-type .home-hero-grid {
+  grid-template-columns: minmax(0, 1.3fr) minmax(400px, 0.7fr);
+  gap: 40px;
 }
 
 .home-page > section:first-of-type .mb-6.inline-flex {
@@ -892,10 +893,9 @@ td{padding:9px 12px;border-top:0.5px solid var(--color-border-tertiary)}
 
 .home-page > section:first-of-type form {
   margin-top: 42px;
-  max-width: 930px;
+  max-width: 100%;
   border-radius: 22px;
   padding: 0;
-  overflow: hidden;
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.16);
   box-shadow: 0 28px 70px rgba(6, 9, 38, 0.32);
@@ -906,7 +906,7 @@ td{padding:9px 12px;border-top:0.5px solid var(--color-border-tertiary)}
   gap: 0;
 }
 
-.home-page > section:first-of-type form > div:first-child > div {
+.home-page > section:first-of-type form > div:first-child > label {
   border-radius: 0;
   background: transparent;
   color: #ffffff;
@@ -925,8 +925,8 @@ td{padding:9px 12px;border-top:0.5px solid var(--color-border-tertiary)}
   color: rgba(255, 255, 255, 0.82);
 }
 
-.home-page > section:first-of-type form > div:first-child > div:first-child,
-.home-page > section:first-of-type form > div:first-child > div:nth-child(2) {
+.home-page > section:first-of-type form > div:first-child > label:first-child,
+.home-page > section:first-of-type form > div:first-child > label:nth-child(2) {
   border-right: 1px solid rgba(255, 255, 255, 0.16);
   padding-left: 28px;
   padding-right: 28px;
@@ -1187,10 +1187,10 @@ td{padding:9px 12px;border-top:0.5px solid var(--color-border-tertiary)}
     min-height: auto;
   }
 
-  .home-page > section:first-of-type form > div:first-child > div:first-child,
-  .home-page > section:first-of-type form > div:first-child > div:nth-child(2) {
-    border-right: 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  .home-page > section:first-of-type form > div:first-child > label:first-child,
+  .home-page > section:first-of-type form > div:first-child > label:nth-child(2) {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 }
 
@@ -2518,6 +2518,237 @@ td{padding:9px 12px;border-top:0.5px solid var(--color-border-tertiary)}
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Homepage — glass search form & stats (match design image 1) */
+.home-page .home-search-glass {
+  width: 100%;
+  max-width: 100%;
+  margin-top: 2rem;
+  padding: 1rem 1.25rem 1.125rem;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.11) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(130, 63, 235, 0.08) 100%
+  );
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  box-shadow:
+    0 24px 56px rgba(5, 8, 32, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.home-search-glass-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  min-height: 3.25rem;
+}
+
+.home-search-glass-field {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0 1.125rem;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.home-search-glass-field--grow {
+  flex: 1;
+  min-width: 0;
+}
+
+.home-search-glass-field--location {
+  position: relative;
+  width: 11.5rem;
+  flex-shrink: 0;
+}
+
+.home-search-glass-divider {
+  width: 1px;
+  align-self: stretch;
+  flex-shrink: 0;
+  margin: 0.45rem 0;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.home-search-glass-field input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  outline: none;
+}
+
+.home-search-glass-field input::placeholder {
+  color: rgba(255, 255, 255, 0.52);
+}
+
+.home-search-glass-field svg {
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.home-search-glass-submit {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-left: 0.75rem;
+  padding: 0 1.375rem;
+  min-height: 3rem;
+  border: none;
+  border-radius: 0.875rem;
+  background: linear-gradient(90deg, #823feb 0%, #9b5cf0 45%, #ad74ff 100%);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 10px 32px rgba(130, 63, 235, 0.48);
+  transition: opacity 0.2s ease;
+}
+
+.home-search-glass-submit:hover {
+  opacity: 0.92;
+}
+
+.home-search-glass-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.875rem;
+  padding-top: 0.875rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.home-search-glass-tags > span {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.home-search-glass-tags button {
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.home-search-glass-tags button:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.home-stats-glass-wrap {
+  position: relative;
+  z-index: 20;
+  width: min(72rem, calc(100% - 2rem));
+  max-width: 72rem;
+  margin: -5.5rem auto 0;
+  padding: 0 1rem;
+}
+
+.home-stats-glass {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem 1.75rem;
+  padding: 1.75rem 2rem;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(
+    100deg,
+    rgba(72, 58, 130, 0.55) 0%,
+    rgba(56, 48, 108, 0.5) 45%,
+    rgba(42, 36, 92, 0.55) 100%
+  );
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow:
+    0 28px 64px rgba(5, 8, 32, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.home-stat-glass-item {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.home-stat-glass-icon {
+  width: 4.25rem;
+  height: 4.25rem;
+  flex-shrink: 0;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.28));
+}
+
+.home-stat-glass-value {
+  font-size: clamp(1.375rem, 2.2vw, 1.75rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.home-stat-glass-label {
+  margin-top: 0.4rem;
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+@media (min-width: 1024px) {
+  .home-stats-glass {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+    padding: 1.625rem 2.25rem;
+  }
+
+  .home-stat-glass-icon {
+    width: 4.5rem;
+    height: 4.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .home-search-glass-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    min-height: unset;
+  }
+
+  .home-search-glass-divider {
+    display: none;
+  }
+
+  .home-search-glass-field {
+    padding: 0.625rem 1rem;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .home-search-glass-field--location {
+    width: 100%;
+  }
+
+  .home-search-glass-submit {
+    margin-left: 0;
+    width: 100%;
+    min-height: 2.75rem;
   }
 }
 

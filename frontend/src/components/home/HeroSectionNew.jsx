@@ -4,6 +4,18 @@ import { ArrowRight, ChevronDown, MapPin, Search, Star } from 'lucide-react';
 
 const popularTags = ['ReactJS', 'Marketing', 'Part-time', 'Thực tập'];
 
+const generateStars = () =>
+  [...Array(20)].map((_, i) => ({
+    top: `${((i * 17 + 7) % 100)}%`,
+    left: `${((i * 23 + 11) % 100)}%`,
+    width: `${(i % 3) + 2}px`,
+    height: `${(i % 3) + 2}px`,
+    '--duration': `${2.5 + (i % 5) * 0.6}s`,
+    '--delay': `${(i % 8) * 0.4}s`,
+  }));
+
+const initialStars = generateStars();
+
 function HeroSectionNew({ keyword, setKeyword, location, setLocation, handleSearch }) {
   const navigate = useNavigate();
 
@@ -27,6 +39,11 @@ function HeroSectionNew({ keyword, setKeyword, location, setLocation, handleSear
         }}
         aria-hidden="true"
       />
+      <div className="hero-stars" aria-hidden="true">
+        {initialStars.map((style, i) => (
+          <div key={i} className="hero-star" style={style} />
+        ))}
+      </div>
 
       <div className="home-hero-shell relative mx-auto">
         <div className="home-hero-badge inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 text-xs font-medium text-white/90">
@@ -36,86 +53,77 @@ function HeroSectionNew({ keyword, setKeyword, location, setLocation, handleSear
 
         <div className="home-hero-grid grid grid-cols-1 items-center lg:grid-cols-2">
           <div className="home-hero-copy text-center lg:text-left">
-          <h1 className="text-pretty font-extrabold leading-tight text-white">
-            Tìm kiếm việc làm phù hợp cho{' '}
-            <span className="bg-gradient-to-r from-brand-light to-brand bg-clip-text text-transparent">
-              Sinh Viên
-            </span>
-          </h1>
+            <h1 className="text-pretty font-extrabold leading-tight text-white">
+              Tìm kiếm việc làm <br className="hidden lg:block" />
+              phù hợp cho{' '}
+              <span className="bg-gradient-to-r from-brand-light to-brand bg-clip-text text-transparent">
+                Sinh Viên
+              </span>
+            </h1>
 
-          <p className="mx-auto text-pretty leading-relaxed text-white/70 lg:mx-0">
-            Khám phá hàng ngàn công việc Part-time, Internship và cơ hội việc làm mới ra trường đã được kiểm duyệt nghiêm ngặt.
-          </p>
+            <p className="mx-auto text-pretty leading-relaxed text-white/70 lg:mx-0">
+              Khám phá hàng ngàn công việc Part-time, Internship và cơ hội việc làm mới ra trường đã được kiểm duyệt nghiêm ngặt.
+            </p>
 
-          <form onSubmit={handleSearch} className="home-search rounded-2xl border border-white/10 bg-white/5 backdrop-blur">
-            <div className="home-search-row flex flex-col md:flex-row">
-              <label className="home-search-field flex flex-1 items-center gap-2">
-                <Search className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
-                <span className="sr-only">Từ khóa tìm việc</span>
-                <input
-                  type="text"
-                  placeholder="Vị trí tuyển dụng, kỹ năng, công ty..."
-                  value={keyword}
-                  onChange={(event) => setKeyword(event.target.value)}
-                  className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
-                />
-              </label>
-
-              <label className="home-search-location relative flex items-center justify-between gap-2">
-                <div className="flex min-w-0 items-center gap-2">
-                  <MapPin className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
-                  <span className="truncate text-sm text-foreground">{location || 'Tất cả địa điểm'}</span>
+            <form onSubmit={handleSearch} className="home-search-glass">
+              <div className="home-search-glass-row">
+                <div className="home-search-glass-field home-search-glass-field--grow">
+                  <Search className="h-5 w-5" aria-hidden="true" />
+                  <input
+                    type="text"
+                    placeholder="Vị trí tuyển dụng, kỹ năng, công ty..."
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                  />
                 </div>
-                <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
-                <span className="sr-only">Chọn địa điểm</span>
-                <select
-                  value={location}
-                  onChange={(event) => setLocation(event.target.value)}
-                  className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-                >
-                  <option value="">Tất cả địa điểm</option>
-                  <option value="Hà Nội">Hà Nội</option>
-                  <option value="TP.HCM">TP.HCM</option>
-                  <option value="Đà Nẵng">Đà Nẵng</option>
-                  <option value="Remote">Remote</option>
-                </select>
-              </label>
 
-              <button
-                type="submit"
-                className="home-search-submit flex items-center justify-center gap-2 rounded-xl border-none bg-gradient-to-r from-brand to-brand-light text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-opacity hover:opacity-90 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-              >
-                Tìm kiếm
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </button>
-            </div>
+                <div className="home-search-glass-divider" aria-hidden="true" />
 
-            <div className="home-popular flex flex-wrap items-center gap-2">
-              <span className="text-xs font-medium text-white/60">Phổ biến:</span>
-              {popularTags.map((tag) => (
-                <button
-                  key={tag}
-                  type="button"
-                  onClick={() => handleTagClick(tag)}
-                  className="rounded-lg border border-white/15 bg-white/5 text-xs font-medium text-white/80 transition-colors hover:bg-white/15 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                >
-                  {tag}
+                <div className="home-search-glass-field home-search-glass-field--location">
+                  <MapPin className="h-5 w-5" aria-hidden="true" />
+                  <span className="truncate text-sm">{location || 'Tất cả địa điểm'}</span>
+                  <ChevronDown className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  <select
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    aria-label="Chọn địa điểm"
+                    className="absolute inset-0 cursor-pointer opacity-0"
+                  >
+                    <option value="">Tất cả địa điểm</option>
+                    <option value="Hà Nội">Hà Nội</option>
+                    <option value="TP.HCM">TP.HCM</option>
+                    <option value="Đà Nẵng">Đà Nẵng</option>
+                    <option value="Remote">Remote</option>
+                  </select>
+                </div>
+
+                <button type="submit" className="home-search-glass-submit">
+                  Tìm kiếm
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </button>
-              ))}
-            </div>
-          </form>
-        </div>
+              </div>
 
-        <div className="home-hero-art relative hidden lg:block">
-          <img
-            src="/images/home/hero-briefcase.png"
-            alt="Minh họa tìm kiếm việc làm cho sinh viên"
-            width="640"
-            height="640"
-            decoding="async"
-            className="mx-auto h-auto w-full max-w-lg drop-shadow-2xl"
-          />
-        </div>
+              <div className="home-search-glass-tags">
+                <span>Phổ biến:</span>
+                {popularTags.map((tag) => (
+                  <button key={tag} type="button" onClick={() => handleTagClick(tag)}>
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </form>
+          </div>
+
+          <div className="home-hero-art relative hidden lg:block">
+            <img
+              src="/images/home/hero-briefcase.png"
+              alt="Minh họa tìm kiếm việc làm cho sinh viên"
+              width="640"
+              height="640"
+              decoding="async"
+              className="mx-auto h-auto w-full max-w-lg drop-shadow-2xl"
+            />
+          </div>
         </div>
       </div>
     </section>
