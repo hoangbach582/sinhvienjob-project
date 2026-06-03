@@ -4,9 +4,9 @@ import { GraduationCap, Menu, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const navLinks = [
-  { label: 'Tìm việc', href: '#tim-viec' },
-  { label: 'Công ty', href: '#cong-ty' },
-  { label: 'Dành cho Nhà tuyển dụng', href: '#nha-tuyen-dung' },
+  { label: 'Tìm việc', to: '/jobs' },
+  { label: 'Công ty', to: '/companies' },
+  { label: 'Dành cho Nhà tuyển dụng', to: '/employer/login' },
 ];
 
 function HomeNavbar() {
@@ -26,13 +26,13 @@ function HomeNavbar() {
 
         <div className="hidden items-center gap-8 lg:flex">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.label}
-              href={link.href}
+              to={link.to}
               className="text-sm font-medium text-white/80 transition-colors hover:text-white no-underline"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </div>
 
@@ -79,14 +79,14 @@ function HomeNavbar() {
         <div className="mx-4 rounded-2xl border border-white/10 bg-navy-deep/95 p-4 backdrop-blur lg:hidden">
           <div className="flex flex-col gap-1">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.label}
-                href={link.href}
+                to={link.to}
                 onClick={() => setOpen(false)}
                 className="rounded-lg px-3 py-2.5 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white no-underline"
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
             {!isLoggedIn && (
               <div className="mt-2 flex flex-col gap-2 border-t border-white/10 pt-3">

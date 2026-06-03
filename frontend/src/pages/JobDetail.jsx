@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import MainLayout from '../layouts/MainLayout';
 import { useAuth } from '../context/AuthContext';
-import SaveButton from '../components/SaveButton'; // Import SaveButton
+import HomeNavbar from '../components/home/HomeNavbar';
+import FooterNew from '../components/FooterNew';
+import JobDetailHero from '../components/job/JobDetailHero';
+import JobDetailContent from '../components/job/JobDetailContent';
+import { JobDetailStats, JobDetailSimilar } from '../components/job/JobDetailSections';
 
 function JobDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isLoggedIn, userRole } = useAuth(); 
-  
+  const { isLoggedIn, userRole } = useAuth();
+
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isApplying, setIsApplying] = useState(false);
@@ -17,26 +20,22 @@ function JobDetail() {
   // --- STATE DÀNH RIÊNG CHO MODAL ỨNG TUYỂN ---
   const [showApplyModal, setShowApplyModal] = useState(false);
   const [coverLetter, setCoverLetter] = useState('');
-  
+
   // Các state mới cho tính năng Upload nâng cao
   const [cvOption, setCvOption] = useState('profile'); // 'profile' hoặc 'upload'
   const [customCvFile, setCustomCvFile] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
-  
-  const [applyMessage, setApplyMessage] = useState({ text: '', type: '' });
 
-  useEffect(() => {
-    fetchJobDetail();
-  }, [id]);
+  const [applyMessage, setApplyMessage] = useState({ text: '', type: '' });
 
   const fetchJobDetail = async () => {
     try {
-      const token = localStorage.getItem('access_token') || localStorage.getItem('token'); 
+      const token = localStorage.getItem('access_token') || localStorage.getItem('token');
       const headers = {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       };
-      
+
       if (token) headers['Authorization'] = `Bearer ${token}`;
 
       const response = await fetch(`http://127.0.0.1:8000/api/jobs/${id}`, {
@@ -50,20 +49,25 @@ function JobDetail() {
         if (token) setHasApplied(data.has_applied);
         else setHasApplied(false);
       }
-    } catch (error) {
-      console.error("Lỗi khi tải chi tiết việc làm:", error);
+    } catch (err) {
+      console.error("Lỗi khi tải chi tiết việc làm:", err);
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchJobDetail();
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+
   const handleOpenApply = () => {
-    const token = localStorage.getItem('access_token') || localStorage.getItem('token'); 
+    const token = localStorage.getItem('access_token') || localStorage.getItem('token');
 
     if (!token || !isLoggedIn) {
       const confirmLogin = window.confirm("Bạn cần đăng nhập tài khoản Sinh viên để ứng tuyển. Đi đến trang Đăng nhập ngay?");
       if (confirmLogin) navigate('/login');
-      return; 
+      return;
     }
 
     if (userRole !== 'student') {
@@ -112,7 +116,7 @@ function JobDetail() {
     // Kiểm tra định dạng đuôi file
     const validExtensions = ['pdf', 'doc', 'docx'];
     const fileExtension = file.name.split('.').pop().toLowerCase();
-    
+
     if (!validExtensions.includes(fileExtension)) {
       setApplyMessage({ text: 'Chỉ hỗ trợ định dạng .pdf, .doc, .docx!', type: 'error' });
       return;
@@ -124,7 +128,7 @@ function JobDetail() {
 
   const submitApplication = async (e) => {
     e.preventDefault();
-    
+
     // Nếu chọn Upload mà chưa có file thì chặn lại
     if (cvOption === 'upload' && !customCvFile) {
       setApplyMessage({ text: 'Vui lòng chọn hoặc kéo thả file CV của bạn!', type: 'error' });
@@ -136,7 +140,7 @@ function JobDetail() {
 
     const formData = new FormData();
     if (coverLetter) formData.append('cover_letter', coverLetter);
-    
+
     // Chỉ đính kèm file nếu người dùng chọn tab Upload
     if (cvOption === 'upload' && customCvFile) {
       formData.append('cv_file', customCvFile);
@@ -152,17 +156,17 @@ function JobDetail() {
         },
         body: formData
       });
-      
+
       const data = await response.json();
 
       if (response.ok) {
         setApplyMessage({ text: data.message || "Ứng tuyển thành công!", type: 'success' });
-        setHasApplied(true); 
+        setHasApplied(true);
         setTimeout(() => setShowApplyModal(false), 2000);
       } else {
         setApplyMessage({ text: data.message || "Có lỗi xảy ra!", type: 'error' });
       }
-    } catch (error) {
+    } catch (_err) {
       setApplyMessage({ text: "Lỗi kết nối! Vui lòng thử lại.", type: 'error' });
     } finally {
       setIsApplying(false);
@@ -184,47 +188,73 @@ function JobDetail() {
     return types[type] || type;
   };
 
-  if (loading) return <div style={{ textAlign: 'center', padding: '50px' }}>Đang tải thông tin...</div>;
-  if (!job) return <div style={{ textAlign: 'center', padding: '50px' }}>Không tìm thấy công việc này!</div>;
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(135deg, #09144B 0%, #0B1656 45%, #1a0a3e 100%)' }}>
+        <HomeNavbar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-10 h-10 border-3 border-white/20 border-t-brand-light rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-white/60 text-sm">Đang tải thông tin...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!job) {
+    return (
+      <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(135deg, #09144B 0%, #0B1656 45%, #1a0a3e 100%)' }}>
+        <HomeNavbar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-white/60 text-lg mb-4">Không tìm thấy công việc này!</p>
+            <Link to="/jobs" className="text-brand-light hover:underline no-underline text-sm">← Quay lại danh sách việc làm</Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <MainLayout>
+    <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(135deg, #09144B 0%, #0B1656 45%, #1a0a3e 100%)' }}>
+      <HomeNavbar />
 
-      {/* --- KHỐI MODAL ỨNG TUYỂN CẢI TIẾN --- */}
+      {/* --- APPLY MODAL (Dark themed) --- */}
       {showApplyModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, backdropFilter: 'blur(4px)' }}>
-          <div style={{ backgroundColor: '#fff', width: '100%', maxWidth: '550px', borderRadius: '12px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)', overflow: 'hidden', border: '1px solid #E2E8F0', margin: '20px' }}>
-            
-            <div style={{ padding: '20px 24px', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#F8FAFC' }}>
-              <h3 style={{ margin: 0, color: '#0F172A', fontSize: '18px', fontWeight: 'bold' }}>Nộp CV Ứng Tuyển</h3>
-              <button onClick={() => setShowApplyModal(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#64748B' }}>✖</button>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, backdropFilter: 'blur(8px)' }}>
+          <div className="rounded-2xl overflow-hidden w-full max-w-[550px] mx-5" style={{ background: 'rgba(18,14,45,0.98)', border: '1px solid rgba(255,255,255,0.1)' }}>
+
+            <div className="px-6 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.03)' }}>
+              <h3 className="text-white font-bold text-lg m-0">Nộp CV Ứng Tuyển</h3>
+              <button onClick={() => setShowApplyModal(false)} className="text-white/40 hover:text-white bg-transparent border-none text-xl cursor-pointer transition-colors">✖</button>
             </div>
 
-            <div style={{ padding: '24px' }}>
+            <div className="p-6">
               {applyMessage.text && (
-                <div style={{ padding: '12px', marginBottom: '20px', borderRadius: '8px', backgroundColor: applyMessage.type === 'success' ? '#DCFCE7' : '#FEE2E2', color: applyMessage.type === 'success' ? '#16A34A' : '#DC2626', fontSize: '14px', fontWeight: 500, textAlign: 'center' }}>
+                <div className={`p-3 mb-5 rounded-xl text-sm font-medium text-center ${applyMessage.type === 'success' ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400'}`}>
                   {applyMessage.type === 'success' ? `✅ ${applyMessage.text}` : `❌ ${applyMessage.text}`}
                 </div>
               )}
 
-              <form onSubmit={submitApplication} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                
+              <form onSubmit={submitApplication} className="flex flex-col gap-6">
                 <div>
-                  <label style={{ display: 'block', fontSize: '14px', color: '#0F172A', marginBottom: '12px', fontWeight: 600 }}>
-                    Tệp CV đính kèm <span style={{color: '#EF4444'}}>*</span>
+                  <label className="block text-sm text-white/80 mb-3 font-semibold">
+                    Tệp CV đính kèm <span className="text-red-400">*</span>
                   </label>
 
                   {/* 2 LỰA CHỌN (TABS) */}
-                  <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
-                    <label style={{ flex: 1, cursor: 'pointer' }}>
-                      <input type="radio" name="cvOption" value="profile" checked={cvOption === 'profile'} onChange={() => setCvOption('profile')} style={{ display: 'none' }} />
-                      <div style={{ padding: '12px', textAlign: 'center', borderRadius: '8px', border: cvOption === 'profile' ? '2px solid #3B82F6' : '1px solid #CBD5E1', backgroundColor: cvOption === 'profile' ? '#EFF6FF' : '#F8FAFC', color: cvOption === 'profile' ? '#1D4ED8' : '#475569', fontWeight: cvOption === 'profile' ? 600 : 500, transition: 'all 0.2s' }}>
+                  <div className="flex gap-3 mb-4">
+                    <label className="flex-1 cursor-pointer">
+                      <input type="radio" name="cvOption" value="profile" checked={cvOption === 'profile'} onChange={() => setCvOption('profile')} className="hidden" />
+                      <div className={`p-3 text-center rounded-xl text-sm font-medium transition-all ${cvOption === 'profile' ? 'text-brand-light' : 'text-white/50'}`} style={{ background: cvOption === 'profile' ? 'rgba(130,63,235,0.15)' : 'rgba(255,255,255,0.05)', border: cvOption === 'profile' ? '1px solid rgba(130,63,235,0.4)' : '1px solid rgba(255,255,255,0.08)' }}>
                         📂 Dùng CV trong Hồ sơ
                       </div>
                     </label>
-                    <label style={{ flex: 1, cursor: 'pointer' }}>
-                      <input type="radio" name="cvOption" value="upload" checked={cvOption === 'upload'} onChange={() => setCvOption('upload')} style={{ display: 'none' }} />
-                      <div style={{ padding: '12px', textAlign: 'center', borderRadius: '8px', border: cvOption === 'upload' ? '2px solid #3B82F6' : '1px solid #CBD5E1', backgroundColor: cvOption === 'upload' ? '#EFF6FF' : '#F8FAFC', color: cvOption === 'upload' ? '#1D4ED8' : '#475569', fontWeight: cvOption === 'upload' ? 600 : 500, transition: 'all 0.2s' }}>
+                    <label className="flex-1 cursor-pointer">
+                      <input type="radio" name="cvOption" value="upload" checked={cvOption === 'upload'} onChange={() => setCvOption('upload')} className="hidden" />
+                      <div className={`p-3 text-center rounded-xl text-sm font-medium transition-all ${cvOption === 'upload' ? 'text-brand-light' : 'text-white/50'}`} style={{ background: cvOption === 'upload' ? 'rgba(130,63,235,0.15)' : 'rgba(255,255,255,0.05)', border: cvOption === 'upload' ? '1px solid rgba(130,63,235,0.4)' : '1px solid rgba(255,255,255,0.08)' }}>
                         💻 Tải lên CV mới
                       </div>
                     </label>
@@ -232,48 +262,40 @@ function JobDetail() {
 
                   {/* KHU VỰC HIỂN THỊ THEO LỰA CHỌN */}
                   {cvOption === 'profile' ? (
-                    <div style={{ padding: '16px', backgroundColor: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: '8px', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                      <span style={{ fontSize: '20px' }}>💡</span>
-                      <p style={{ margin: 0, fontSize: '13px', color: '#166534', lineHeight: '1.5' }}>
+                    <div className="p-4 rounded-xl flex items-start gap-3" style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)' }}>
+                      <span className="text-xl">💡</span>
+                      <p className="m-0 text-sm text-emerald-400/90 leading-relaxed">
                         Hệ thống sẽ tự động trích xuất <b>CV hiện tại trong Hồ sơ cá nhân</b> của bạn để gửi cho nhà tuyển dụng.
                       </p>
                     </div>
                   ) : (
-                    <div 
+                    <div
                       onDragOver={handleDragOver}
                       onDragLeave={handleDragLeave}
                       onDrop={handleDrop}
-                      style={{ 
-                        padding: '30px 20px', 
-                        border: isDragging ? '2px dashed #3B82F6' : '2px dashed #CBD5E1', 
-                        borderRadius: '8px', 
-                        backgroundColor: isDragging ? '#EFF6FF' : '#F8FAFC',
-                        textAlign: 'center',
-                        transition: 'all 0.2s ease',
-                        position: 'relative'
+                      className="p-8 rounded-xl text-center transition-all"
+                      style={{
+                        border: isDragging ? '2px dashed rgba(130,63,235,0.6)' : '2px dashed rgba(255,255,255,0.15)',
+                        background: isDragging ? 'rgba(130,63,235,0.1)' : 'rgba(255,255,255,0.03)',
                       }}
                     >
                       {customCvFile ? (
                         <div>
-                          <div style={{ fontSize: '32px', marginBottom: '8px' }}>📄</div>
-                          <p style={{ margin: '0 0 8px 0', color: '#0F172A', fontWeight: 600, fontSize: '14px' }}>{customCvFile.name}</p>
-                          <p style={{ margin: '0 0 16px 0', color: '#64748B', fontSize: '12px' }}>{(customCvFile.size / 1024 / 1024).toFixed(2)} MB</p>
-                          <span onClick={() => setCustomCvFile(null)} style={{ color: '#EF4444', fontSize: '13px', fontWeight: 500, cursor: 'pointer', padding: '6px 12px', border: '1px solid #FECACA', borderRadius: '6px', backgroundColor: '#FEF2F2' }}>
+                          <div className="text-3xl mb-2">📄</div>
+                          <p className="m-0 mb-1 text-white font-semibold text-sm">{customCvFile.name}</p>
+                          <p className="m-0 mb-4 text-white/40 text-xs">{(customCvFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                          <span onClick={() => setCustomCvFile(null)} className="text-red-400 text-xs font-medium cursor-pointer px-3 py-1.5 rounded-lg" style={{ border: '1px solid rgba(239,68,68,0.3)', background: 'rgba(239,68,68,0.1)' }}>
                             Xóa file này
                           </span>
                         </div>
                       ) : (
                         <div>
-                          <div style={{ fontSize: '32px', marginBottom: '12px', color: '#94A3B8' }}>☁️</div>
-                          <p style={{ margin: '0 0 8px 0', color: '#334155', fontWeight: 500, fontSize: '14px' }}>
-                            Kéo thả file CV của bạn vào đây
-                          </p>
-                          <p style={{ margin: '0 0 16px 0', color: '#64748B', fontSize: '12px' }}>
-                            Hỗ trợ định dạng .pdf, .doc, .docx (Dưới 5MB)
-                          </p>
-                          <label style={{ cursor: 'pointer', display: 'inline-block', backgroundColor: '#fff', color: '#3B82F6', border: '1px solid #BFDBFE', padding: '8px 16px', borderRadius: '6px', fontSize: '13px', fontWeight: 600 }}>
+                          <div className="text-3xl mb-3 text-white/30">☁️</div>
+                          <p className="m-0 mb-2 text-white/70 font-medium text-sm">Kéo thả file CV của bạn vào đây</p>
+                          <p className="m-0 mb-4 text-white/40 text-xs">Hỗ trợ định dạng .pdf, .doc, .docx (Dưới 5MB)</p>
+                          <label className="cursor-pointer inline-block px-4 py-2 rounded-lg text-sm font-semibold text-brand-light" style={{ background: 'rgba(130,63,235,0.15)', border: '1px solid rgba(130,63,235,0.3)' }}>
                             Hoặc chọn file từ máy
-                            <input type="file" accept=".pdf,.doc,.docx" onChange={handleFileChange} style={{ display: 'none' }} />
+                            <input type="file" accept=".pdf,.doc,.docx" onChange={handleFileChange} className="hidden" />
                           </label>
                         </div>
                       )}
@@ -282,20 +304,22 @@ function JobDetail() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '14px', color: '#0F172A', marginBottom: '8px', fontWeight: 600 }}>Thư ngỏ (Cover Letter)</label>
-                  <textarea 
-                    value={coverLetter} 
-                    onChange={(e) => setCoverLetter(e.target.value)} 
-                    placeholder="Viết một vài dòng giới thiệu bản thân và lý do bạn ứng tuyển..." 
-                    rows="4" 
-                    style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #CBD5E1', outline: 'none', fontSize: '14px', boxSizing: 'border-box', resize: 'vertical', fontFamily: 'inherit' }}
+                  <label className="block text-sm text-white/80 mb-2 font-semibold">Thư ngỏ (Cover Letter)</label>
+                  <textarea
+                    value={coverLetter}
+                    onChange={(e) => setCoverLetter(e.target.value)}
+                    placeholder="Viết một vài dòng giới thiệu bản thân và lý do bạn ứng tuyển..."
+                    rows="4"
+                    className="w-full p-3 rounded-xl text-sm text-white placeholder-white/30 outline-none resize-vertical box-border"
+                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', fontFamily: 'inherit' }}
                   />
                 </div>
 
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   disabled={isApplying || applyMessage.type === 'success'}
-                  style={{ width: '100%', padding: '14px', backgroundColor: '#10B981', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '16px', fontWeight: 'bold', cursor: (isApplying || applyMessage.type === 'success') ? 'not-allowed' : 'pointer', transition: 'background-color 0.2s' }}
+                  className="w-full py-3.5 rounded-xl text-white font-bold text-base border-none cursor-pointer transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: 'linear-gradient(135deg, #823feb, #6366f1)' }}
                 >
                   {isApplying ? 'Đang gửi hồ sơ...' : '🚀 Gửi CV Ngay'}
                 </button>
@@ -306,83 +330,27 @@ function JobDetail() {
       )}
       {/* --- KẾT THÚC KHỐI MODAL --- */}
 
-      <div style={{ maxWidth: '1000px', margin: '30px auto', padding: '0 20px' }}>
-        <Link to="/" style={{ display: 'inline-block', marginBottom: '20px', color: '#64748B', textDecoration: 'none', fontWeight: 500 }}>
-          ← Quay lại trang chủ
-        </Link>
-        <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
-          <div style={{ flex: 2 }}>
-            <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', marginBottom: '24px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                <h1 style={{ fontSize: '24px', color: '#0F172A', margin: 0, fontWeight: 700 }}>{job.title}</h1>
-                <SaveButton jobId={job.id} size={28} />
-              </div>
-              <div style={{ display: 'flex', gap: '24px', marginBottom: '20px', borderBottom: '1px solid #E2E8F0', paddingBottom: '20px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <span style={{ color: '#64748B', fontSize: '13px' }}>Mức lương</span>
-                  <span style={{ color: '#10B981', fontWeight: 600, fontSize: '16px' }}>💰 {formatSalary(job.salary_min, job.salary_max)}</span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <span style={{ color: '#64748B', fontSize: '13px' }}>Địa điểm</span>
-                  <span style={{ color: '#334155', fontWeight: 500, fontSize: '15px' }}>📍 {job.location}</span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <span style={{ color: '#64748B', fontSize: '13px' }}>Hình thức</span>
-                  <span style={{ color: '#334155', fontWeight: 500, fontSize: '15px' }}>⏱️ {translateType(job.type)}</span>
-                </div>
-              </div>
+      <JobDetailHero
+        job={job}
+        formatSalary={formatSalary}
+        translateType={translateType}
+        hasApplied={hasApplied}
+        isApplying={isApplying}
+        onApply={handleOpenApply}
+      />
 
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <button 
-                  onClick={handleOpenApply} 
-                  disabled={isApplying || hasApplied}
-                  style={{ 
-                    flex: 1, 
-                    padding: '14px', 
-                    backgroundColor: (isApplying || hasApplied) ? '#94A3B8' : '#3B82F6', 
-                    color: '#fff', 
-                    border: 'none', 
-                    borderRadius: '8px', 
-                    fontSize: '16px', 
-                    fontWeight: 600, 
-                    cursor: (isApplying || hasApplied) ? 'not-allowed' : 'pointer',
-                    transition: 'background-color 0.3s'
-                  }}
-                >
-                  {hasApplied ? '✅ Đã ứng tuyển' : (isApplying ? 'Đang gửi hồ sơ...' : 'Ứng tuyển ngay')}
-                </button>
-                <div style={{ display: 'flex', alignItems: 'center', padding: '0 4px', border: '1px solid #E2E8F0', borderRadius: '8px' }}>
-                  <SaveButton jobId={job.id} size={24} showText={true} />
-                </div>
-              </div>
-            </div>
+      <JobDetailContent job={job} />
 
-            <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-              <h3 style={{ fontSize: '18px', color: '#0F172A', marginBottom: '16px', borderLeft: '4px solid #3B82F6', paddingLeft: '12px' }}>Mô tả công việc</h3>
-              <p style={{ color: '#334155', lineHeight: '1.6', marginBottom: '24px', whiteSpace: 'pre-wrap' }}>{job.description}</p>
+      <JobDetailStats job={job} />
 
-              <h3 style={{ fontSize: '18px', color: '#0F172A', marginBottom: '16px', borderLeft: '4px solid #3B82F6', paddingLeft: '12px' }}>Yêu cầu ứng viên</h3>
-              <p style={{ color: '#334155', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>{job.requirements}</p>
-            </div>
-          </div>
+      <JobDetailSimilar
+        currentJobId={id}
+        formatSalary={formatSalary}
+        translateType={translateType}
+      />
 
-          <div style={{ flex: 1, backgroundColor: '#fff', padding: '24px', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
-              <div style={{ width: '64px', height: '64px', backgroundColor: '#F1F5F9', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', fontWeight: 700, color: '#3B82F6' }}>
-                {job.employer?.company_name?.substring(0, 2).toUpperCase() || 'CT'}
-              </div>
-              <h3 style={{ fontSize: '16px', color: '#0F172A', margin: 0, fontWeight: 700 }}>{job.employer?.company_name || 'Đang cập nhật'}</h3>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px', color: '#475569' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Hạn nộp hồ sơ:</span>
-                <span style={{ fontWeight: 600, color: '#E11D48' }}>{job.deadline ? new Date(job.deadline).toLocaleDateString('vi-VN') : 'Không thời hạn'}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </MainLayout>
+      <FooterNew />
+    </div>
   );
 }
 
