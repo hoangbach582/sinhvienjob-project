@@ -134,6 +134,33 @@ class EmployerProfileController extends Controller
         $jobs = $employer->jobs()->where('status', 'approved')->orderBy('created_at', 'desc')->get();
         $employer->setRelation('jobs', $jobs);
 
+        // Lấy các công ty tương tự (cùng ngành, ngoại trừ công ty hiện tại)
+        $similarCompanies = [];
+        if ($employer->industry) {
+            $similarCompanies = \App\Models\Employer::withCount(['jobs' => function ($query) {
+                $query->where('status', 'approved');
+            }])
+            ->where('industry', $employer->industry)
+            ->where('id', '!=', $employer->id)
+            ->where('is_approved', true) // assuming only approved companies should be shown
+            ->limit(5)
+            ->get();
+        }
+        
+        // Nếu không có cùng ngành, lấy random các công ty khác
+        if (count($similarCompanies) === 0) {
+            $similarCompanies = \App\Models\Employer::withCount(['jobs' => function ($query) {
+                $query->where('status', 'approved');
+            }])
+            ->where('id', '!=', $employer->id)
+            ->inRandomOrder()
+            ->limit(5)
+            ->get();
+        }
+
+        // Đính kèm similar_companies vào response
+        $employer->similar_companies = $similarCompanies;
+
         return response()->json($employer);
     }
 }

@@ -18,7 +18,19 @@ class Employer extends Model
         'industry',
         'logo_url',
         'website',
-        'description'
+        'description',
+        'address',
+        'employee_count',
+        'founded_year',
+        'about',
+        'cover_image_url',
+        'benefits',
+        'gallery_images'
+    ];
+
+    protected $casts = [
+        'benefits' => 'array',
+        'gallery_images' => 'array'
     ];
 
     public function user()

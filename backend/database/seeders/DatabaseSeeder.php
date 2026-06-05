@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             IndustrySeeder::class,
+            EmployerDetailSeeder::class,
         ]);
     }
 }
