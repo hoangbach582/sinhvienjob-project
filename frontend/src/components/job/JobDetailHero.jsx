@@ -11,8 +11,8 @@ const STARS = Array.from({ length: 30 }, (_, i) => ({
   delay: ((i * 7 + 3) % 30) / 10,
 }));
 
-function JobDetailHero({ job, formatSalary, translateType, hasApplied, isApplying, onApply }) {
-  const applicantCount = job.applications_count || 128;
+function JobDetailHero({ job, formatSalary, translateType, hasApplied, isApplying, onApply, isSaved, onSaveJob, onShare }) {
+  const applicantCount = job.applications_count !== undefined ? job.applications_count : 0;
 
   return (
     <section className="relative overflow-hidden" style={{ paddingTop: '8rem', paddingBottom: '0', paddingLeft: '2rem', paddingRight: '2rem', minHeight:'0', background: 'linear-gradient(135deg, #09144B 0%, #0B1656 45%, #1a0a3e 100%)' }}>
@@ -73,11 +73,25 @@ function JobDetailHero({ job, formatSalary, translateType, hasApplied, isApplyin
               >
                 {hasApplied ? '✅ Đã ứng tuyển' : (isApplying ? 'Đang gửi...' : 'Ứng tuyển ngay')}
               </button>
-              <div className="flex items-center gap-2 rounded-xl px-4 py-2.5 cursor-pointer transition-colors hover:bg-white/15" style={{ border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.06)' }}>
-                <span className="text-white/70">♡</span>
-                <span className="text-white/80 text-sm font-medium">Lưu tin</span>
+              <div 
+                onClick={onSaveJob}
+                className="flex items-center gap-2 rounded-xl px-4 py-2.5 cursor-pointer transition-colors hover:bg-white/15" 
+                style={{ 
+                  border: isSaved ? '1px solid rgba(239, 68, 68, 0.5)' : '1px solid rgba(255,255,255,0.2)', 
+                  background: isSaved ? 'rgba(239, 68, 68, 0.1)' : 'rgba(255,255,255,0.06)' 
+                }}
+              >
+                <span className={isSaved ? "text-red-400" : "text-white/70"}>
+                  {isSaved ? '♥' : '♡'}
+                </span>
+                <span className={isSaved ? "text-red-400 text-sm font-medium" : "text-white/80 text-sm font-medium"}>
+                  {isSaved ? 'Đã lưu' : 'Lưu tin'}
+                </span>
               </div>
-              <button className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-white/80 text-sm font-medium bg-transparent cursor-pointer transition-colors hover:bg-white/15 border" style={{ borderColor: 'rgba(255,255,255,0.2)' }}>
+              <button 
+                onClick={onShare}
+                className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-white/80 text-sm font-medium bg-transparent cursor-pointer transition-colors hover:bg-white/15 border" style={{ borderColor: 'rgba(255,255,255,0.2)' }}
+              >
                 <Share2 className="w-4 h-4" /> Chia sẻ
               </button>
             </div>

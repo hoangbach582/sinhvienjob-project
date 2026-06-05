@@ -2986,6 +2986,20 @@ button.inline-flex.items-center.justify-center.gap-2.rounded-xl.px-8.py-3.text-w
   padding: 0.6rem 2.7rem
 }
 
-a.rounded-2xl.p-5.no-underline.transition-all.duration-300.hover\:-translate-y-1.group {
-    padding: 1rem 1rem 0 1rem;
+.flex.items-start.gap-3.mb-4 {
+    align-items: center;
+    margin-bottom: 0.4rem;
+}
+
+.w-12.h-12.rounded-xl.flex.items-center.justify-center.text-sm.font-bold.shrink-0 {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.flex.items-center.gap-4.text-xs.text-white\/60.mb-4 {
+  margin-bottom: 0.4rem;
+}
+
+a.rounded-2xl.p-4.no-underline.transition-all.duration-300.hover\:-translate-y-1.group.flex.flex-col.h-full {
+    padding: 1rem;
 }

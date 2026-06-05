@@ -183,7 +183,14 @@ function Companies() {
           }}
           className="mx-auto max-w-6xl relative z-10 flex flex-col items-center text-center"
         >
-          <div className="mb-8">
+          {/* Breadcrumb */}
+          <nav className="flex items-center gap-2 text-sm text-white/50 mb-6 w-full flex-wrap" style={{marginLeft: "0.5rem"}}>
+            <Link to="/" className="hover:text-white transition-colors no-underline text-white/50">Trang chủ</Link>
+            <span>›</span>
+            <span className="text-white/80">Công ty</span>
+          </nav>
+
+          <div className="mb-8 w-full">
             <div
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-4"
               style={{

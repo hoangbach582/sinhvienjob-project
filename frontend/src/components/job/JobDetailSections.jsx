@@ -100,14 +100,7 @@ function JobDetailSimilar({ currentJobId, formatSalary, translateType }) {
                     <h4 className="text-white font-bold text-sm mb-1 truncate group-hover:text-brand-light transition-colors">
                       {job.title}
                     </h4>
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-brand-light text-xs font-medium">
-                        {translateType(job.type)}
-                      </span>
-                      <span className="text-white/60 text-xs truncate">
-                        {job.employer?.company_name}
-                      </span>
-                    </div>
+                    
                   </div>
                   <div onClick={(e) => e.preventDefault()} className="shrink-0 pt-1">
                     <SaveButton jobId={job.id} size={18} variant="minimal" />

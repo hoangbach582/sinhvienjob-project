@@ -16,6 +16,7 @@ function JobDetail() {
   const [loading, setLoading] = useState(true);
   const [isApplying, setIsApplying] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
   // --- STATE DÀNH RIÊNG CHO MODAL ỨNG TUYỂN ---
   const [showApplyModal, setShowApplyModal] = useState(false);
@@ -47,8 +48,13 @@ function JobDetail() {
         if (response.ok) {
           const data = await response.json();
           setJob(data);
-          if (token) setHasApplied(data.has_applied);
-          else setHasApplied(false);
+          if (token) {
+            setHasApplied(data.has_applied);
+            setIsSaved(data.is_saved);
+          } else {
+            setHasApplied(false);
+            setIsSaved(false);
+          }
         }
       } catch (err) {
         console.error("Lỗi khi tải chi tiết việc làm:", err);
@@ -79,6 +85,61 @@ function JobDetail() {
     setApplyMessage({ text: '', type: '' });
     setCvOption('profile');
     setCustomCvFile(null);
+  };
+
+  const handleSaveJob = async () => {
+    const token = localStorage.getItem('access_token') || localStorage.getItem('token');
+    
+    if (!token || !isLoggedIn) {
+      const confirmLogin = window.confirm("Bạn cần đăng nhập tài khoản Sinh viên để lưu việc làm. Đi đến trang Đăng nhập ngay?");
+      if (confirmLogin) navigate('/login');
+      return;
+    }
+    
+    if (userRole !== 'student') {
+      alert("Chỉ tài khoản Sinh viên mới có quyền lưu việc làm!");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/jobs/${id}/save`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (response.ok) {
+        setIsSaved(prev => !prev);
+      } else {
+        alert("Có lỗi xảy ra khi lưu việc làm!");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Lỗi kết nối!");
+    }
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: job.title,
+          text: `Xem công việc ${job.title} trên SinhVienJob`,
+          url: url,
+        });
+      } catch (err) {
+        console.error("Lỗi chia sẻ:", err);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url);
+        alert("Đã sao chép đường dẫn vào bộ nhớ tạm!");
+      } catch (err) {
+        console.error("Lỗi sao chép:", err);
+      }
+    }
   };
 
   // --- HÀM XỬ LÝ KÉO THẢ VÀ KIỂM TRA FILE ---
@@ -337,6 +398,9 @@ function JobDetail() {
         hasApplied={hasApplied}
         isApplying={isApplying}
         onApply={handleOpenApply}
+        isSaved={isSaved}
+        onSaveJob={handleSaveJob}
+        onShare={handleShare}
       />
 
       <JobDetailContent job={job} />

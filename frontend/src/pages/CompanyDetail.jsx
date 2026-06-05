@@ -113,16 +113,15 @@ function CompanyDetail() {
     <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(135deg, #09144B 0%, #0B1656 45%, #1a0a3e 100%)' }}>
       <HomeNavbar />
 
-      <main className="company-detail-container">
-        {/* Back Link */}
-        <div className="mb-6">
-          <Link
-            to="/companies"
-            className="text-white/60 hover:text-white transition-colors text-sm font-medium inline-flex items-center gap-1.5 no-underline"
-          >
-            ← Quay lại danh sách công ty
-          </Link>
-        </div>
+      <main className="company-detail-container" style={{maxWidth: "1152px", margin: "0 auto", width: "100%", paddingLeft: "1rem", paddingRight: "1rem"}}>
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-2 text-sm text-white/50 mb-6 flex-wrap">
+          <Link to="/" className="hover:text-white transition-colors no-underline text-white/50">Trang chủ</Link>
+          <span>›</span>
+          <Link to="/companies" className="hover:text-white transition-colors no-underline text-white/50">Công ty</Link>
+          <span>›</span>
+          <span className="text-white/80 truncate max-w-[200px]">{company.company_name}</span>
+        </nav>
 
         {/* Hero Section Banner & Header */}
         <section

@@ -207,6 +207,13 @@ function Jobs() {
         />
 
         <div className="mx-auto max-w-6xl relative z-10">
+          {/* Breadcrumb */}
+          <nav className="flex items-center gap-2 text-sm text-white/50 mb-6 flex-wrap" style={{marginLeft: "0.5rem"}}>
+            <Link to="/" className="hover:text-white transition-colors no-underline text-white/50">Trang chủ</Link>
+            <span>›</span>
+            <span className="text-white/80">Tìm việc</span>
+          </nav>
+
           {/* Search Bar */}
           <form
             onSubmit={handleHeroSearch}
