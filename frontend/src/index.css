@@ -95,7 +95,7 @@ body{font-family:'Inter', system-ui, -apple-system, sans-serif;font-size:14px;ba
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-.app{max-width:960px;margin:0 auto}
+.app{max-width:1280px;margin:0 auto}
 .nav-tabs{display:flex;gap:4px;padding:12px 0 0;border-bottom:0.5px solid var(--color-border-tertiary);flex-wrap:wrap}
 .nav-tab{padding:7px 14px;border-radius:8px 8px 0 0;border:0.5px solid transparent;cursor:pointer;font-size:13px;color:var(--color-text-secondary);background:transparent;transition:all .15s}
 .nav-tab.active{background:var(--color-background-primary);border-color:var(--color-border-tertiary);border-bottom-color:var(--color-background-primary);color:var(--color-text-primary);font-weight:500}
@@ -154,7 +154,7 @@ body{font-family:'Inter', system-ui, -apple-system, sans-serif;font-size:14px;ba
 .table-wrap{border:0.5px solid var(--color-border-tertiary);border-radius:10px;overflow:hidden}
 table{width:100%;border-collapse:collapse;font-size:13px}
 thead{background:var(--color-background-secondary)}
-th{padding:9px 12px;text-align:left;font-weight:500;color:var(--color-text-secondary);font-size:12px}
+th{padding:9px 24px;text-align:left;font-weight:500;color:var(--color-text-secondary);font-size:12px}
 td{padding:9px 12px;border-top:0.5px solid var(--color-border-tertiary)}
 .avatar{width:32px;height:32px;border-radius:50%;background:#E6F1FB;color:#185FA5;display:inline-flex;align-items:center;justify-content:center;font-weight:500;font-size:12px}
 .progress{height:6px;background:var(--color-background-secondary);border-radius:3px;overflow:hidden}
@@ -2888,4 +2888,104 @@ button.flex.items-center.justify-center.gap-2.py-3.px-4.bg-white\/5.hover\:bg-wh
 
 button.absolute.inset-y-0.right-0.pr-4.flex.items-center.text-gray-500.hover\:text-gray-300 {
   margin-right: 0.8rem;
+}
+
+section.pt-28.pb-10.px-4.relative.overflow-hidden {
+    padding-top: 0;
+}
+
+section.pt-28.pb-10.px-4.relative.overflow-hidden {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-left: 3.6rem;
+    margin-top: 3.6rem;
+    min-height: 0;
+}
+
+form.flex.flex-col.sm\:flex-row.items-stretch.gap-3.rounded-2xl.p-3 {
+    padding: 2.4rem 1.6rem;
+}
+
+input.w-full.px-3.py-2\.5.rounded-xl.text-sm.text-white.placeholder-white\/30.outline-none.border.box-border,
+select.w-full.px-3.py-2\.5.rounded-xl.text-sm.text-white.outline-none.border.cursor-pointer.appearance-none.box-border {
+    height: 2.8rem;
+    padding-left: 1rem;
+}
+
+label.block.text-sm.text-white\/60.mb-2.font-medium {
+    margin-bottom: 0.4rem;
+}
+
+button.w-full.py-3.rounded-xl.text-white.font-semibold.text-sm.border-none.cursor-pointer.transition-all.hover\:opacity-90.flex.items-center.justify-center.gap-2.mt-1 {
+  height: 2.8rem;
+}
+
+.group.rounded-2xl.p-5.transition-all.duration-300.hover\:-translate-y-0\.5 {
+  padding: 1rem;
+}
+
+input.w-full.pl-9.pr-3.py-2\.5.rounded-xl.text-sm.text-white.placeholder-white\/30.outline-none.border.box-border,
+select.w-full.pl-9.pr-3.py-2\.5.rounded-xl.text-sm.text-white.outline-none.border.cursor-pointer.appearance-none.box-border {
+  padding: 0.8rem;
+}
+
+/* Custom CSS to stabilize CompanyDetail page layout structure */
+.company-detail-container {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 120px 24px 48px;
+  box-sizing: border-box;
+}
+
+.company-detail-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .company-detail-grid {
+    flex-direction: row;
+  }
+  .company-detail-left {
+    flex: 2;
+    min-width: 0;
+  }
+  .company-detail-right {
+    flex: 1;
+    min-width: 320px;
+    width: 320px;
+  }
+}
+
+.w-8.h-8.rounded-lg.flex.items-center.justify-center.text-xs.font-bold.shrink-0 {
+  width: 3.6rem;
+    height: 2.8rem;
+}
+
+span.text-white.font-semibold.text-base {
+  font-size: 1.2rem;
+}
+
+span.flex.items-center.gap-1\.5 {
+    padding: 0.6rem;
+    background: #36278b;
+    border-radius: 1rem;
+}
+
+button.inline-flex.items-center.justify-center.gap-2.rounded-xl.px-8.py-3.text-white.font-semibold.text-sm.border-none.cursor-pointer.transition-all.hover\:opacity-90.disabled\:opacity-60.disabled\:cursor-not-allowed
+{
+    padding: 0.6rem;
+}
+
+.flex.items-center.gap-2.rounded-xl.px-4.py-2\.5.cursor-pointer.transition-colors.hover\:bg-white\/15
+,button.flex.items-center.gap-2.rounded-xl.px-4.py-2\.5.text-white\/80.text-sm.font-medium.bg-transparent.cursor-pointer.transition-colors.hover\:bg-white\/15.border
+{
+  padding: 0.6rem 2.7rem
+}
+
+a.rounded-2xl.p-5.no-underline.transition-all.duration-300.hover\:-translate-y-1.group {
+    padding: 1rem 1rem 0 1rem;
 }

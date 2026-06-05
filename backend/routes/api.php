@@ -53,6 +53,9 @@ Route::get('/jobs', [JobController::class, 'index']);
 Route::get('/categories/job-types', [JobController::class, 'getCategories']);
 Route::get('/categories/industries', [JobController::class, 'getIndustries']);
 
+Route::get('/employers', [EmployerProfileController::class, 'publicIndex']);
+Route::get('/employers/{id}', [EmployerProfileController::class, 'publicShow']);
+
 // ==========================================
 // NHÓM 2: YÊU CẦU PHẢI CÓ TOKEN (ĐÃ ĐĂNG NHẬP)
 // ==========================================

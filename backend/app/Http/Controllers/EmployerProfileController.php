@@ -104,4 +104,37 @@ class EmployerProfileController extends Controller
             'employer' => $employer
         ]);
     }
+
+    /**
+     * Lấy danh sách công ty công khai kèm số việc làm đang tuyển
+     */
+    public function publicIndex(Request $request)
+    {
+        $employers = \App\Models\Employer::withCount(['jobs' => function ($query) {
+            $query->where('status', 'approved');
+        }])->orderBy('company_name', 'asc')->get();
+
+        return response()->json($employers);
+    }
+
+    /**
+     * Lấy chi tiết công ty công khai kèm danh sách việc làm
+     */
+    public function publicShow($id)
+    {
+        $employer = \App\Models\Employer::withCount(['jobs' => function ($query) {
+            $query->where('status', 'approved');
+        }])->find($id);
+
+        if (!$employer) {
+            return response()->json(['message' => 'Không tìm thấy công ty'], 404);
+        }
+
+        // Nạp danh sách công việc đã được duyệt
+        $jobs = $employer->jobs()->where('status', 'approved')->orderBy('created_at', 'desc')->get();
+        $employer->setRelation('jobs', $jobs);
+
+        return response()->json($employer);
+    }
 }
+

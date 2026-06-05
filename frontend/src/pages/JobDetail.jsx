@@ -5,7 +5,7 @@ import HomeNavbar from '../components/home/HomeNavbar';
 import FooterNew from '../components/FooterNew';
 import JobDetailHero from '../components/job/JobDetailHero';
 import JobDetailContent from '../components/job/JobDetailContent';
-import { JobDetailStats, JobDetailSimilar } from '../components/job/JobDetailSections';
+import { JobDetailSimilar } from '../components/job/JobDetailSections';
 
 function JobDetail() {
   const { id } = useParams();
@@ -28,37 +28,37 @@ function JobDetail() {
 
   const [applyMessage, setApplyMessage] = useState({ text: '', type: '' });
 
-  const fetchJobDetail = async () => {
-    try {
-      const token = localStorage.getItem('access_token') || localStorage.getItem('token');
-      const headers = {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      };
-
-      if (token) headers['Authorization'] = `Bearer ${token}`;
-
-      const response = await fetch(`http://127.0.0.1:8000/api/jobs/${id}`, {
-        method: 'GET',
-        headers: headers
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setJob(data);
-        if (token) setHasApplied(data.has_applied);
-        else setHasApplied(false);
-      }
-    } catch (err) {
-      console.error("Lỗi khi tải chi tiết việc làm:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchJobDetail = async () => {
+      try {
+        const token = localStorage.getItem('access_token') || localStorage.getItem('token');
+        const headers = {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        };
+
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const response = await fetch(`http://127.0.0.1:8000/api/jobs/${id}`, {
+          method: 'GET',
+          headers: headers
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setJob(data);
+          if (token) setHasApplied(data.has_applied);
+          else setHasApplied(false);
+        }
+      } catch (err) {
+        console.error("Lỗi khi tải chi tiết việc làm:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchJobDetail();
-  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [id]);
 
 
   const handleOpenApply = () => {
@@ -166,7 +166,7 @@ function JobDetail() {
       } else {
         setApplyMessage({ text: data.message || "Có lỗi xảy ra!", type: 'error' });
       }
-    } catch (_err) {
+    } catch {
       setApplyMessage({ text: "Lỗi kết nối! Vui lòng thử lại.", type: 'error' });
     } finally {
       setIsApplying(false);
@@ -191,7 +191,7 @@ function JobDetail() {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(135deg, #09144B 0%, #0B1656 45%, #1a0a3e 100%)' }}>
+      <div className="home-page min-h-screen flex flex-col " style={{ background: 'linear-gradient(135deg, #09144B 0%, #0B1656 45%, #1a0a3e 100%)' }}>
         <HomeNavbar />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
@@ -205,7 +205,7 @@ function JobDetail() {
 
   if (!job) {
     return (
-      <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(135deg, #09144B 0%, #0B1656 45%, #1a0a3e 100%)' }}>
+      <div className="home-page min-h-screen flex flex-col" style={{ background: 'linear-gradient(135deg, #09144B 0%, #0B1656 45%, #1a0a3e 100%)' }}>
         <HomeNavbar />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
@@ -218,7 +218,7 @@ function JobDetail() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(135deg, #09144B 0%, #0B1656 45%, #1a0a3e 100%)' }}>
+    <div className="home-page min-h-screen flex flex-col" style={{ background: 'linear-gradient(135deg, #09144B 0%, #0B1656 45%, #1a0a3e 100%)' }}>
       <HomeNavbar />
 
       {/* --- APPLY MODAL (Dark themed) --- */}
@@ -340,8 +340,6 @@ function JobDetail() {
       />
 
       <JobDetailContent job={job} />
-
-      <JobDetailStats job={job} />
 
       <JobDetailSimilar
         currentJobId={id}

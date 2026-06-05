@@ -22,7 +22,7 @@ function BenefitsSectionNew() {
             <p className="mt-4 max-w-md text-pretty leading-relaxed text-white/70">
               Chúng tôi đem lại những giải pháp thiết thực nhất để sinh viên bắt đầu hành trình sự nghiệp dễ dàng.
             </p>
-            <button
+            <button style={{padding: '0.6rem'}}
               type="button"
               onClick={() => navigate('/jobs')}
               className="mt-6 rounded-xl border-none bg-white px-6 py-3 text-sm font-semibold text-brand transition-colors hover:bg-white/90 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"

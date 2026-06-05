@@ -26,7 +26,8 @@ import EmployerApplicants from './pages/EmployerApplicants';
 import EmployerProfile from './pages/EmployerProfile'; 
 import EmployerSettings from './pages/EmployerSettings'; 
 import EmployerNotifications from './pages/EmployerNotifications';
-import Companies from './pages/Companies'; 
+import Companies from './pages/Companies';
+import CompanyDetail from './pages/CompanyDetail';
 
 import EmployerLayout from './layouts/EmployerLayout';
 import EmployerDashboard from './pages/EmployerDashboard'; 
@@ -70,6 +71,7 @@ function App() {
             <Route path="/build-cv" element={<BuildCV />} />
             <Route path="/settings" element={<StudentSettings />} />
             <Route path="/companies" element={<Companies />} />
+            <Route path="/companies/:id" element={<CompanyDetail />} />
             <Route path="/notifications" element={<Notifications />} />
 
             {/* Phân hệ Nhà tuyển dụng */}
