@@ -890,11 +890,17 @@ function CompanyDetail() {
                 {/* Logo and Name card */}
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 rounded-xl bg-white p-1.5 flex items-center justify-center shrink-0 shadow-lg border border-white/5 overflow-hidden">
-                    <img
-                      src={c.logo_url || c.logo}
-                      alt={c.company_name}
-                      className="w-full h-full object-contain"
-                    />
+                    {(c.logo_url || c.logo) ? (
+                      <img
+                        src={c.logo_url || c.logo}
+                        alt={c.company_name}
+                        className="w-full h-full object-contain"
+                      />
+                    ) : (
+                      <span className="text-navy text-sm font-bold">
+                        {c.company_name?.substring(0, 2).toUpperCase() || "CT"}
+                      </span>
+                    )}
                   </div>
                   <div className="min-w-0">
                     <h4 className="text-white font-bold text-xs truncate m-0">

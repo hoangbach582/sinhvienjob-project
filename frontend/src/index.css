@@ -3215,3 +3215,41 @@ a.rounded-2xl.p-4.no-underline.transition-all.duration-300.hover\:-translate-y-1
 button.company-btn-outline.px-5.py-3.rounded-xl.text-white\/90.font-medium.text-sm.cursor-pointer.flex.items-center.gap-2.border {
     padding: 1rem;
 }
+
+button.relative.group.flex.items-center.gap-2.px-5.py-2\.5.rounded-xl.border.border-white\/10.text-white.font-medium.text-sm.transition-all.hover\:-translate-y-0\.5.hover\:shadow-\[0_0_20px_\#8b5cf6\].overflow-hidden {
+    padding: 0.6rem;
+}
+
+button.p-2.rounded-lg.bg-purple-500.text-white.shadow-\[0_0_10px_\#8b5cf6\],
+button.p-2.rounded-lg.text-slate-400.hover\:text-white.transition-colors,
+button.p-2.rounded-lg.text-purple-400.hover\:text-purple-300.transition-colors {
+    padding: 0.4rem;
+    margin: 0.4rem;
+}
+
+button.w-full.flex.items-center.justify-between.p-4.hover\:bg-white\/5.transition-colors
+,button.w-full.flex.items-center.justify-center.gap-2.py-4.rounded-xl.border.border-dashed.border-white\/20.text-slate-400.hover\:text-purple-300.hover\:border-purple-500\/50.hover\:bg-purple-500\/10.transition-all.font-medium.text-sm.mt-2{
+  padding:1rem;
+  cursor:pointer;
+}
+
+textarea.w-full.rounded-lg.px-4.py-2\.5.text-sm.text-white.focus\:outline-none.transition-all.placeholder-slate-500.resize-y.focus\:border-\[\#8b5cf6\].focus\:shadow-\[0_0_0_3px_rgba\(139\,92\,246\,\.15\)\] {
+    margin-top: 1rem;
+    padding: 0.4rem;
+}
+
+h3.text-\[18px\].font-bold.text-white.print-text-dark.tracking-wide.mb-6 {
+  margin: 1rem 0;
+}
+h3.text-\[18px\].font-bold.text-white.print-text-dark.tracking-wide.mb-4 {
+  margin-bottom:1rem;
+}
+
+.rounded-xl.overflow-hidden.mb-3.transition-all {
+  margin-top:1rem;
+}
+
+span.px-3\.5.py-1\.5.rounded-lg.text-indigo-200.print-text-slate.text-\[13\.5px\].font-medium.print-bg-slate-light {
+  color:#000;
+  padding:0.2rem;
+}

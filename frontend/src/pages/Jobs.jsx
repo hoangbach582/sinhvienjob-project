@@ -579,28 +579,29 @@ function Jobs() {
                     />
                   </svg>
                 </div>
-                <div className="flex rounded-lg overflow-hidden">
+                <div className="flex rounded-lg overflow-hidden gap-2">
                   <button
                     onClick={() => setViewMode("list")}
-                    className={`p-2 border-none cursor-pointer transition-colors ${viewMode === "list" ? "bg-white/15 text-white" : "bg-transparent text-white/40 hover:text-white/70"}`}
+                    className={`p-2 border-none cursor-pointer transition-colors flex items-center justify-center ${viewMode === "list" ? "text-white" : "bg-transparent text-white/40 hover:text-white/70"}`}
                     style={{
                       padding: "0.8rem",
                       borderRadius: "0.4rem",
                       marginBottom: "0.2rem",
-                      marginRight: "0.6rem",
-                      backgroundColor: "#6530f1",
+                      backgroundColor: viewMode === "list" ? "#6530f1" : "transparent",
+                      border: viewMode === "list" ? "none" : "1px solid rgba(255,255,255,0.1)",
                     }}
                   >
                     <List className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setViewMode("grid")}
-                    className={`p-2 border-none cursor-pointer transition-colors ${viewMode === "grid" ? "bg-white/15 text-white" : "bg-transparent text-white/40 hover:text-white/70"}`}
+                    className={`p-2 border-none cursor-pointer transition-colors flex items-center justify-center ${viewMode === "grid" ? "text-white" : "bg-transparent text-white/40 hover:text-white/70"}`}
                     style={{
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      marginBottom: "0.2rem",
                       padding: "0.8rem",
                       borderRadius: "0.4rem",
+                      marginBottom: "0.2rem",
+                      backgroundColor: viewMode === "grid" ? "#6530f1" : "transparent",
+                      border: viewMode === "grid" ? "none" : "1px solid rgba(255,255,255,0.1)",
                     }}
                   >
                     <LayoutGrid className="w-4 h-4" />
@@ -668,11 +669,11 @@ function Jobs() {
                 </button>
               </div>
             ) : (
-              <div className="flex flex-col gap-4">
+              <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "flex flex-col gap-4"}>
                 {paginatedJobs.map((job) => (
                   <div
                     key={job.id}
-                    className="group rounded-2xl p-5 transition-all duration-300 hover:-translate-y-0.5"
+                    className="group rounded-2xl p-5 transition-all duration-300 hover:-translate-y-0.5 flex flex-col h-full"
                     style={{
                       background: "rgba(255,255,255,0.05)",
                       border: "1px solid rgba(255,255,255,0.08)",
@@ -690,29 +691,48 @@ function Jobs() {
                       e.currentTarget.style.boxShadow = "none";
                     }}
                   >
-                    <div className="flex gap-4 items-start">
-                      {/* Company Avatar */}
-                      <div
-                        className="w-14 h-14 rounded-xl flex items-center justify-center text-base font-bold shrink-0"
-                        style={{
-                          background:
-                            "linear-gradient(135deg, #823feb, #6366f1)",
-                          color: "white",
-                        }}
-                      >
-                        {job.employer?.company_name
-                          ?.substring(0, 2)
-                          .toUpperCase() || "CT"}
+                    <div className={`flex ${viewMode === "grid" ? "flex-col" : "items-start gap-4"} flex-1`}>
+                      {/* Company Avatar & Badges */}
+                      <div className={`flex justify-between items-start ${viewMode === "grid" ? "w-full mb-4" : "shrink-0"}`}>
+                        <div
+                          className="w-14 h-14 rounded-xl flex items-center justify-center text-base font-bold shrink-0"
+                          style={{
+                            background:
+                              "linear-gradient(135deg, #823feb, #6366f1)",
+                            color: "white",
+                          }}
+                        >
+                          {job.employer?.company_name
+                            ?.substring(0, 2)
+                            .toUpperCase() || "CT"}
+                        </div>
+                        {viewMode === "grid" && (
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`px-3 py-1 rounded-full text-xs font-semibold border ${getTypeBadgeColor(job.type)}`}
+                            >
+                              {translateType(job.type)}
+                            </span>
+                            <div onClick={(e) => e.stopPropagation()}>
+                              <SaveButton
+                                jobId={job.id}
+                                variant="minimal"
+                                size={18}
+                              />
+                            </div>
+                          </div>
+                        )}
                       </div>
 
                       {/* Job Info */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-3 mb-1">
+                      <div className="flex-1 min-w-0 flex flex-col justify-center">
+                        <div className={`flex ${viewMode === "grid" ? "flex-col" : "items-start justify-between gap-3 mb-1"}`}>
                           <div className="min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
                               <Link
                                 to={`/job/${job.id}`}
-                                className="text-white font-bold text-base hover:text-brand-light transition-colors no-underline truncate"
+                                className="text-white font-bold text-base hover:text-brand-light transition-colors no-underline truncate block"
+                                style={viewMode === "grid" ? { maxWidth: "100%" } : {}}
                               >
                                 {job.title}
                               </Link>
@@ -734,24 +754,26 @@ function Jobs() {
                             </Link>
                           </div>
 
-                          <div className="flex items-center gap-3 shrink-0">
-                            <span
-                              className={`px-3 py-1 rounded-full text-xs font-semibold border ${getTypeBadgeColor(job.type)}`}
-                            >
-                              {translateType(job.type)}
-                            </span>
-                            <div onClick={(e) => e.stopPropagation()}>
-                              <SaveButton
-                                jobId={job.id}
-                                variant="minimal"
-                                size={18}
-                              />
+                          {viewMode === "list" && (
+                            <div className="flex items-center gap-3 shrink-0">
+                              <span
+                                className={`px-3 py-1 rounded-full text-xs font-semibold border ${getTypeBadgeColor(job.type)}`}
+                              >
+                                {translateType(job.type)}
+                              </span>
+                              <div onClick={(e) => e.stopPropagation()}>
+                                <SaveButton
+                                  jobId={job.id}
+                                  variant="minimal"
+                                  size={18}
+                                />
+                              </div>
                             </div>
-                          </div>
+                          )}
                         </div>
 
-                        <div className="flex items-center justify-between mt-3">
-                          <div className="flex items-center gap-5 text-sm">
+                        <div className={`flex items-center justify-between ${viewMode === "grid" ? "mt-4" : "mt-3"}`}>
+                          <div className={`flex items-center gap-4 text-sm flex-wrap`}>
                             <span className="flex items-center gap-1.5 text-white/50">
                               <MapPin className="w-3.5 h-3.5" /> {job.location}
                             </span>
@@ -759,15 +781,27 @@ function Jobs() {
                               💰 {formatSalary(job.salary_min, job.salary_max)}
                             </span>
                           </div>
-                          <Link
-                            to={`/job/${job.id}`}
-                            className="flex items-center gap-1 text-sm text-white/50 hover:text-brand-light transition-colors no-underline font-medium"
-                          >
-                            Chi tiết <ArrowRight className="w-3.5 h-3.5" />
-                          </Link>
+                          {viewMode === "list" && (
+                            <Link
+                              to={`/job/${job.id}`}
+                              className="flex items-center gap-1 text-sm text-white/50 hover:text-brand-light transition-colors no-underline font-medium"
+                            >
+                              Chi tiết <ArrowRight className="w-3.5 h-3.5" />
+                            </Link>
+                          )}
                         </div>
                       </div>
                     </div>
+                    {viewMode === "grid" && (
+                      <div className="mt-4 pt-4 border-t border-white/10 flex justify-end">
+                        <Link
+                          to={`/job/${job.id}`}
+                          className="flex items-center gap-1 text-sm text-white/50 hover:text-brand-light transition-colors no-underline font-medium"
+                        >
+                          Chi tiết <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
