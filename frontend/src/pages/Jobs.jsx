@@ -14,6 +14,7 @@ import {
   List,
   LayoutGrid,
   GraduationCap,
+  Users,
 } from "lucide-react";
 import HomeNavbar from "../components/home/HomeNavbar";
 import FooterNew from "../components/FooterNew";
@@ -309,24 +310,6 @@ function Jobs() {
                 Tìm kiếm <ArrowRight className="w-4 h-4" />
               </button>
             </div>
-
-            {/* Popular Tags */}
-            <div className="flex items-center gap-3 mt-5 flex-wrap">
-              <span className="text-white/50 text-sm">Phổ biến:</span>
-              {popularTags.map((tag) => (
-                <button
-                  key={tag}
-                  onClick={() => handleTagClick(tag)}
-                  className="px-4 py-1.5 rounded-full text-sm text-white/80 border cursor-pointer transition-all hover:bg-white/15 hover:text-white"
-                  style={{
-                    background: "rgba(255,255,255,0.08)",
-                    borderColor: "rgba(255,255,255,0.15)",
-                  }}
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
           </form>
         </div>
       </section>
@@ -587,8 +570,12 @@ function Jobs() {
                       padding: "0.8rem",
                       borderRadius: "0.4rem",
                       marginBottom: "0.2rem",
-                      backgroundColor: viewMode === "list" ? "#6530f1" : "transparent",
-                      border: viewMode === "list" ? "none" : "1px solid rgba(255,255,255,0.1)",
+                      backgroundColor:
+                        viewMode === "list" ? "#6530f1" : "transparent",
+                      border:
+                        viewMode === "list"
+                          ? "none"
+                          : "1px solid rgba(255,255,255,0.1)",
                     }}
                   >
                     <List className="w-4 h-4" />
@@ -600,8 +587,12 @@ function Jobs() {
                       padding: "0.8rem",
                       borderRadius: "0.4rem",
                       marginBottom: "0.2rem",
-                      backgroundColor: viewMode === "grid" ? "#6530f1" : "transparent",
-                      border: viewMode === "grid" ? "none" : "1px solid rgba(255,255,255,0.1)",
+                      backgroundColor:
+                        viewMode === "grid" ? "#6530f1" : "transparent",
+                      border:
+                        viewMode === "grid"
+                          ? "none"
+                          : "1px solid rgba(255,255,255,0.1)",
                     }}
                   >
                     <LayoutGrid className="w-4 h-4" />
@@ -669,7 +660,13 @@ function Jobs() {
                 </button>
               </div>
             ) : (
-              <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "flex flex-col gap-4"}>
+              <div
+                className={
+                  viewMode === "grid"
+                    ? "grid grid-cols-1 md:grid-cols-2 gap-4"
+                    : "flex flex-col gap-4"
+                }
+              >
                 {paginatedJobs.map((job) => (
                   <div
                     key={job.id}
@@ -691,9 +688,13 @@ function Jobs() {
                       e.currentTarget.style.boxShadow = "none";
                     }}
                   >
-                    <div className={`flex ${viewMode === "grid" ? "flex-col" : "items-start gap-4"} flex-1`}>
+                    <div
+                      className={`flex ${viewMode === "grid" ? "flex-col" : "items-start gap-4"} flex-1`}
+                    >
                       {/* Company Avatar & Badges */}
-                      <div className={`flex justify-between items-start ${viewMode === "grid" ? "w-full mb-4" : "shrink-0"}`}>
+                      <div
+                        className={`flex justify-between items-start ${viewMode === "grid" ? "w-full mb-4" : "shrink-0"}`}
+                      >
                         <div
                           className="w-14 h-14 rounded-xl flex items-center justify-center text-base font-bold shrink-0"
                           style={{
@@ -726,13 +727,19 @@ function Jobs() {
 
                       {/* Job Info */}
                       <div className="flex-1 min-w-0 flex flex-col justify-center">
-                        <div className={`flex ${viewMode === "grid" ? "flex-col" : "items-start justify-between gap-3 mb-1"}`}>
+                        <div
+                          className={`flex ${viewMode === "grid" ? "flex-col" : "items-start justify-between gap-3 mb-1"}`}
+                        >
                           <div className="min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
                               <Link
                                 to={`/job/${job.id}`}
                                 className="text-white font-bold text-base hover:text-brand-light transition-colors no-underline truncate block"
-                                style={viewMode === "grid" ? { maxWidth: "100%" } : {}}
+                                style={
+                                  viewMode === "grid"
+                                    ? { maxWidth: "100%" }
+                                    : {}
+                                }
                               >
                                 {job.title}
                               </Link>
@@ -772,10 +779,17 @@ function Jobs() {
                           )}
                         </div>
 
-                        <div className={`flex items-center justify-between ${viewMode === "grid" ? "mt-4" : "mt-3"}`}>
-                          <div className={`flex items-center gap-4 text-sm flex-wrap`}>
+                        <div
+                          className={`flex items-center justify-between ${viewMode === "grid" ? "mt-4" : "mt-3"}`}
+                        >
+                          <div
+                            className={`flex items-center gap-4 text-sm flex-wrap`}
+                          >
                             <span className="flex items-center gap-1.5 text-white/50">
                               <MapPin className="w-3.5 h-3.5" /> {job.location}
+                            </span>
+                            <span className="flex items-center gap-1.5 text-white/50">
+                              <Users className="w-3.5 h-3.5" /> {job.vacancies ? `${job.vacancies} người` : 'Không giới hạn'}
                             </span>
                             <span className="flex items-center gap-1.5 text-amber-400 font-semibold">
                               💰 {formatSalary(job.salary_min, job.salary_max)}

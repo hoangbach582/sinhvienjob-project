@@ -38,6 +38,7 @@ function JobForm({ defaultValues, onSubmit, isSubmitting }) {
       return {
         title: '',
         type: 'full_time',
+        vacancies: '',
         location: 'Hà Nội',
         industry: 'IT & Phần mềm',
         experience: 'Không yêu cầu',
@@ -52,6 +53,7 @@ function JobForm({ defaultValues, onSubmit, isSubmitting }) {
     return {
       title: defaultValues.title || '',
       type: defaultValues.type || 'full_time',
+      vacancies: defaultValues.vacancies !== null && defaultValues.vacancies !== undefined ? defaultValues.vacancies.toString() : '',
       location: defaultValues.location || 'Hà Nội',
       industry: defaultValues.industry || 'IT & Phần mềm',
       experience: defaultValues.experience || 'Không yêu cầu',
@@ -136,6 +138,11 @@ function JobForm({ defaultValues, onSubmit, isSubmitting }) {
             <option value="internship">Internship</option>
             <option value="full_time">Full-time</option>
           </select>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Số lượng tuyển</label>
+          <input className="form-input" type="number" min="1" placeholder="Vd: 5" {...register('vacancies')} />
         </div>
         
         <div className="form-group">

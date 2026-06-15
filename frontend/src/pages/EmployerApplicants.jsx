@@ -43,6 +43,18 @@ const STATUS_FILTERS = [
 const StatusSelect = ({ currentStatus, onChange, isLoading }) => {
   const currentOption = STATUS_OPTIONS.find(opt => opt.value === currentStatus) || STATUS_OPTIONS[0];
 
+  // Tối ưu: Nếu đã được nhận thì hiển thị một badge cố định, không cho sửa nữa
+  if (currentStatus === 'accepted') {
+    return (
+      <div 
+        className={`inline-flex w-[150px] items-center justify-center border rounded-lg py-2 px-3 text-sm font-medium ${currentOption.color} cursor-not-allowed`} 
+        title="Trạng thái đã chốt, không thể thay đổi"
+      >
+        {currentOption.label}
+      </div>
+    );
+  }
+
   return (
     <div className="relative inline-block w-[150px]">
       <select
@@ -175,8 +187,87 @@ const NoteModal = ({ isOpen, onClose, initialNote, onSubmit, isSubmitting }) => 
   );
 };
 
+// Modal chi tiết ứng viên
+const ApplicantDetailModal = ({ isOpen, onClose, app }) => {
+  if (!isOpen || !app) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
+        <div className="flex justify-between items-center p-5 border-b">
+          <h3 className="font-semibold text-lg text-gray-900">Chi tiết ứng viên</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+            <X size={20} />
+          </button>
+        </div>
+        <div className="p-6 overflow-y-auto flex-1 custom-scrollbar space-y-6">
+          <div className="flex items-start gap-4">
+            {app.student_avatar ? (
+              <img 
+                src={app.student_avatar} 
+                alt={app.student_name}
+                className="w-16 h-16 rounded-full object-cover shadow-sm border border-gray-200 shrink-0"
+              />
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xl font-bold shrink-0 shadow-sm border border-blue-200">
+                {(app.student_name || 'U').charAt(0).toUpperCase()}
+              </div>
+            )}
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">{app.student_name}</h2>
+              <div className="mt-1 space-y-1 text-sm text-gray-600">
+                <p><span className="font-medium text-gray-700">Email:</span> {app.student_email}</p>
+                <p><span className="font-medium text-gray-700">Số điện thoại:</span> {app.student_phone}</p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="font-semibold text-gray-900 mb-2">Giới thiệu bản thân</h4>
+            <div className="bg-gray-50 p-4 rounded-lg text-sm text-gray-700 border border-gray-100 whitespace-pre-wrap">
+              {app.student_bio}
+            </div>
+          </div>
+
+          <div>
+            <h4 className="font-semibold text-gray-900 mb-2">Thư ngỏ (Cover Letter)</h4>
+            <div className="bg-blue-50 p-4 rounded-lg text-sm text-gray-700 border border-blue-100 whitespace-pre-wrap">
+              {app.cover_letter || 'Ứng viên không đính kèm thư ngỏ.'}
+            </div>
+          </div>
+
+          <div>
+            <h4 className="font-semibold text-gray-900 mb-2">Hồ sơ đính kèm (CV)</h4>
+            {app.cv_url ? (
+              <a 
+                href={app.cv_url} 
+                target="_blank" 
+                rel="noreferrer" 
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white text-blue-600 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all border border-gray-200 shadow-sm"
+              >
+                <FileText size={16} />
+                Xem / Tải xuống CV
+              </a>
+            ) : (
+              <p className="text-sm text-gray-500">Ứng viên không có CV.</p>
+            )}
+          </div>
+        </div>
+        <div className="p-4 border-t bg-gray-50 flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Đóng
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Hàng ứng viên trong bảng
-const ApplicantRow = ({ app, jobs, onStatusChange, isUpdatingStatus, onOpenRejectModal, onOpenNoteModal }) => {
+const ApplicantRow = ({ app, jobs, onStatusChange, isUpdatingStatus, onOpenRejectModal, onOpenNoteModal, onOpenDetailModal }) => {
   const jobTitle = app.job?.title || jobs.find(j => j.id === app.job_id)?.title || 'Vị trí không xác định';
   
   const handleStatusSelect = (newStatus) => {
@@ -189,7 +280,11 @@ const ApplicantRow = ({ app, jobs, onStatusChange, isUpdatingStatus, onOpenRejec
 
   return (
     <tr className="hover:bg-gray-50/70 transition-colors group">
-      <td className="py-4 px-4 min-w-[240px]">
+      <td 
+        className="py-4 px-4 min-w-[240px] cursor-pointer"
+        onClick={() => onOpenDetailModal(app)}
+        title="Nhấn để xem chi tiết ứng viên"
+      >
         <div className="flex items-center gap-3">
           {app.student_avatar ? (
             <img 
@@ -325,6 +420,7 @@ export default function EmployerApplicants() {
   // Modal states
   const [rejectModalData, setRejectModalData] = useState(null); // { applicant: null }
   const [noteModalData, setNoteModalData] = useState(null); // { applicant: null }
+  const [detailModalData, setDetailModalData] = useState(null); // { applicant: null }
 
   // Queries
   const { data: jobs = [] } = useQuery({
@@ -496,6 +592,7 @@ export default function EmployerApplicants() {
                     isUpdatingStatus={updateStatusMutation.isPending && updateStatusMutation.variables?.id === app.id}
                     onOpenRejectModal={(applicant) => setRejectModalData({ applicant })}
                     onOpenNoteModal={(applicant) => setNoteModalData({ applicant })}
+                    onOpenDetailModal={(applicant) => setDetailModalData({ applicant })}
                   />
                 ))}
               </tbody>
@@ -518,6 +615,12 @@ export default function EmployerApplicants() {
         initialNote={noteModalData?.applicant?.employer_notes}
         onSubmit={handleNoteSubmit}
         isSubmitting={updateNoteMutation.isPending}
+      />
+
+      <ApplicantDetailModal
+        isOpen={!!detailModalData}
+        onClose={() => setDetailModalData(null)}
+        app={detailModalData?.applicant}
       />
     </div>
   );

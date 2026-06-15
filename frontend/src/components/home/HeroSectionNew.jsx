@@ -1,41 +1,57 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowRight, ChevronDown, MapPin, Search, Star } from 'lucide-react';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { ArrowRight, ChevronDown, MapPin, Search, Star } from "lucide-react";
 
-const popularTags = ['ReactJS', 'Marketing', 'Part-time', 'Thực tập'];
+const popularTags = ["ReactJS", "Marketing", "Part-time", "Thực tập"];
 
 const generateStars = () =>
   [...Array(20)].map((_, i) => ({
-    top: `${((i * 17 + 7) % 100)}%`,
-    left: `${((i * 23 + 11) % 100)}%`,
+    top: `${(i * 17 + 7) % 100}%`,
+    left: `${(i * 23 + 11) % 100}%`,
     width: `${(i % 3) + 2}px`,
     height: `${(i % 3) + 2}px`,
-    '--duration': `${2.5 + (i % 5) * 0.6}s`,
-    '--delay': `${(i % 8) * 0.4}s`,
+    "--duration": `${2.5 + (i % 5) * 0.6}s`,
+    "--delay": `${(i % 8) * 0.4}s`,
   }));
 
 const initialStars = generateStars();
 
-function HeroSectionNew({ keyword, setKeyword, location, setLocation, handleSearch }) {
+function HeroSectionNew({
+  keyword,
+  setKeyword,
+  location,
+  setLocation,
+  handleSearch,
+}) {
   const navigate = useNavigate();
 
   const handleTagClick = (tag) => {
     const params = new URLSearchParams();
-    params.append('keyword', tag);
-    if (location) params.append('location', location);
+    params.append("keyword", tag);
+    if (location) params.append("location", location);
     navigate(`/jobs?${params.toString()}`);
   };
 
   return (
     <section className="home-hero relative overflow-hidden bg-navy-deep">
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-navy-deep via-navy to-navy-deep" aria-hidden="true" />
-      <div className="pointer-events-none absolute -right-20 top-10 h-[28rem] w-[28rem] rounded-full bg-brand/30 blur-[120px]" aria-hidden="true" />
-      <div className="pointer-events-none absolute -left-24 top-40 h-80 w-80 rounded-full bg-brand-light/20 blur-[120px]" aria-hidden="true" />
+      <div
+        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-navy-deep via-navy to-navy-deep"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute -right-20 top-10 h-[28rem] w-[28rem] rounded-full bg-brand/30 blur-[120px]"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute -left-24 top-40 h-80 w-80 rounded-full bg-brand-light/20 blur-[120px]"
+        aria-hidden="true"
+      />
       <div
         className="pointer-events-none absolute inset-0 opacity-20"
         style={{
-          backgroundImage: 'radial-gradient(rgba(255,255,255,0.28) 1px, transparent 1px)',
-          backgroundSize: '28px 28px',
+          backgroundImage:
+            "radial-gradient(rgba(255,255,255,0.28) 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
         }}
         aria-hidden="true"
       />
@@ -47,22 +63,26 @@ function HeroSectionNew({ keyword, setKeyword, location, setLocation, handleSear
 
       <div className="home-hero-shell relative mx-auto">
         <div className="home-hero-badge inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 text-xs font-medium text-white/90">
-          <Star className="h-3.5 w-3.5 fill-warning text-warning" aria-hidden="true" />
-          Nền Tảng Tìm Việc Làm Sinh Viên Số 1 Việt Nam
+          <Star
+            className="h-3.5 w-3.5 fill-warning text-warning"
+            aria-hidden="true"
+          />
+          Nền Tảng Tìm Việc Làm Cho Sinh Viên
         </div>
 
         <div className="home-hero-grid grid grid-cols-1 items-center lg:grid-cols-2">
           <div className="home-hero-copy text-center lg:text-left">
             <h1 className="text-pretty font-extrabold leading-tight text-white">
               Tìm kiếm việc làm <br className="hidden lg:block" />
-              phù hợp cho{' '}
+              phù hợp cho{" "}
               <span className="bg-gradient-to-r from-brand-light to-brand bg-clip-text text-transparent">
                 Sinh Viên
               </span>
             </h1>
 
             <p className="mx-auto text-pretty leading-relaxed text-white/70 lg:mx-0">
-              Khám phá hàng ngàn công việc Part-time, Internship và cơ hội việc làm mới ra trường đã được kiểm duyệt nghiêm ngặt.
+              Khám phá hàng ngàn công việc Part-time, Internship và cơ hội việc
+              làm mới ra trường đã được kiểm duyệt nghiêm ngặt.
             </p>
 
             <form onSubmit={handleSearch} className="home-search-glass">
@@ -81,8 +101,13 @@ function HeroSectionNew({ keyword, setKeyword, location, setLocation, handleSear
 
                 <div className="home-search-glass-field home-search-glass-field--location">
                   <MapPin className="h-5 w-5" aria-hidden="true" />
-                  <span className="truncate text-sm">{location || 'Tất cả địa điểm'}</span>
-                  <ChevronDown className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  <span className="truncate text-sm">
+                    {location || "Địa điểm"}
+                  </span>
+                  <ChevronDown
+                    className="h-4 w-4 shrink-0"
+                    aria-hidden="true"
+                  />
                   <select
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
@@ -106,7 +131,11 @@ function HeroSectionNew({ keyword, setKeyword, location, setLocation, handleSear
               <div className="home-search-glass-tags">
                 <span>Phổ biến:</span>
                 {popularTags.map((tag) => (
-                  <button key={tag} type="button" onClick={() => handleTagClick(tag)}>
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => handleTagClick(tag)}
+                  >
                     {tag}
                   </button>
                 ))}

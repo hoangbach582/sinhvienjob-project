@@ -1,14 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import MainLayout from '../layouts/MainLayout';
-import { useNavigate } from 'react-router-dom';
-import { jobService } from '../services/jobService';
-import SaveButton from '../components/SaveButton';
+import React, { useState, useEffect } from "react";
+import HomeNavbar from "../components/home/HomeNavbar";
+import FooterNew from "../components/FooterNew";
+import { useNavigate } from "react-router-dom";
+import { jobService } from "../services/jobService";
+import { useSavedJobs } from "../context/SavedJobsContext";
+import { toast } from "react-hot-toast";
+import {
+  Bookmark,
+  MapPin,
+  Briefcase,
+  Calendar,
+  Eye,
+  Heart,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { vi } from "date-fns/locale";
 
 function SavedJobs() {
   const [savedJobs, setSavedJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({});
   const navigate = useNavigate();
+  const { toggleSave, isSaved } = useSavedJobs();
 
   const fetchSavedJobs = async (page = 1) => {
     try {
@@ -18,7 +33,7 @@ function SavedJobs() {
       setPagination({
         current_page: data.current_page,
         last_page: data.last_page,
-        total: data.total
+        total: data.total,
       });
     } catch (error) {
       console.error("Lỗi khi tải việc làm đã lưu:", error);
@@ -32,124 +47,256 @@ function SavedJobs() {
   }, []);
 
   const formatSalary = (min, max) => {
-    if (!min && !max) return 'Thỏa thuận';
+    if (!min && !max) return "Thỏa thuận";
     const minMil = min ? min / 1000000 : 0;
     const maxMil = max ? max / 1000000 : 0;
     if (minMil && maxMil) return `${minMil} - ${maxMil} triệu`;
     if (minMil) return `Từ ${minMil} triệu`;
     if (maxMil) return `Lên đến ${maxMil} triệu`;
-    return 'Thỏa thuận';
+    return "Thỏa thuận";
   };
 
   const translateType = (type) => {
     const types = {
-      'full_time': 'Toàn thời gian',
-      'part_time': 'Bán thời gian',
-      'internship': 'Thực tập sinh'
+      full_time: "Toàn thời gian",
+      part_time: "Bán thời gian",
+      internship: "Thực tập sinh",
     };
     return types[type] || type;
   };
 
+  const handleToggleSave = async (e, jobId) => {
+    e.stopPropagation();
+    try {
+      const newState = await toggleSave(jobId);
+      toast.success(newState ? "Đã lưu việc làm" : "Đã bỏ lưu việc làm");
+    } catch {
+      toast.error("Có lỗi xảy ra, vui lòng thử lại");
+    }
+  };
+
   return (
-    <MainLayout>
-      <div style={{ maxWidth: '1000px', margin: '40px auto', padding: '0 20px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-          <h2 style={{ fontSize: '24px', color: '#1E293B', fontWeight: 700 }}>Việc làm đã lưu</h2>
-          <span style={{ fontSize: '14px', color: '#64748B' }}>{pagination.total || 0} việc làm</span>
-        </div>
+    <div
+      className="home-page min-h-screen flex flex-col"
+      style={{
+        background:
+          "linear-gradient(135deg, #09144B 0%, #0B1656 45%, #1a0a3e 100%)",
+      }}
+    >
+      <HomeNavbar />
 
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: '100px 0', color: '#64748B' }}>
-            Đang tải danh sách...
+      <main
+        style={{ marginTop: "5rem", padding: "2rem 0" }}
+        className="flex-1 w-full pt-28 pb-16 px-4"
+      >
+        <div
+          style={{ maxWidth: "1130px", margin: "0 auto" }}
+          className="max-w-[1000px] mx-auto"
+        >
+          {/* Header */}
+          <div
+            style={{ marginBottom: "1.6rem" }}
+            className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 shrink-0 border border-white/10">
+                <Bookmark className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-white mb-1 m-0">
+                  Việc làm đã lưu
+                </h2>
+                <p className="text-white/60 text-sm m-0">
+                  Danh sách việc làm bạn đã lưu để xem sau
+                </p>
+              </div>
+            </div>
+            <div className="px-5 py-2.5 rounded-full bg-white/5 border border-white/10 text-white/90 text-sm font-semibold">
+              {pagination.total || 0} việc làm
+            </div>
           </div>
-        ) : savedJobs.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '100px 0', backgroundColor: '#F8FAFC', borderRadius: '12px' }}>
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>❤️</div>
-            <h3 style={{ fontSize: '18px', color: '#1E293B', marginBottom: '8px' }}>Bạn chưa lưu việc làm nào</h3>
-            <p style={{ color: '#64748B', marginBottom: '24px' }}>Hãy khám phá các cơ hội việc làm và lưu lại những tin bạn quan tâm.</p>
-            <button 
-              onClick={() => navigate('/jobs')}
-              style={{ backgroundColor: '#3B82F6', color: '#fff', padding: '12px 24px', borderRadius: '8px', border: 'none', fontWeight: 600, cursor: 'pointer' }}
-            >
-              Tìm việc ngay
-            </button>
-          </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px' }}>
-            {savedJobs.map((item) => {
-              const job = item.job;
-              if (!job) return null;
-              return (
-                <div 
-                  key={item.id} 
-                  onClick={() => navigate(`/job/${job.id}`)}
-                  style={{ border: '1px solid #E2E8F0', padding: '20px', borderRadius: '12px', display: 'flex', gap: '20px', backgroundColor: '#fff', cursor: 'pointer', transition: 'all 0.2s', position: 'relative', overflow: 'hidden' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#3B82F6'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.08)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.boxShadow = 'none'; }}
-                >  
-                  {/* Cột Logo */}
-                  <div style={{ width: '64px', height: '64px', backgroundColor: '#F1F5F9', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', fontWeight: 700, color: '#3B82F6', flexShrink: 0 }}>
-                    {job.employer?.company_name?.substring(0, 2).toUpperCase() || 'CT'}
-                  </div>
 
-                  {/* Cột Thông tin */}
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
-                      <h4 style={{ margin: 0, fontSize: '17px', color: '#0F172A', fontWeight: 700 }}>
-                        {job.title}
-                      </h4>
-                      <div onClick={(e) => e.stopPropagation()}>
-                        <SaveButton jobId={job.id} />
-                      </div>
-                    </div>
-
-                    <div style={{ fontSize: '14px', color: '#3B82F6', marginBottom: '12px', fontWeight: 600 }}>
-                      {job.employer?.company_name}
-                    </div>
-
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', fontSize: '13px', color: '#64748B' }}>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        📍 {job.location}
-                      </span>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#059669', fontWeight: 600 }}>
-                        💰 {formatSalary(job.salary_min, job.salary_max)}
-                      </span>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: '#F1F5F9', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 700 }}>
-                        {translateType(job.type)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Phân trang đơn giản */}
-        {!loading && pagination.last_page > 1 && (
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '40px' }}>
-            {Array.from({ length: pagination.last_page }, (_, i) => i + 1).map(page => (
+          {loading ? (
+            <div className="text-center py-20 text-white/60 font-medium">
+              Đang tải danh sách...
+            </div>
+          ) : savedJobs.length === 0 ? (
+            <div className="text-center py-20 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
+              <div className="text-5xl mb-4">❤️</div>
+              <h3 className="text-xl text-white font-bold mb-2 m-0">
+                Bạn chưa lưu việc làm nào
+              </h3>
+              <p className="text-white/60 mb-6 m-0">
+                Hãy khám phá các cơ hội việc làm và lưu lại những tin bạn quan
+                tâm.
+              </p>
               <button
-                key={page}
-                onClick={() => fetchSavedJobs(page)}
+                onClick={() => navigate("/jobs")}
+                className="px-6 py-3 rounded-xl text-white font-semibold cursor-pointer border-none transition-all hover:opacity-90"
                 style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '8px',
-                  border: '1px solid #E2E8F0',
-                  backgroundColor: pagination.current_page === page ? '#3B82F6' : '#fff',
-                  color: pagination.current_page === page ? '#fff' : '#64748B',
-                  fontWeight: 600,
-                  cursor: 'pointer'
+                  background: "linear-gradient(135deg, #823feb, #6366f1)",
                 }}
               >
-                {page}
+                Tìm việc ngay
               </button>
-            ))}
-          </div>
-        )}
-      </div>
-    </MainLayout>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {savedJobs.map((item) => {
+                const job = item.job;
+                if (!job) return null;
+                const saved = isSaved(job.id);
+                return (
+                  <div
+                    key={item.id}
+                    onClick={() => navigate(`/job/${job.id}`)}
+                    className="group relative rounded-2xl p-5 md:p-6 flex flex-col md:flex-row gap-5 md:gap-6 cursor-pointer overflow-hidden transition-all duration-300"
+                    style={{
+                      padding: "2rem 1.2rem 0.6rem",
+                      marginBottom: "1rem",
+                      background: "rgba(255, 255, 255, 0.03)",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      backdropFilter: "blur(12px)",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor =
+                        "rgba(130, 63, 235, 0.4)";
+                      e.currentTarget.style.background =
+                        "rgba(255, 255, 255, 0.05)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor =
+                        "rgba(255, 255, 255, 0.08)";
+                      e.currentTarget.style.background =
+                        "rgba(255, 255, 255, 0.03)";
+                    }}
+                  >
+                    {/* Company Logo */}
+                    <div
+                      style={{
+                        width: "8rem",
+                        height: "8rem",
+                        background: "#36278b",
+                        fontSize: "2.4rem",
+                      }}
+                      className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-[#0B0F19] border border-white/5 flex items-center justify-center text-xl md:text-2xl font-bold text-blue-500 shrink-0 mt-5 md:mt-2 shadow-inner"
+                    >
+                      {job.employer?.company_name
+                        ?.substring(0, 2)
+                        .toUpperCase() || "CT"}
+                    </div>
+
+                    {/* Job Info */}
+                    <div className="flex-1 min-w-0 flex flex-col justify-between">
+                      <div>
+                        <div className="flex justify-between items-start gap-4 mb-2 mt-1 md:mt-0">
+                          <div className="flex items-center gap-3 flex-wrap">
+                            <span className="px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-xs font-semibold flex items-center gap-1.5">
+                              <Bookmark className="w-3 h-3" /> Đã lưu
+                            </span>
+                          </div>
+
+                          <button
+                            onClick={(e) => handleToggleSave(e, job.id)}
+                            className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors border border-white/10 cursor-pointer"
+                            title="Bỏ lưu"
+                          >
+                            <Heart
+                              className={`w-5 h-5 transition-colors ${saved ? "text-pink-500 fill-pink-500" : "text-white/40"}`}
+                            />
+                          </button>
+                        </div>
+
+                        <h4 className="text-lg font-bold text-white mb-2 leading-tight group-hover:text-indigo-400 transition-colors m-0">
+                          {job.title}
+                        </h4>
+                        <div className="text-purple-400 text-sm font-medium mb-4">
+                          {job.employer?.company_name}
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-3 text-sm mb-5">
+                          <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/5 text-white/70">
+                            <MapPin className="w-4 h-4 text-white/40" />{" "}
+                            {job.location}
+                          </span>
+                          <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-medium">
+                            <span className="text-base">💰</span>{" "}
+                            {formatSalary(job.salary_min, job.salary_max)}
+                          </span>
+                          <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/5 text-white/70 font-medium">
+                            {translateType(job.type)}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Footer of card */}
+                      <div
+                        style={{ marginTop: "1.4rem", padding: "0.6rem 0" }}
+                        className="pt-4 border-t border-white/10 flex items-center gap-4 text-xs text-white/40 flex-wrap"
+                      >
+                        <span className="flex items-center gap-1.5">
+                          <Calendar className="w-3.5 h-3.5" /> Đã đăng:{" "}
+                          {new Date(job.created_at).toLocaleDateString("vi-VN")}
+                        </span>
+                        <span className="w-1 h-1 rounded-full bg-white/20 hidden md:block"></span>
+                        <span className="flex items-center gap-1.5">
+                          <Eye className="w-3.5 h-3.5" /> Đã xem:{" "}
+                          {item.created_at 
+                            ? formatDistanceToNow(new Date(item.created_at), { addSuffix: true, locale: vi }).replace('khoảng ', '') 
+                            : 'Vừa xong'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Pagination */}
+          {!loading && pagination.last_page > 0 && (
+            <div className="flex items-center justify-center gap-2 mt-8" style={{ marginTop: '1rem' }}>
+              <button 
+                disabled={pagination.current_page === 1}
+                onClick={() => fetchSavedJobs(pagination.current_page - 1)}
+                className="w-9 h-9 rounded-lg flex items-center justify-center border-none cursor-pointer transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-white/60 hover:text-white" 
+                style={{ background: 'rgba(255, 255, 255, 0.06)' }}
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              {Array.from(
+                { length: pagination.last_page },
+                (_, i) => i + 1,
+              ).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => fetchSavedJobs(page)}
+                  className="w-9 h-9 rounded-lg flex items-center justify-center border-none cursor-pointer text-sm font-semibold transition-all"
+                  style={{
+                    background: pagination.current_page === page ? 'linear-gradient(135deg, rgb(130, 63, 235), rgb(99, 102, 241))' : 'rgba(255, 255, 255, 0.06)',
+                    color: pagination.current_page === page ? 'white' : 'rgba(255, 255, 255, 0.6)'
+                  }}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button 
+                disabled={pagination.current_page === pagination.last_page}
+                onClick={() => fetchSavedJobs(pagination.current_page + 1)}
+                className="w-9 h-9 rounded-lg flex items-center justify-center border-none cursor-pointer transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-white/60 hover:text-white" 
+                style={{ background: 'rgba(255, 255, 255, 0.06)' }}
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+        </div>
+      </main>
+
+      <FooterNew />
+    </div>
   );
 }
 

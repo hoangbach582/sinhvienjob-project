@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 import JobForm from '../components/JobForm';
 import { jobService } from '../services/jobService';
 
@@ -9,7 +10,6 @@ function EditJob() {
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -23,7 +23,7 @@ function EditJob() {
         }
 
         setJob(data);
-      } catch (err) {
+      } catch (_err) {
         setError('Không thể tải thông tin tin tuyển dụng hoặc bạn không có quyền sửa.');
       } finally {
         setLoading(false);
@@ -36,10 +36,9 @@ function EditJob() {
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     setError('');
-    setSuccess('');
     try {
       await jobService.updateJob(id, data);
-      setSuccess('Cập nhật tin tuyển dụng thành công!');
+      toast.success('Cập nhật tin tuyển dụng thành công. Vui lòng chờ duyệt!');
       setTimeout(() => {
         navigate('/employer/posted-jobs');
       }, 1500);
@@ -47,11 +46,11 @@ function EditJob() {
       if (err.response?.data?.errors) {
         const errors = err.response.data.errors;
         const firstErrorKey = Object.keys(errors)[0];
-        setError(errors[firstErrorKey][0]);
+        toast.error(errors[firstErrorKey][0]);
       } else if (err.response?.data?.message) {
-        setError(err.response.data.message);
+        toast.error(err.response.data.message);
       } else {
-        setError(`Lỗi: ${err.message || 'Không thể kết nối đến máy chủ.'}`);
+        toast.error(`Lỗi: ${err.message || 'Không thể kết nối đến máy chủ.'}`);
       }
     } finally {
       setIsSubmitting(false);
@@ -75,18 +74,6 @@ function EditJob() {
   return (
     <div style={{ maxWidth: '640px' }}>
       <p className="section-title">Chỉnh sửa tin tuyển dụng</p>
-      
-      {error && (
-        <div style={{ padding: '12px', backgroundColor: '#FDECEC', color: '#E24B4A', borderRadius: '4px', fontSize: '13px', marginBottom: '16px' }}>
-          {error}
-        </div>
-      )}
-
-      {success && (
-        <div style={{ padding: '12px', backgroundColor: '#EAF3DE', color: '#3B6D11', borderRadius: '4px', fontSize: '13px', marginBottom: '16px' }}>
-          {success}
-        </div>
-      )}
 
       <JobForm 
         defaultValues={job} 

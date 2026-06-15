@@ -89,9 +89,10 @@ export const jobService = {
     return response.data;
   },
 
-  // Cập nhật trạng thái ứng viên
-  updateApplicationStatus: async (applicationId, status) => {
-    const response = await api.patch(`/employer/applications/${applicationId}`, { status });
+  // Cập nhật trạng thái ứng viên (hoặc thêm ghi chú)
+  updateApplicationStatus: async (applicationId, status, extraData = {}) => {
+    const payload = status !== undefined ? { status, ...extraData } : { ...extraData };
+    const response = await api.patch(`/employer/applications/${applicationId}`, payload);
     return response.data;
   },
 

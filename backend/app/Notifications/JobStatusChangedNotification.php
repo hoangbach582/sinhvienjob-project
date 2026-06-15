@@ -43,19 +43,23 @@ class JobStatusChangedNotification extends Notification implements ShouldQueue
         $statusLabels = [
             'pending' => 'Đang chờ',
             'reviewing' => 'Đang xem xét',
-            'interviewed' => 'Đã phỏng vấn',
+            'interview' => 'Mời phỏng vấn',
             'rejected' => 'Bị từ chối',
-            'hired' => 'Đã trúng tuyển',
+            'accepted' => 'Được nhận',
         ];
 
         $statusText = $statusLabels[$this->status] ?? $this->status;
-
-        return (new MailMessage)
+        $message = (new MailMessage)
                     ->subject('Cập nhật trạng thái ứng tuyển: ' . $this->job->title)
                     ->greeting('Chào ' . $notifiable->name . '!')
-                    ->line('Trạng thái hồ sơ của bạn cho vị trí "' . $this->job->title . '" đã được cập nhật thành: ' . $statusText)
-                    ->action('Xem chi tiết', url('/applications/me'))
-                    ->line('Chúc bạn may mắn!');
+                    ->line('Trạng thái hồ sơ của bạn cho vị trí "' . $this->job->title . '" đã được cập nhật thành: ' . $statusText);
+                    
+        if ($this->status === 'rejected' && $this->application->reject_reason) {
+            $message->line('Lý do: ' . $this->application->reject_reason);
+        }
+
+        return $message->action('Xem chi tiết', url('/applications/me'))
+                       ->line('Chúc bạn may mắn!');
     }
 
     /**
@@ -68,19 +72,24 @@ class JobStatusChangedNotification extends Notification implements ShouldQueue
         $statusLabels = [
             'pending' => 'Đang chờ',
             'reviewing' => 'Đang xem xét',
-            'interviewed' => 'Đã phỏng vấn',
+            'interview' => 'Mời phỏng vấn',
             'rejected' => 'Bị từ chối',
-            'hired' => 'Đã trúng tuyển',
+            'accepted' => 'Được nhận',
         ];
 
         $statusText = $statusLabels[$this->status] ?? $this->status;
+        $message = "Hồ sơ ứng tuyển vị trí {$this->job->title} đã chuyển sang trạng thái: {$statusText}";
+        
+        if ($this->status === 'rejected' && $this->application->reject_reason) {
+            $message .= ". Lý do: {$this->application->reject_reason}";
+        }
 
         return [
             'application_id' => $this->application->id,
             'job_id' => $this->job->id,
             'job_title' => $this->job->title,
             'status' => $this->status,
-            'message' => "Hồ sơ ứng tuyển vị trí {$this->job->title} đã chuyển sang trạng thái: {$statusText}",
+            'message' => $message,
             'action_url' => "/applications/me",
         ];
     }

@@ -95,7 +95,7 @@ function FooterNew() {
     <>
       <footer id="nha-tuyen-dung" className="bg-navy-deep text-white font-body">
         <div
-          style={{ padding: "24px 67px" }}
+          style={{ padding: "24px 0px" }}
           className="mx-auto max-w-7xl px-[67px] py-14"
         >
           <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">

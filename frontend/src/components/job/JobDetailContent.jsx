@@ -84,8 +84,9 @@ function JobDetailContent({ job }) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {[
                   { label: 'Cấp bậc', value: 'Intern', icon: <GraduationCap className="w-4 h-4" /> },
-                  { label: 'Kinh nghiệm', value: 'Không yêu cầu', icon: <Clock className="w-4 h-4" /> },
+                  { label: 'Kinh nghiệm', value: job.experience || 'Không yêu cầu', icon: <Clock className="w-4 h-4" /> },
                   { label: 'Học vấn', value: 'Đại học', icon: <Award className="w-4 h-4" /> },
+                  { label: 'Số lượng tuyển', value: job.vacancies ? `${job.vacancies} người` : 'Không giới hạn', icon: <Users className="w-4 h-4" /> },
                 ].map((item, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.875rem' }}>
                     <span style={{ color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>{item.icon} {item.label}</span>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Briefcase, Heart, MapPin, Sparkles } from 'lucide-react';
+import { ArrowRight, Briefcase, Heart, MapPin, Sparkles, Users } from 'lucide-react';
 import SaveButton from '../SaveButton';
 
 const tabs = [
@@ -38,10 +38,16 @@ function JobCard({ job, navigate, formatSalary, translateType }) {
       <p className="mt-1 text-sm text-muted-foreground">{companyName}</p>
 
       <div className="mt-4 flex items-center justify-between gap-3">
-        <span className="flex min-w-0 items-center gap-1 text-sm text-muted-foreground">
-          <MapPin className="h-4 w-4 shrink-0" aria-hidden="true" />
-          <span className="truncate">{job.location}</span>
-        </span>
+        <div className="flex min-w-0 items-center gap-3">
+          <span className="flex min-w-0 items-center gap-1 text-sm text-muted-foreground">
+            <MapPin className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <span className="truncate">{job.location}</span>
+          </span>
+          <span className="flex min-w-0 items-center gap-1 text-sm text-muted-foreground">
+            <Users className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <span className="truncate">{job.vacancies ? `${job.vacancies} người` : 'Không giới hạn'}</span>
+          </span>
+        </div>
         <span className="shrink-0 text-sm font-bold text-warning">
           {formatSalary(job.salary_min, job.salary_max)}
         </span>

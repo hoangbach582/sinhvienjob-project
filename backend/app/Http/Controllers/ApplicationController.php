@@ -26,13 +26,19 @@ class ApplicationController extends Controller
             return response()->json(['message' => 'Không tìm thấy hồ sơ sinh viên của bạn!'], 400);
         }
 
-        // 4. Kiểm tra xem sinh viên này đã nộp đơn vào công việc này chưa?
-        $exists = Application::where('job_id', $jobId)
-                             ->where('student_id', $studentProfile->id)
-                             ->first();
+        $job = \App\Models\Job::findOrFail($jobId);
 
-        if ($exists) {
-            return response()->json(['message' => 'Bạn đã nộp CV cho công việc này rồi!'], 400);
+        // 4. Kiểm tra xem sinh viên này đã nộp đơn vào công việc nào của công ty này chưa?
+        $appliedToSameEmployer = Application::whereHas('job', function($q) use ($job) {
+            $q->where('employer_id', $job->employer_id);
+        })->where('student_id', $studentProfile->id)->first();
+
+        if ($appliedToSameEmployer) {
+            if ($appliedToSameEmployer->job_id == $jobId) {
+                return response()->json(['message' => 'Bạn đã nộp CV cho công việc này rồi!'], 400);
+            } else {
+                return response()->json(['message' => 'Bạn đã nộp hồ sơ vào một vị trí khác của công ty này rồi! Mỗi ứng viên chỉ được ứng tuyển 1 vị trí tại cùng một công ty.'], 400);
+            }
         }
 
         // 5. Validate dữ liệu gửi lên từ Modal (File CV và Thư ngỏ)
@@ -66,7 +72,7 @@ class ApplicationController extends Controller
         ]);
 
         // 8. Thông báo cho nhà tuyển dụng
-        $job = $application->job;
+        // Job đã được load ở trên
         $employerUser = $job->employer->user;
         $employerUser->notify(new \App\Notifications\JobAppliedNotification($application));
 
@@ -115,15 +121,49 @@ class ApplicationController extends Controller
             return response()->json(['message' => 'Bạn không có quyền cập nhật hồ sơ này!'], 403);
         }
 
+        // Tối ưu: Nếu hồ sơ đã ở trạng thái "Được nhận", không cho phép sửa trạng thái nữa
+        if ($application->status === 'accepted' && $request->has('status') && $request->status !== 'accepted') {
+            return response()->json(['message' => 'Hồ sơ này đã được chốt (Được nhận), không thể thay đổi trạng thái khác!'], 400);
+        }
+
         $request->validate([
-            'status' => 'required|in:pending,reviewing,interviewed,rejected,hired'
+            'status' => 'nullable|in:pending,reviewing,interview,rejected,accepted',
+            'employer_notes' => 'nullable|string|max:1000',
+            'reject_reason' => 'nullable|string|max:1000',
         ]);
 
-        $application->update(['status' => $request->status]);
+        $updateData = [];
+        if ($request->has('status')) {
+            $updateData['status'] = $request->status;
+        }
+        if ($request->has('employer_notes')) {
+            $updateData['employer_notes'] = $request->employer_notes;
+        }
+        if ($request->has('reject_reason')) {
+            $updateData['reject_reason'] = $request->reject_reason;
+        }
+
+        if (!empty($updateData)) {
+            $application->update($updateData);
+
+            // Tối ưu: Kiểm tra số lượng đã tuyển so với vacancies
+            if (isset($updateData['status']) && $updateData['status'] === 'accepted') {
+                $job = $application->job;
+                $acceptedCount = \App\Models\Application::where('job_id', $job->id)
+                                            ->where('status', 'accepted')
+                                            ->count();
+                // Nếu số lượng đã nhận >= số lượng cần tuyển, thì đóng job
+                if ($acceptedCount >= ($job->vacancies ?: 1)) {
+                    $job->update(['status' => 'closed']);
+                }
+            }
+        }
 
         // Thông báo cho sinh viên
-        $studentUser = $application->student->user;
-        $studentUser->notify(new \App\Notifications\JobStatusChangedNotification($application));
+        if ($request->has('status')) {
+            $studentUser = $application->student->user;
+            $studentUser->notify(new \App\Notifications\JobStatusChangedNotification($application));
+        }
 
         return response()->json([
             'message' => 'Cập nhật trạng thái thành công',
@@ -142,7 +182,7 @@ class ApplicationController extends Controller
 
         $employerId = $user->employer->id;
 
-        $query = Application::with(['job:id,title', 'student.user:id,name,email'])
+        $query = Application::with(['job:id,title', 'student', 'student.user:id,name,email'])
                             ->whereHas('job', function($q) use ($employerId) {
                                 $q->where('employer_id', $employerId);
                             });
@@ -167,11 +207,13 @@ class ApplicationController extends Controller
 
         $applications = $query->orderBy('created_at', 'desc')->get();
 
-        // Định dạng lại dữ liệu trả về cho frontend giống với dạng hiện tại
+        // Định dạng lại dữ liệu trả về cho frontend
         $formattedApplications = $applications->map(function($app) {
             $app->student_name = $app->student->user->name ?? 'Ứng viên';
             $app->student_email = $app->student->user->email ?? 'Email';
             $app->student_avatar = $app->student->avatar ?? null;
+            $app->student_phone = $app->student->phone ?? 'Chưa cập nhật';
+            $app->student_bio = $app->student->bio ?? 'Chưa có giới thiệu';
             return $app;
         });
 

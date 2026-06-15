@@ -17,7 +17,9 @@ class Application extends Model
         'student_id', // Dùng đúng student_id của bạn
         'cv_url',     // Bắt buộc phải có
         'cover_letter',// thư ngỏ
-        'status'
+        'status',
+        'employer_notes',
+        'reject_reason'
     ];
 
     // Móc nối với bảng Jobs

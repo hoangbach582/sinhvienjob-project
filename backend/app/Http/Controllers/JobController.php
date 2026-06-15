@@ -170,7 +170,10 @@ class JobController extends Controller
         
         Gate::authorize('update', $job);
 
-        $job->update($request->validated());
+        $data = $request->validated();
+        $data['status'] = 'pending';
+
+        $job->update($data);
 
         return response()->json(['message' => 'Cập nhật công việc thành công', 'job' => $job]);
     }

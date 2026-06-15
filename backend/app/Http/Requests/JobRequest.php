@@ -25,6 +25,7 @@ class JobRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'type' => 'required|in:internship,part_time,full_time',
+            'vacancies' => 'nullable|integer|min:1',
             'industry' => 'nullable|string|max:255',
             'salary_min' => 'nullable|numeric|min:0',
             'salary_max' => 'nullable|numeric|min:0|gte:salary_min',

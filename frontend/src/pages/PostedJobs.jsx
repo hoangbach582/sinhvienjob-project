@@ -7,10 +7,6 @@ function PostedJobs() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchJobs();
-  }, []);
-
   const fetchJobs = async () => {
     try {
       setLoading(true);
@@ -22,6 +18,10 @@ function PostedJobs() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchJobs();
+  }, []);
 
   const handleDelete = async (id) => {
     if (window.confirm('Bạn có chắc chắn muốn đóng/xóa tin này?')) {
@@ -73,6 +73,7 @@ function PostedJobs() {
               <tr>
                 <th>Tiêu đề</th>
                 <th>Loại</th>
+                <th>SL Tuyển</th>
                 <th>Hồ sơ</th>
                 <th>Hạn nộp</th>
                 <th>Trạng thái</th>
@@ -84,6 +85,7 @@ function PostedJobs() {
                 <tr key={job.id}>
                   <td>{job.title}</td>
                   <td>{getTypeBadge(job.type)}</td>
+                  <td>{job.vacancies || 'Không giới hạn'}</td>
                   <td>
                     {/* Link to view applications for this job */}
                     <Link to={`/employer/applicants?jobId=${job.id}`} style={{ color: '#3B6FE8', textDecoration: 'underline' }}>
