@@ -101,6 +101,12 @@ class JobController extends Controller
                 $query->where('salary_min', '>', 10000000);
             }
         }
+
+        // 5. Lọc theo NGÀNH NGHỀ
+        if ($request->has('industry') && $request->industry != '') {
+            $query->where('industry', $request->industry);
+        }
+        
         // Trả về danh sách, sắp xếp việc mới nhất lên đầu
         $jobs = $query->orderBy('created_at', 'desc')->get();
 

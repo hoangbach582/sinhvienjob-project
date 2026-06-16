@@ -37,13 +37,23 @@ function Jobs() {
   const initialLocation = searchParams.get("location") || "";
   const initialType = searchParams.get("type") || "";
   const initialSalary = searchParams.get("salary") || "";
+  const initialIndustry = searchParams.get("industry") || "";
 
   const [keyword, setKeyword] = useState(initialKeyword);
   const [location, setLocation] = useState(initialLocation);
   const [type, setType] = useState(initialType);
   const [salary, setSalary] = useState(initialSalary);
+  const [industry, setIndustry] = useState(initialIndustry);
+  
   const [searchKeyword, setSearchKeyword] = useState(initialKeyword);
   const [searchLocation, setSearchLocation] = useState(initialLocation);
+  
+  const [searchHistory, setSearchHistory] = useState(() => {
+    const saved = localStorage.getItem("jobSearchHistory");
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [industries, setIndustries] = useState([]);
 
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -55,7 +65,8 @@ function Jobs() {
     searchParams.get("keyword") ||
     searchParams.get("location") ||
     searchParams.get("type") ||
-    searchParams.get("salary");
+    searchParams.get("salary") ||
+    searchParams.get("industry");
 
   const fetchJobs = async () => {
     setLoading(true);
@@ -69,6 +80,8 @@ function Jobs() {
         params.append("type", searchParams.get("type"));
       if (searchParams.get("salary"))
         params.append("salary", searchParams.get("salary"));
+      if (searchParams.get("industry"))
+        params.append("industry", searchParams.get("industry"));
 
       const response = await fetch(
         `http://127.0.0.1:8000/api/jobs?${params.toString()}`,
@@ -84,6 +97,22 @@ function Jobs() {
     }
   };
 
+  const fetchIndustries = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/categories/industries");
+      if (response.ok) {
+        const data = await response.json();
+        setIndustries(data);
+      }
+    } catch (error) {
+      console.error("Lỗi tải danh sách ngành nghề:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchIndustries();
+  }, []);
+
   useEffect(() => {
     fetchJobs();
   }, [searchParams]);
@@ -95,6 +124,7 @@ function Jobs() {
     if (location) params.append("location", location);
     if (type) params.append("type", type);
     if (salary) params.append("salary", salary);
+    if (industry) params.append("industry", industry);
     setSearchParams(params);
     setCurrentPage(1);
   };
@@ -104,10 +134,18 @@ function Jobs() {
     const params = new URLSearchParams();
     if (searchKeyword) params.append("keyword", searchKeyword);
     if (searchLocation) params.append("location", searchLocation);
+    if (industry) params.append("industry", industry);
     setSearchParams(params);
     setKeyword(searchKeyword);
     setLocation(searchLocation);
     setCurrentPage(1);
+    
+    if (searchKeyword.trim()) {
+      const newHistory = [searchKeyword.trim(), ...searchHistory.filter(k => k !== searchKeyword.trim())].slice(0, 5);
+      setSearchHistory(newHistory);
+      localStorage.setItem("jobSearchHistory", JSON.stringify(newHistory));
+    }
+    setIsSearchFocused(false);
   };
 
   const handleTagClick = (tag) => {
@@ -115,8 +153,15 @@ function Jobs() {
     setKeyword(tag);
     const params = new URLSearchParams();
     params.append("keyword", tag);
+    if (searchLocation) params.append("location", searchLocation);
+    if (industry) params.append("industry", industry);
     setSearchParams(params);
     setCurrentPage(1);
+    
+    const newHistory = [tag, ...searchHistory.filter(k => k !== tag)].slice(0, 5);
+    setSearchHistory(newHistory);
+    localStorage.setItem("jobSearchHistory", JSON.stringify(newHistory));
+    setIsSearchFocused(false);
   };
 
   const clearFilter = () => {
@@ -124,6 +169,7 @@ function Jobs() {
     setLocation("");
     setType("");
     setSalary("");
+    setIndustry("");
     setSearchKeyword("");
     setSearchLocation("");
     setSearchParams({});
@@ -192,22 +238,34 @@ function Jobs() {
       <HomeNavbar />
 
       {/* Hero Search Section */}
-      <section className="pt-28 pb-10 px-4 relative overflow-hidden">
+      <section 
+        className="relative px-4"
+        style={{
+          minHeight: "auto",
+          paddingTop: "8rem",
+          paddingBottom: "3rem"
+        }}
+      >
         {/* Background decorative elements */}
-        <div
-          className="absolute top-20 right-10 w-72 h-72 rounded-full opacity-10"
-          style={{
-            background: "radial-gradient(circle, #823feb 0%, transparent 70%)",
-          }}
-        />
-        <div
-          className="absolute bottom-0 left-10 w-48 h-48 rounded-full opacity-8"
-          style={{
-            background: "radial-gradient(circle, #3B82F6 0%, transparent 70%)",
-          }}
-        />
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div
+            className="absolute top-20 right-10 w-72 h-72 rounded-full opacity-10"
+            style={{
+              background: "radial-gradient(circle, #823feb 0%, transparent 70%)",
+            }}
+          />
+          <div
+            className="absolute bottom-0 left-10 w-48 h-48 rounded-full opacity-8"
+            style={{
+              background: "radial-gradient(circle, #3B82F6 0%, transparent 70%)",
+            }}
+          />
+        </div>
 
-        <div className="mx-auto max-w-6xl relative z-10">
+        <div 
+          className="max-w-6xl relative z-10"
+          style={{ margin: "0 auto", width: "100%" }}
+        >
           {/* Breadcrumb */}
           <nav
             className="flex items-center gap-2 text-sm text-white/50 mb-6 flex-wrap"
@@ -223,42 +281,46 @@ function Jobs() {
             <span className="text-white/80">Tìm việc</span>
           </nav>
 
-          {/* Search Bar */}
-          <form
-            onSubmit={handleHeroSearch}
-            style={{
-              marginTop: "1.2rem",
-              background: "rgba(255,255,255,0.06)",
-              padding: "1.6rem 1.6rem 0.4rem",
-              border: "1px solid rgba(255,255,255,0.1)",
-              backdropFilter: "blur(12px)",
-            }}
-          >
-            <div className="flex flex-col sm:flex-row items-stretch gap-3 rounded-2xl p-3">
+          {/* Search Bar Wrapper */}
+          <div className="relative z-50">
+            <form
+              onSubmit={handleHeroSearch}
+              style={{
+                marginTop: "1.2rem",
+                background: "rgba(255,255,255,0.06)",
+                padding: "1.6rem",
+                border: "1px solid rgba(255,255,255,0.1)",
+                backdropFilter: "blur(12px)",
+                borderRadius: "1.5rem"
+              }}
+            >
+            <div className="flex flex-col sm:flex-row items-stretch gap-3 rounded-2xl p-0">
               <div
-                className="flex items-center gap-3 flex-1 rounded-xl px-4 py-3"
+                className="flex items-center gap-3 flex-1 rounded-xl px-4 py-3 transition-all focus-within:bg-white/10 focus-within:ring-1 focus-within:ring-brand/50"
                 style={{
                   background: "rgba(255,255,255,0.07)",
                   paddingLeft: "1rem",
                 }}
               >
-                <Search className="w-5 h-5 text-white/40 shrink-0" />
+                <Search className="w-5 h-5 text-brand-light/70 shrink-0" />
                 <input
                   type="text"
                   placeholder="Vị trí tuyển dụng, kỹ năng, công ty..."
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
+                  onFocus={() => setIsSearchFocused(true)}
+                  onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
                   className="w-full bg-transparent border-none outline-none text-white placeholder-white/40 text-sm"
                 />
               </div>
               <div
-                className="flex items-center gap-3 rounded-xl px-4 py-3 sm:w-56"
+                className="flex items-center gap-3 rounded-xl px-4 py-3 sm:w-56 transition-all focus-within:bg-white/10 focus-within:ring-1 focus-within:ring-brand/50"
                 style={{
                   background: "rgba(255,255,255,0.07)",
                   padding: "0 1rem",
                 }}
               >
-                <MapPin className="w-5 h-5 text-white/40 shrink-0" />
+                <MapPin className="w-5 h-5 text-brand-light/70 shrink-0" />
                 <select
                   value={searchLocation}
                   onChange={(e) => setSearchLocation(e.target.value)}
@@ -300,7 +362,7 @@ function Jobs() {
               </div>
               <button
                 type="submit"
-                className="flex items-center justify-center gap-2 rounded-xl px-8 py-3 text-white font-semibold text-sm border-none cursor-pointer transition-all hover:opacity-90"
+                className="flex items-center justify-center gap-2 rounded-xl px-8 py-3 text-white font-semibold text-sm border-none cursor-pointer transition-all hover:shadow-[0_0_20px_rgba(130,63,235,0.4)] hover:-translate-y-0.5"
                 style={{
                   background: "linear-gradient(135deg, #823feb, #6366f1)",
                   marginTop: "0",
@@ -310,7 +372,54 @@ function Jobs() {
                 Tìm kiếm <ArrowRight className="w-4 h-4" />
               </button>
             </div>
-          </form>
+            
+            </form>
+
+            {/* Search Dropdown / History */}
+            {isSearchFocused && (
+              <div className="absolute top-full mt-2 left-0 right-0 bg-[#16103a] rounded-2xl border border-white/10 p-5 shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-[100]">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-white/60 text-sm font-medium flex items-center gap-2">
+                    <RotateCcw className="w-4 h-4" /> Lịch sử tìm kiếm
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {searchHistory.length > 0 ? (
+                    searchHistory.map((historyItem, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onMouseDown={() => handleTagClick(historyItem)}
+                        className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 text-white/80 text-sm cursor-pointer transition-colors"
+                      >
+                        {historyItem}
+                      </button>
+                    ))
+                  ) : (
+                    <span className="text-white/30 text-sm italic">Chưa có lịch sử tìm kiếm</span>
+                  )}
+                </div>
+                
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-white/60 text-sm font-medium flex items-center gap-2">
+                    <Search className="w-4 h-4" /> Gợi ý việc làm
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {popularTags.map((tag, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onMouseDown={() => handleTagClick(tag)}
+                      className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-brand/20 border border-white/10 hover:border-brand/50 text-brand-light text-sm cursor-pointer transition-all"
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
@@ -357,22 +466,33 @@ function Jobs() {
               className="flex flex-col gap-5"
               style={{ marginTop: "1rem" }}
             >
-              {/* Từ khóa */}
+              {/* Ngành nghề */}
               <div>
                 <label className="block text-sm text-white/60 mb-2 font-medium">
-                  Từ khóa
+                  Ngành nghề
                 </label>
-                <input
-                  type="text"
-                  placeholder="Tên việc, công ty..."
-                  value={keyword}
-                  onChange={(e) => setKeyword(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl text-sm text-white placeholder-white/30 outline-none border box-border"
-                  style={{
-                    background: "rgba(255,255,255,0.06)",
-                    borderColor: "rgba(255,255,255,0.1)",
-                  }}
-                />
+                <div className="relative">
+                  <select
+                    value={industry}
+                    onChange={(e) => setIndustry(e.target.value)}
+                    className="w-full px-3 py-2.5 rounded-xl text-sm text-white outline-none border cursor-pointer appearance-none box-border"
+                    style={{
+                      background: "rgba(255,255,255,0.06)",
+                      borderColor: "rgba(255,255,255,0.1)",
+                      WebkitAppearance: "none",
+                    }}
+                  >
+                    <option value="" style={{ background: "#1a1145" }}>
+                      Tất cả ngành nghề
+                    </option>
+                    {industries.map((ind) => (
+                      <option key={ind.id} value={ind.name} style={{ background: "#1a1145" }}>
+                        {ind.name}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-white/40 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
               </div>
 
               {/* Địa điểm */}
@@ -413,73 +533,58 @@ function Jobs() {
 
               {/* Hình thức */}
               <div>
-                <label className="block text-sm text-white/60 mb-2 font-medium">
+                <label className="block text-sm text-white/60 mb-3 font-medium">
                   Hình thức làm việc
                 </label>
-                <div className="relative">
-                  <select
-                    value={type}
-                    onChange={(e) => setType(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl text-sm text-white outline-none border cursor-pointer appearance-none box-border"
-                    style={{
-                      background: "rgba(255,255,255,0.06)",
-                      borderColor: "rgba(255,255,255,0.1)",
-                      WebkitAppearance: "none",
-                    }}
-                  >
-                    <option value="" style={{ background: "#1a1145" }}>
-                      Tất cả hình thức
-                    </option>
-                    <option value="full_time" style={{ background: "#1a1145" }}>
-                      Toàn thời gian
-                    </option>
-                    <option value="part_time" style={{ background: "#1a1145" }}>
-                      Bán thời gian
-                    </option>
-                    <option
-                      value="internship"
-                      style={{ background: "#1a1145" }}
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { value: "", label: "Tất cả" },
+                    { value: "full_time", label: "Toàn thời gian" },
+                    { value: "part_time", label: "Bán thời gian" },
+                    { value: "internship", label: "Thực tập sinh" },
+                  ].map((item) => (
+                    <button
+                      key={item.value}
+                      type="button"
+                      onClick={() => setType(item.value)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer border ${
+                        type === item.value
+                          ? "bg-brand/20 text-brand-light border-brand/50 shadow-[0_0_10px_rgba(130,63,235,0.2)]"
+                          : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10 hover:text-white/90"
+                      }`}
                     >
-                      Thực tập sinh
-                    </option>
-                  </select>
-                  <ChevronDown className="w-4 h-4 text-white/40 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      {item.label}
+                    </button>
+                  ))}
                 </div>
               </div>
 
               {/* Mức lương */}
               <div>
-                <label className="block text-sm text-white/60 mb-2 font-medium">
+                <label className="block text-sm text-white/60 mb-3 font-medium">
                   Mức lương
                 </label>
-                <div className="relative">
-                  <select
-                    value={salary}
-                    onChange={(e) => setSalary(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl text-sm text-white outline-none border cursor-pointer appearance-none box-border"
-                    style={{
-                      background: "rgba(255,255,255,0.06)",
-                      borderColor: "rgba(255,255,255,0.1)",
-                      WebkitAppearance: "none",
-                    }}
-                  >
-                    <option value="" style={{ background: "#1a1145" }}>
-                      Tất cả mức lương
-                    </option>
-                    <option value="under_3" style={{ background: "#1a1145" }}>
-                      Dưới 3 triệu
-                    </option>
-                    <option value="3_to_5" style={{ background: "#1a1145" }}>
-                      Từ 3 - 5 triệu
-                    </option>
-                    <option value="5_to_10" style={{ background: "#1a1145" }}>
-                      Từ 5 - 10 triệu
-                    </option>
-                    <option value="over_10" style={{ background: "#1a1145" }}>
-                      Trên 10 triệu
-                    </option>
-                  </select>
-                  <ChevronDown className="w-4 h-4 text-white/40 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { value: "", label: "Tất cả" },
+                    { value: "under_3", label: "Dưới 3 triệu" },
+                    { value: "3_to_5", label: "3 - 5 triệu" },
+                    { value: "5_to_10", label: "5 - 10 triệu" },
+                    { value: "over_10", label: "Trên 10 triệu" },
+                  ].map((item) => (
+                    <button
+                      key={item.value}
+                      type="button"
+                      onClick={() => setSalary(item.value)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer border ${
+                        salary === item.value
+                          ? "bg-amber-500/20 text-amber-400 border-amber-500/50 shadow-[0_0_10px_rgba(245,158,11,0.2)]"
+                          : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10 hover:text-white/90"
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
                 </div>
               </div>
 

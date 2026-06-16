@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { jobService } from '../services/jobService';
-import { Search, X, Briefcase, Calendar, FileText, User, MessageSquare, ChevronDown, XCircle } from 'lucide-react';
+import { Search, X, Briefcase, Calendar, FileText, User, MessageSquare, ChevronDown, XCircle, Mail, Phone } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 // -------------------------------------------------------------
@@ -192,73 +192,106 @@ const ApplicantDetailModal = ({ isOpen, onClose, app }) => {
   if (!isOpen || !app) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
-        <div className="flex justify-between items-center p-5 border-b">
-          <h3 className="font-semibold text-lg text-gray-900">Chi tiết ứng viên</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200 backdrop-blur-sm">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] border border-gray-100">
+        <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gray-50/50">
+          <h3 className="font-bold text-xl text-gray-900">Chi tiết ứng viên</h3>
+          <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors">
             <X size={20} />
           </button>
         </div>
-        <div className="p-6 overflow-y-auto flex-1 custom-scrollbar space-y-6">
-          <div className="flex items-start gap-4">
+        
+        <div className="p-6 overflow-y-auto flex-1 custom-scrollbar space-y-8">
+          {/* Header Profile Section */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 p-5 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 rounded-xl border border-blue-100/50">
             {app.student_avatar ? (
               <img 
                 src={app.student_avatar} 
                 alt={app.student_name}
-                className="w-16 h-16 rounded-full object-cover shadow-sm border border-gray-200 shrink-0"
+                className="w-20 h-20 rounded-full object-cover shadow-sm border-2 border-white shrink-0"
               />
             ) : (
-              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xl font-bold shrink-0 shadow-sm border border-blue-200">
+              <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center text-blue-600 text-2xl font-bold shrink-0 shadow-sm border-2 border-blue-50">
                 {(app.student_name || 'U').charAt(0).toUpperCase()}
               </div>
             )}
-            <div>
-              <h2 className="text-xl font-bold text-gray-900">{app.student_name}</h2>
-              <div className="mt-1 space-y-1 text-sm text-gray-600">
-                <p><span className="font-medium text-gray-700">Email:</span> {app.student_email}</p>
-                <p><span className="font-medium text-gray-700">Số điện thoại:</span> {app.student_phone}</p>
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">{app.student_name}</h2>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-sm">
+                <div className="flex items-center gap-2 text-gray-600">
+                  <Mail size={16} className="text-gray-400 shrink-0" />
+                  <span className="truncate">{app.student_email || 'Chưa cập nhật'}</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-600">
+                  <Phone size={16} className="text-gray-400 shrink-0" />
+                  <span>{app.student_phone || 'Chưa cập nhật'}</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <div>
-            <h4 className="font-semibold text-gray-900 mb-2">Giới thiệu bản thân</h4>
-            <div className="bg-gray-50 p-4 rounded-lg text-sm text-gray-700 border border-gray-100 whitespace-pre-wrap">
-              {app.student_bio}
+          <div className="space-y-6">
+            {/* Bio Section */}
+            <div>
+              <h4 className="font-semibold text-gray-900 flex items-center gap-2 mb-3">
+                <User size={18} className="text-blue-600" />
+                Giới thiệu bản thân
+              </h4>
+              <div className="bg-gray-50/80 p-5 rounded-xl text-sm text-gray-700 border border-gray-100 whitespace-pre-wrap leading-relaxed">
+                {app.student_bio || <span className="text-gray-400 italic">Chưa có thông tin giới thiệu.</span>}
+              </div>
             </div>
-          </div>
 
-          <div>
-            <h4 className="font-semibold text-gray-900 mb-2">Thư ngỏ (Cover Letter)</h4>
-            <div className="bg-blue-50 p-4 rounded-lg text-sm text-gray-700 border border-blue-100 whitespace-pre-wrap">
-              {app.cover_letter || 'Ứng viên không đính kèm thư ngỏ.'}
+            {/* Cover Letter Section */}
+            <div>
+              <h4 className="font-semibold text-gray-900 flex items-center gap-2 mb-3">
+                <MessageSquare size={18} className="text-green-600" />
+                Thư ngỏ (Cover Letter)
+              </h4>
+              <div className="bg-green-50/50 p-5 rounded-xl text-sm text-gray-700 border border-green-100 whitespace-pre-wrap leading-relaxed">
+                {app.cover_letter || <span className="text-gray-400 italic">Ứng viên không đính kèm thư ngỏ.</span>}
+              </div>
             </div>
-          </div>
 
-          <div>
-            <h4 className="font-semibold text-gray-900 mb-2">Hồ sơ đính kèm (CV)</h4>
-            {app.cv_url ? (
-              <a 
-                href={app.cv_url} 
-                target="_blank" 
-                rel="noreferrer" 
-                className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white text-blue-600 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all border border-gray-200 shadow-sm"
-              >
-                <FileText size={16} />
-                Xem / Tải xuống CV
-              </a>
-            ) : (
-              <p className="text-sm text-gray-500">Ứng viên không có CV.</p>
-            )}
+            {/* CV Section */}
+            <div>
+              <h4 className="font-semibold text-gray-900 flex items-center gap-2 mb-3">
+                <FileText size={18} className="text-purple-600" />
+                Hồ sơ đính kèm (CV)
+              </h4>
+              <div className="bg-purple-50/50 p-5 rounded-xl border border-purple-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-white rounded-lg shadow-sm border border-purple-100/50">
+                    <FileText size={24} className="text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900 text-sm">Sơ yếu lý lịch</p>
+                    <p className="text-xs text-gray-500">Định dạng PDF/DOCX</p>
+                  </div>
+                </div>
+                {app.cv_url ? (
+                  <a 
+                    href={app.cv_url} 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="inline-flex items-center justify-center gap-2 px-5 py-2 bg-white text-purple-700 rounded-lg text-sm font-semibold hover:bg-purple-50 transition-all border border-purple-200 shadow-sm hover:shadow"
+                  >
+                    Xem / Tải xuống
+                  </a>
+                ) : (
+                  <span className="text-sm text-gray-500 italic">Không có CV</span>
+                )}
+              </div>
+            </div>
           </div>
         </div>
-        <div className="p-4 border-t bg-gray-50 flex justify-end">
+        
+        <div className="p-5 border-t border-gray-100 bg-gray-50 flex justify-end">
           <button
             onClick={onClose}
-            className="px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors shadow-sm"
           >
-            Đóng
+            Đóng cửa sổ
           </button>
         </div>
       </div>
