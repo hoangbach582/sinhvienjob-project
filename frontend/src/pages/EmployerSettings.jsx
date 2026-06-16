@@ -165,26 +165,26 @@ function EmployerSettings() {
     });
   };
 
-  // Styles - Dùng màu xanh lá cho NTD
-  const glassCard = {
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+  // Styles - Light theme matching EmployerLayout
+  const cardStyle = {
+    backgroundColor: "#ffffff",
     borderRadius: "16px",
-    border: "1px solid rgba(255, 255, 255, 0.1)",
+    border: "1px solid #E2E8F0",
     padding: "32px",
-    backdropFilter: "blur(10px)",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
     marginBottom: "24px",
   };
 
   const dangerCard = {
-    ...glassCard,
-    backgroundColor: "rgba(239, 68, 68, 0.02)",
-    border: "1px solid rgba(239, 68, 68, 0.2)",
+    ...cardStyle,
+    backgroundColor: "#FEF2F2",
+    border: "1px solid #FECACA",
   };
 
   const sectionTitle = {
     fontSize: "18px",
     fontWeight: 600,
-    color: "#fff",
+    color: "#0F172A",
     marginBottom: "24px",
     display: "flex",
     alignItems: "center",
@@ -194,7 +194,7 @@ function EmployerSettings() {
   const labelStyle = {
     display: "block",
     fontSize: "14px",
-    color: "#94A3B8",
+    color: "#64748B",
     marginBottom: "8px",
     fontWeight: 500,
   };
@@ -210,9 +210,9 @@ function EmployerSettings() {
     padding: "12px 16px",
     paddingRight: "48px",
     borderRadius: "12px",
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    border: "1px solid rgba(255, 255, 255, 0.1)",
-    color: "#fff",
+    backgroundColor: "#ffffff",
+    border: "1px solid #CBD5E1",
+    color: "#334155",
     outline: "none",
     fontSize: "15px",
     transition: "all 0.2s",
@@ -223,7 +223,7 @@ function EmployerSettings() {
     right: "16px",
     background: "none",
     border: "none",
-    color: "#94A3B8",
+    color: "#64748B",
     cursor: "pointer",
     padding: 0,
     display: "flex",
@@ -250,7 +250,7 @@ function EmployerSettings() {
     justifyContent: "space-between",
     alignItems: "center",
     padding: "16px 0",
-    borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+    borderBottom: "1px solid #F1F5F9",
   };
 
   return (
@@ -274,14 +274,14 @@ function EmployerSettings() {
         >
           <div
             style={{
-              backgroundColor: "#1E293B",
+              backgroundColor: "#ffffff",
               padding: "32px",
               borderRadius: "20px",
               width: "90%",
               maxWidth: "340px",
               textAlign: "center",
-              border: "1px solid rgba(255,255,255,0.1)",
-              boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5)",
+              border: "1px solid #E2E8F0",
+              boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)",
             }}
           >
             <div
@@ -297,7 +297,7 @@ function EmployerSettings() {
             <h3
               style={{
                 margin: "0 0 8px 0",
-                color: "#fff",
+                color: "#0F172A",
                 fontSize: "20px",
                 fontWeight: "bold",
               }}
@@ -307,7 +307,7 @@ function EmployerSettings() {
             <p
               style={{
                 margin: "0 0 24px 0",
-                color: "#94A3B8",
+                color: "#64748B",
                 fontSize: "15px",
               }}
             >
@@ -344,13 +344,13 @@ function EmployerSettings() {
         >
           <div
             style={{
-              backgroundColor: "#1E293B",
+              backgroundColor: "#ffffff",
               padding: "32px",
               borderRadius: "20px",
               width: "90%",
               maxWidth: "420px",
-              border: "1px solid rgba(255,255,255,0.1)",
-              boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5)",
+              border: "1px solid #E2E8F0",
+              boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)",
             }}
           >
             <div style={{ textAlign: "center", marginBottom: "24px" }}>
@@ -373,7 +373,7 @@ function EmployerSettings() {
               <h3
                 style={{
                   margin: "0 0 8px",
-                  color: "#fff",
+                  color: "#0F172A",
                   fontSize: "20px",
                   fontWeight: 700,
                 }}
@@ -383,7 +383,7 @@ function EmployerSettings() {
               <p
                 style={{
                   margin: 0,
-                  color: "#94A3B8",
+                  color: "#64748B",
                   fontSize: "14px",
                   lineHeight: 1.6,
                 }}
@@ -420,23 +420,24 @@ function EmployerSettings() {
                   borderColor:
                     deleteConfirm === "XOA TAI KHOAN"
                       ? "#EF4444"
-                      : "rgba(255,255,255,0.1)",
+                      : "#CBD5E1",
                   textAlign: "center",
                   fontFamily: "monospace",
                   fontSize: "16px",
                   letterSpacing: "1px",
+                  color: "#0F172A",
                 }}
                 onFocus={(e) =>
                   (e.target.style.borderColor =
                     deleteConfirm === "XOA TAI KHOAN"
                       ? "#EF4444"
-                      : "rgba(255,255,255,0.3)")
+                      : "#94A3B8")
                 }
                 onBlur={(e) =>
                   (e.target.style.borderColor =
                     deleteConfirm === "XOA TAI KHOAN"
                       ? "#EF4444"
-                      : "rgba(255,255,255,0.1)")
+                      : "#CBD5E1")
                 }
               />
             </div>
@@ -449,20 +450,20 @@ function EmployerSettings() {
                 style={{
                   flex: 1,
                   padding: "12px",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  border: "1px solid #E2E8F0",
                   borderRadius: "12px",
-                  backgroundColor: "rgba(255,255,255,0.05)",
+                  backgroundColor: "#ffffff",
                   fontSize: "15px",
                   fontWeight: 500,
                   cursor: "pointer",
-                  color: "#fff",
+                  color: "#334155",
                   transition: "all 0.2s",
                 }}
                 onMouseEnter={(e) =>
-                  (e.target.style.backgroundColor = "rgba(255,255,255,0.1)")
+                  (e.target.style.backgroundColor = "#F8FAFC")
                 }
                 onMouseLeave={(e) =>
-                  (e.target.style.backgroundColor = "rgba(255,255,255,0.05)")
+                  (e.target.style.backgroundColor = "#ffffff")
                 }
               >
                 Hủy bỏ
@@ -516,9 +517,7 @@ function EmployerSettings() {
 
       <div
         style={{
-          backgroundColor: "#0B0F19",
-          minHeight: "100vh",
-          padding: "40px 0",
+          padding: "4px 0 40px 0",
         }}
       >
         <div style={{ maxWidth: "800px", margin: "0 auto", padding: "0 20px" }}>
@@ -552,20 +551,20 @@ function EmployerSettings() {
                 style={{
                   fontSize: "24px",
                   fontWeight: 700,
-                  color: "#fff",
+                  color: "#0F172A",
                   margin: "0 0 4px 0",
                 }}
               >
                 Cài đặt tài khoản
               </h1>
-              <p style={{ color: "#94A3B8", fontSize: "14px", margin: 0 }}>
+              <p style={{ color: "#64748B", fontSize: "14px", margin: 0 }}>
                 Quản lý bảo mật và thông tin tài khoản nhà tuyển dụng
               </p>
             </div>
           </div>
 
           {/* SECTION 1: THÔNG TIN TÀI KHOẢN */}
-          <div style={glassCard}>
+          <div style={cardStyle}>
             <h2 style={sectionTitle}>
               <div
                 style={{
@@ -586,7 +585,7 @@ function EmployerSettings() {
             {loadingInfo ? (
               <p
                 style={{
-                  color: "#94A3B8",
+                  color: "#64748B",
                   textAlign: "center",
                   padding: "20px",
                 }}
@@ -601,14 +600,14 @@ function EmployerSettings() {
                       display: "flex",
                       alignItems: "center",
                       gap: "10px",
-                      color: "#94A3B8",
+                      color: "#64748B",
                       fontSize: "14px",
                     }}
                   >
                     <Building size={16} /> Tên công ty
                   </div>
                   <span
-                    style={{ color: "#fff", fontWeight: 500, fontSize: "15px" }}
+                    style={{ color: "#0F172A", fontWeight: 500, fontSize: "15px" }}
                   >
                     {userName || "—"}
                   </span>
@@ -619,14 +618,14 @@ function EmployerSettings() {
                       display: "flex",
                       alignItems: "center",
                       gap: "10px",
-                      color: "#94A3B8",
+                      color: "#64748B",
                       fontSize: "14px",
                     }}
                   >
                     <Mail size={16} /> Email đăng nhập
                   </div>
                   <span
-                    style={{ color: "#fff", fontWeight: 500, fontSize: "15px" }}
+                    style={{ color: "#0F172A", fontWeight: 500, fontSize: "15px" }}
                   >
                     {accountInfo.email || "—"}
                   </span>
@@ -637,7 +636,7 @@ function EmployerSettings() {
                       display: "flex",
                       alignItems: "center",
                       gap: "10px",
-                      color: "#94A3B8",
+                      color: "#64748B",
                       fontSize: "14px",
                     }}
                   >
@@ -665,14 +664,14 @@ function EmployerSettings() {
                       display: "flex",
                       alignItems: "center",
                       gap: "10px",
-                      color: "#94A3B8",
+                      color: "#64748B",
                       fontSize: "14px",
                     }}
                   >
                     <Calendar size={16} /> Ngày tạo tài khoản
                   </div>
                   <span
-                    style={{ color: "#fff", fontWeight: 500, fontSize: "15px" }}
+                    style={{ color: "#0F172A", fontWeight: 500, fontSize: "15px" }}
                   >
                     {formatDate(accountInfo.created_at)}
                   </span>
@@ -682,18 +681,18 @@ function EmployerSettings() {
           </div>
 
           {/* SECTION 2: ĐỔI MẬT KHẨU */}
-          <div style={glassCard}>
+          <div style={cardStyle}>
             <h2 style={sectionTitle}>
               <div
                 style={{
                   width: "32px",
                   height: "32px",
                   borderRadius: "50%",
-                  backgroundColor: "rgba(255,255,255,0.1)",
+                  backgroundColor: "#F1F5F9",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "#fff",
+                  color: "#64748B",
                 }}
               >
                 <Lock size={18} />
@@ -709,10 +708,10 @@ function EmployerSettings() {
                   borderRadius: "12px",
                   backgroundColor:
                     passwordMsg.type === "error"
-                      ? "rgba(239, 68, 68, 0.1)"
-                      : "rgba(16, 185, 129, 0.1)",
-                  color: passwordMsg.type === "error" ? "#f87171" : "#34d399",
-                  border: `1px solid ${passwordMsg.type === "error" ? "rgba(239, 68, 68, 0.2)" : "rgba(16, 185, 129, 0.2)"}`,
+                      ? "#FEF2F2"
+                      : "#ECFDF5",
+                  color: passwordMsg.type === "error" ? "#DC2626" : "#059669",
+                  border: `1px solid ${passwordMsg.type === "error" ? "#FECACA" : "#A7F3D0"}`,
                   fontSize: "14px",
                   fontWeight: 500,
                   display: "flex",
@@ -749,10 +748,10 @@ function EmployerSettings() {
                     placeholder="Nhập mật khẩu hiện tại..."
                     style={inputStyle}
                     onFocus={(e) =>
-                      (e.target.style.borderColor = "rgba(16, 185, 129, 0.5)")
+                      (e.target.style.borderColor = "#10B981")
                     }
                     onBlur={(e) =>
-                      (e.target.style.borderColor = "rgba(255, 255, 255, 0.1)")
+                      (e.target.style.borderColor = "#CBD5E1")
                     }
                   />
                   <button
@@ -784,10 +783,10 @@ function EmployerSettings() {
                     placeholder="Ít nhất 6 ký tự..."
                     style={inputStyle}
                     onFocus={(e) =>
-                      (e.target.style.borderColor = "rgba(16, 185, 129, 0.5)")
+                      (e.target.style.borderColor = "#10B981")
                     }
                     onBlur={(e) =>
-                      (e.target.style.borderColor = "rgba(255, 255, 255, 0.1)")
+                      (e.target.style.borderColor = "#CBD5E1")
                     }
                   />
                   <button
@@ -815,10 +814,10 @@ function EmployerSettings() {
                     placeholder="Nhập lại mật khẩu mới..."
                     style={inputStyle}
                     onFocus={(e) =>
-                      (e.target.style.borderColor = "rgba(16, 185, 129, 0.5)")
+                      (e.target.style.borderColor = "#10B981")
                     }
                     onBlur={(e) =>
-                      (e.target.style.borderColor = "rgba(255, 255, 255, 0.1)")
+                      (e.target.style.borderColor = "#CBD5E1")
                     }
                   />
                   <button
@@ -874,7 +873,7 @@ function EmployerSettings() {
             <h2
               style={{
                 ...sectionTitle,
-                color: "#f87171",
+                color: "#EF4444",
                 marginBottom: "16px",
               }}
             >
@@ -896,7 +895,7 @@ function EmployerSettings() {
             </h2>
             <p
               style={{
-                color: "#94A3B8",
+                color: "#64748B",
                 fontSize: "14px",
                 lineHeight: 1.7,
                 marginBottom: "24px",
@@ -904,7 +903,7 @@ function EmployerSettings() {
             >
               Khi xóa tài khoản, tất cả dữ liệu bao gồm thông tin công ty, tin
               tuyển dụng đã đăng và hồ sơ ứng viên đã nhận sẽ bị xóa{" "}
-              <strong style={{ color: "#f87171", fontWeight: 500 }}>
+              <strong style={{ color: "#EF4444", fontWeight: 500 }}>
                 vĩnh viễn
               </strong>{" "}
               và không thể khôi phục.
@@ -914,9 +913,9 @@ function EmployerSettings() {
                 onClick={() => setShowDeleteModal(true)}
                 style={{
                   padding: "12px 24px",
-                  backgroundColor: "transparent",
+                  backgroundColor: "#ffffff",
                   color: "#EF4444",
-                  border: "1px solid rgba(239, 68, 68, 0.3)",
+                  border: "1px solid #FECACA",
                   borderRadius: "12px",
                   fontSize: "15px",
                   fontWeight: 600,
@@ -927,12 +926,12 @@ function EmployerSettings() {
                   gap: "8px",
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = "rgba(239, 68, 68, 0.1)";
-                  e.target.style.borderColor = "rgba(239, 68, 68, 0.5)";
+                  e.target.style.backgroundColor = "#FEF2F2";
+                  e.target.style.borderColor = "#FCA5A5";
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = "transparent";
-                  e.target.style.borderColor = "rgba(239, 68, 68, 0.3)";
+                  e.target.style.backgroundColor = "#ffffff";
+                  e.target.style.borderColor = "#FECACA";
                 }}
               >
                 <Trash2 size={18} /> Xóa tài khoản của tôi
