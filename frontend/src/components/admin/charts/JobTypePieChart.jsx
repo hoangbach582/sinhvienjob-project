@@ -5,7 +5,7 @@ const COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444'];
 
 const JobTypePieChart = ({ data }) => {
   return (
-    <div style={{ width: '100%', height: 300 }}>
+    <div style={{ width: '100%', height: '100%' }}>
       <ResponsiveContainer>
         <PieChart>
           <Pie

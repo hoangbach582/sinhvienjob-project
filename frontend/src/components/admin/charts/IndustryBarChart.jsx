@@ -5,7 +5,7 @@ const COLORS = ['#4f46e5', '#6366f1', '#818cf8', '#a5b4fc', '#c7d2fe', '#e0e7ff'
 
 const IndustryBarChart = ({ data }) => {
   return (
-    <div style={{ width: '100%', height: 400 }}>
+    <div style={{ width: '100%', height: '100%' }}>
       <ResponsiveContainer>
         <BarChart
           layout="vertical"

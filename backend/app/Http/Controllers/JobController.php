@@ -7,8 +7,11 @@ use App\Models\Job;
 use App\Models\Application;
 use App\Models\StudentProfile;
 use App\Models\SavedJob;
+use App\Models\User;
 use App\Http\Requests\JobRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\AdminJobNotification;
 
 class JobController extends Controller
 {
@@ -157,6 +160,10 @@ class JobController extends Controller
             ['employer_id' => $user->employer->id, 'status' => 'pending']
         ));
 
+        // Notify admins
+        $admins = User::where('role', 'admin')->get();
+        Notification::send($admins, new AdminJobNotification($job, 'created', $user->employer->company_name));
+
         return response()->json(['message' => 'Tạo công việc thành công', 'job' => $job], 201);
     }
 
@@ -180,6 +187,11 @@ class JobController extends Controller
         $data['status'] = 'pending';
 
         $job->update($data);
+
+        // Notify admins
+        $user = $request->user();
+        $admins = User::where('role', 'admin')->get();
+        Notification::send($admins, new AdminJobNotification($job, 'updated', $user->employer->company_name));
 
         return response()->json(['message' => 'Cập nhật công việc thành công', 'job' => $job]);
     }

@@ -62,6 +62,15 @@ const getNotificationMeta = (notification) => {
       label: 'Ứng tuyển'
     };
   }
+  if (type.includes('AdminJobNotification')) {
+    return {
+      icon: <DefaultIcon />, // You can use a different icon if preferred
+      bgColor: '#F5F3FF',
+      iconColor: '#8B5CF6',
+      borderColor: '#EDE9FE',
+      label: 'Việc làm mới'
+    };
+  }
   return {
     icon: <DefaultIcon />,
     bgColor: '#F3F4F6',
@@ -76,7 +85,9 @@ const NotificationDropdown = ({ onClose }) => {
   const { userRole } = useAuth();
   const navigate = useNavigate();
 
-  const notificationsPageUrl = userRole === 'employer' ? '/employer/notifications' : '/notifications';
+  const notificationsPageUrl = userRole === 'employer' 
+    ? '/employer/notifications' 
+    : (userRole === 'admin' ? '/admin/jobs' : '/notifications');
 
   const handleNotificationClick = (notification) => {
     if (!notification.read_at) markAsRead(notification.id);

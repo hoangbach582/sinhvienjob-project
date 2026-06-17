@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Search, Filter, RefreshCw, AlertTriangle, Eye, EyeOff, Edit, Trash2, Link as LinkIcon, ChevronDown, X } from 'lucide-react';
+import { 
+  Plus, Search, Filter, RefreshCw, AlertTriangle, EyeOff, Edit, 
+  Trash2, Link as LinkIcon, ChevronDown, X, Layers, Briefcase
+} from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import adminIndustryService from '../services/adminIndustryService';
 import IndustryModal from '../components/admin/industries/IndustryModal';
 
 export default function AdminIndustries() {
   const queryClient = useQueryClient();
 
-  // States
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState('');
   const [filters, setFilters] = useState({
@@ -21,7 +24,6 @@ export default function AdminIndustries() {
   const [selectedIndustry, setSelectedIndustry] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
 
-  // Debounce search
   useEffect(() => {
     const handler = setTimeout(() => {
       setFilters(prev => ({ ...prev, search: searchInput }));
@@ -30,7 +32,6 @@ export default function AdminIndustries() {
     return () => clearTimeout(handler);
   }, [searchInput]);
 
-  // Queries
   const { data, isLoading, isFetching, refetch, isError, error } = useQuery({
     queryKey: ['adminIndustries', page, filters],
     queryFn: async () => {
@@ -51,7 +52,6 @@ export default function AdminIndustries() {
     total: data?.total || 0,
   };
 
-  // Mutations
   const createMutation = useMutation({
     mutationFn: adminIndustryService.createIndustry,
     onSuccess: () => {
@@ -112,7 +112,6 @@ export default function AdminIndustries() {
     },
   });
 
-  // Handlers
   const handleOpenAddModal = () => {
     setSelectedIndustry(null);
     setIsModalOpen(true);
@@ -131,10 +130,6 @@ export default function AdminIndustries() {
     }
   };
 
-  const handleToggleStatus = (industry) => {
-    toggleStatusMutation.mutate(industry.id);
-  };
-
   const handleDeleteClick = (industry) => {
     setConfirmDialog({
       industry,
@@ -143,207 +138,178 @@ export default function AdminIndustries() {
     });
   };
 
-  const handleConfirmDelete = () => {
-    if (confirmDialog?.industry) {
-      deleteMutation.mutate(confirmDialog.industry.id);
-    }
-  };
-
   return (
-    <div>
-      {/* ====== HEADER ====== */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+    <div className="pb-10 font-sans">
+      {/* HEADER */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <h1 style={{ fontSize: '20px', fontWeight: '700', color: '#1e293b', margin: 0 }}>
-            Quản lý Ngành nghề
-          </h1>
-          <p style={{ fontSize: '13px', color: '#64748b', margin: '4px 0 0' }}>
-            Quản lý danh mục ngành nghề hiển thị trên hệ thống
-          </p>
+          <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Quản lý Ngành nghề</h1>
+          <p className="text-sm font-medium text-slate-500 mt-1">Quản lý danh mục ngành nghề hiển thị trên hệ thống</p>
         </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div className="flex gap-3">
           <button
-            className="btn"
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl font-semibold text-sm transition-all shadow-sm"
             onClick={() => refetch()}
-            style={{ gap: '6px', fontSize: '13px' }}
           >
-            <RefreshCw size={14} style={{ animation: isFetching ? 'spin 1s linear infinite' : 'none' }} />
-            Làm mới
+            <RefreshCw size={16} className={isFetching ? 'animate-spin' : ''} /> Làm mới
           </button>
           <button
-            className="btn btn-primary"
+            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold text-sm transition-all shadow-md shadow-indigo-600/20 hover:-translate-y-0.5 active:translate-y-0"
             onClick={handleOpenAddModal}
-            style={{ gap: '6px', fontSize: '13px' }}
           >
-            <Plus size={14} /> Thêm ngành nghề
+            <Plus size={16} /> Thêm ngành nghề
           </button>
         </div>
       </div>
 
-      {/* ====== BỘ LỌC ====== */}
-      <div style={{
-        background: '#fff', border: '1px solid #e8ecf0',
-        borderRadius: '12px', padding: '14px 16px', marginBottom: '16px',
-      }}>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
-          <div style={{ position: 'relative', flex: 1, minWidth: '200px' }}>
-            <Search size={14} style={{
-              position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)',
-              color: '#94a3b8',
-            }} />
-            <input
-              className="form-input"
-              placeholder="Tên ngành nghề mới..."
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              style={{ paddingLeft: '32px' }}
-            />
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        {/* FILTERS */}
+        <div className="p-5 border-b border-slate-100 bg-slate-50/50">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="relative flex-1 min-w-[240px]">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                className="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none text-slate-700 text-sm font-medium"
+                placeholder="Tên ngành nghề mới..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+              />
+            </div>
+
+            <div className="relative">
+              <select
+                className="appearance-none pl-4 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none text-slate-700 text-sm font-medium cursor-pointer min-w-[170px]"
+                value={filters.status}
+                onChange={(e) => {
+                  setFilters(prev => ({ ...prev, status: e.target.value }));
+                  setPage(1);
+                }}
+              >
+                <option value="all">Tất cả trạng thái</option>
+                <option value="active">Hoạt động</option>
+                <option value="inactive">Đã ẩn</option>
+              </select>
+              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+            </div>
           </div>
-
-          <select
-            className="form-input"
-            value={filters.status}
-            onChange={(e) => {
-                setFilters(prev => ({ ...prev, status: e.target.value }));
-                setPage(1);
-            }}
-            style={{ width: '170px' }}
-          >
-            <option value="all">Tất cả trạng thái</option>
-            <option value="active">Hoạt động</option>
-            <option value="inactive">Đã ẩn</option>
-          </select>
         </div>
-      </div>
 
-      {/* ====== SUMMARY BAR ====== */}
-      {!isLoading && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-          <span style={{ fontSize: '12px', color: '#94a3b8' }}>
-            Hiển thị {industries.length} / {pagination.total || 0} bản ghi
-          </span>
-        </div>
-      )}
-
-      {/* ====== BẢNG DỮ LIỆU ====== */}
-      <div className="table-wrap" style={{ background: '#fff' }}>
-        <table>
-          <thead>
-            <tr>
-              <th>Ngành nghề</th>
-              <th style={{ textAlign: 'center' }}>Số tin</th>
-              <th style={{ textAlign: 'center' }}>Trạng thái</th>
-              <th style={{ textAlign: 'right' }}>Thao tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isError ? (
-              <tr>
-                <td colSpan="4" style={{ textAlign: 'center', padding: '40px 20px', color: '#ef4444' }}>
-                  <AlertTriangle size={32} style={{ margin: '0 auto 10px' }} />
-                  <p>Lỗi tải dữ liệu: {error?.response?.data?.message || error?.message || 'Không rõ nguyên nhân'}</p>
-                </td>
+        {/* TABLE */}
+        <div className="overflow-x-auto min-h-[400px]">
+          <table className="w-full text-left border-collapse min-w-[700px]">
+            <thead>
+              <tr className="border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50/80">
+                <th className="py-4 px-5">Ngành nghề</th>
+                <th className="py-4 px-5 text-center">Số tin tuyển dụng</th>
+                <th className="py-4 px-5 text-center">Trạng thái</th>
+                <th className="py-4 px-5 text-right">Hành động</th>
               </tr>
-            ) : isLoading ? (
-              [...Array(5)].map((_, i) => (
-                <tr key={i}>
-                  <td colSpan="4" style={{ padding: '15px' }}>
-                    <div style={{
-                      height: '20px', background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
-                      backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite', borderRadius: '4px'
-                    }}></div>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {isError ? (
+                <tr>
+                  <td colSpan="4" className="py-16 text-center text-rose-500">
+                    <AlertTriangle size={32} className="mx-auto mb-3 opacity-50" />
+                    <p className="font-medium text-sm">Lỗi tải dữ liệu: {error?.response?.data?.message || error?.message || 'Không rõ nguyên nhân'}</p>
                   </td>
                 </tr>
-              ))
-            ) : industries.length === 0 ? (
-              <tr>
-                <td colSpan="4" style={{ textAlign: 'center', padding: '40px 20px', color: '#64748b' }}>
-                  <EyeOff size={32} style={{ margin: '0 auto 10px', color: '#cbd5e1' }} />
-                  <p>Không tìm thấy ngành nghề nào.</p>
-                </td>
-              </tr>
-            ) : (
-              industries.map(industry => (
-                <tr key={industry.id} style={{ transition: 'background 0.2s', borderBottom: '1px solid #f1f5f9' }}>
-                  <td>
-                    <div style={{ fontWeight: '500', color: '#1e293b' }}>{industry.name}</div>
-                    {industry.description && (
-                      <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px', maxWidth: '300px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {industry.description}
-                      </div>
-                    )}
-                  </td>
-                  <td style={{ textAlign: 'center' }}>
-                    <Link 
-                      to={`/admin/jobs?keyword=${encodeURIComponent(industry.name)}`}
-                      style={{ 
-                        color: '#3B6FE8', fontWeight: '600', textDecoration: 'none', 
-                        display: 'inline-flex', alignItems: 'center', gap: '4px' 
-                      }}
-                    >
-                      {industry.jobs_count ? industry.jobs_count.toLocaleString() : '0'}
-                      <LinkIcon size={12} />
-                    </Link>
-                  </td>
-                  <td style={{ textAlign: 'center' }}>
-                    <span className={`badge ${industry.is_active ? 'badge-green' : 'badge-gray'}`}>
-                      {industry.is_active ? 'Hoạt động' : 'Đã ẩn'}
-                    </span>
-                  </td>
-                  <td style={{ textAlign: 'right' }}>
-                    <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
-                      <button 
-                        className="btn" 
-                        style={{ padding: '4px 8px', fontSize: '11px' }}
-                        onClick={() => handleOpenEditModal(industry)}
-                        title="Sửa"
-                      >
-                        Sửa
-                      </button>
-                      <button 
-                        className="btn" 
-                        style={{ padding: '4px 8px', fontSize: '11px', color: industry.is_active ? '#B45309' : '#3B6D11' }}
-                        onClick={() => handleToggleStatus(industry)}
-                        title={industry.is_active ? 'Ẩn' : 'Hiện'}
-                      >
-                        {industry.is_active ? 'Ẩn' : 'Hiện'}
-                      </button>
-                      <button 
-                        className="btn" 
-                        style={{ padding: '4px 8px', fontSize: '11px', color: '#B91C1C' }}
-                        onClick={() => handleDeleteClick(industry)}
-                        title="Xóa"
-                      >
-                        Xóa
-                      </button>
+              ) : isLoading ? (
+                [...Array(5)].map((_, i) => (
+                  <tr key={i}>
+                    <td colSpan="4" className="py-4 px-5">
+                      <div className="h-10 rounded-xl bg-slate-100 animate-pulse w-full"></div>
+                    </td>
+                  </tr>
+                ))
+              ) : industries.length === 0 ? (
+                <tr>
+                  <td colSpan="4" className="py-16 text-center">
+                    <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mx-auto mb-4">
+                      <Layers size={24} className="text-slate-400" />
                     </div>
+                    <p className="text-slate-800 font-bold mb-1">Không có ngành nghề</p>
+                    <p className="text-slate-500 text-sm">Không tìm thấy ngành nghề nào phù hợp với bộ lọc.</p>
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-        
-        {/* Phân trang */}
+              ) : (
+                industries.map(industry => (
+                  <tr key={industry.id} className="hover:bg-slate-50 transition-colors group">
+                    <td className="py-4 px-5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                          <Briefcase size={18} />
+                        </div>
+                        <div>
+                          <div className="font-semibold text-slate-800 text-[15px] group-hover:text-indigo-600 transition-colors">{industry.name}</div>
+                          {industry.description && (
+                            <div className="text-xs text-slate-500 mt-0.5 max-w-[300px] truncate">{industry.description}</div>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-4 px-5 text-center">
+                      <Link 
+                        to={`/admin/jobs?keyword=${encodeURIComponent(industry.name)}`}
+                        className="inline-flex items-center justify-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-xs font-bold transition-colors"
+                      >
+                        {industry.jobs_count ? industry.jobs_count.toLocaleString() : '0'} <LinkIcon size={12} />
+                      </Link>
+                    </td>
+                    <td className="py-4 px-5 text-center">
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold border ${industry.is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200'}`}>
+                        {industry.is_active ? 'Hoạt động' : 'Đã ẩn'}
+                      </span>
+                    </td>
+                    <td className="py-4 px-5">
+                      <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button 
+                          className="w-8 h-8 rounded-lg flex items-center justify-center text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors"
+                          onClick={() => handleOpenEditModal(industry)}
+                          title="Sửa"
+                        >
+                          <Edit size={14} />
+                        </button>
+                        <button 
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${industry.is_active ? 'text-amber-600 bg-amber-50 hover:bg-amber-100' : 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100'}`}
+                          onClick={() => toggleStatusMutation.mutate(industry.id)}
+                          title={industry.is_active ? 'Ẩn' : 'Hiện'}
+                        >
+                          {industry.is_active ? <EyeOff size={14} /> : <Eye size={14} />}
+                        </button>
+                        <button 
+                          className="w-8 h-8 rounded-lg flex items-center justify-center text-rose-600 bg-rose-50 hover:bg-rose-100 transition-colors"
+                          onClick={() => handleDeleteClick(industry)}
+                          title="Xóa"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
         {pagination.last_page > 1 && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 16px', borderTop: '1px solid #e8ecf0', background: '#fafbfc', alignItems: 'center' }}>
-            <span style={{ fontSize: '12px', color: '#64748b' }}>
+          <div className="flex items-center justify-between px-5 py-4 border-t border-slate-200 bg-slate-50/50">
+            <span className="text-sm font-medium text-slate-500">
               Trang {pagination.current_page} / {pagination.last_page}
             </span>
-            <div style={{ display: 'flex', gap: '4px' }}>
+            <div className="flex gap-2">
               <button 
-                className="btn" 
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 disabled={pagination.current_page === 1}
                 onClick={() => setPage(p => Math.max(1, p - 1))}
-                style={{ padding: '4px 10px', fontSize: '12px', opacity: pagination.current_page === 1 ? 0.5 : 1 }}
               >
                 Trước
               </button>
               <button 
-                className="btn" 
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 disabled={pagination.current_page === pagination.last_page}
                 onClick={() => setPage(p => Math.min(pagination.last_page, p + 1))}
-                style={{ padding: '4px 10px', fontSize: '12px', opacity: pagination.current_page === pagination.last_page ? 0.5 : 1 }}
               >
                 Sau
               </button>
@@ -352,7 +318,7 @@ export default function AdminIndustries() {
         )}
       </div>
 
-      {/* ====== MODAL THÊM/SỬA ====== */}
+      {/* MODAL THÊM/SỬA */}
       {isModalOpen && (
         <IndustryModal 
           isOpen={isModalOpen}
@@ -363,44 +329,50 @@ export default function AdminIndustries() {
         />
       )}
 
-      {/* ====== DIALOG XÓA ====== */}
-      {confirmDialog && (
-        <div style={{
-            position: 'fixed', inset: 0, zIndex: 1100,
-            background: 'rgba(15, 23, 42, 0.55)', backdropFilter: 'blur(3px)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px',
-        }} onClick={(e) => e.target === e.currentTarget && setConfirmDialog(null)}>
-            <div style={{
-                background: '#fff', borderRadius: '16px', width: '100%', maxWidth: '400px',
-                padding: '28px', boxShadow: '0 20px 50px rgba(0,0,0,0.18)', animation: 'slideUp 0.2s ease-out',
-            }}>
-                <div style={{
-                    width: '48px', height: '48px', borderRadius: '12px', background: '#FEF3F2',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px',
-                }}>
-                    <Trash2 size={20} color="#B91C1C" />
-                </div>
-                <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1e293b', margin: '0 0 8px' }}>
-                    {confirmDialog.title}
-                </h3>
-                <p style={{ fontSize: '13px', color: '#64748b', margin: '0 0 24px', lineHeight: '1.6' }}>
-                    {confirmDialog.message}
-                </p>
-                <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                    <button className="btn" onClick={() => setConfirmDialog(null)} disabled={deleteMutation.isPending}>Hủy</button>
-                    <button
-                        className="btn"
-                        onClick={handleConfirmDelete}
-                        disabled={deleteMutation.isPending}
-                        style={{ background: '#B91C1C', color: '#fff', borderColor: '#B91C1C', gap: '6px' }}
-                    >
-                        {deleteMutation.isPending && <RefreshCw size={13} style={{ animation: 'spin 1s linear infinite' }} />}
-                        Xóa
-                    </button>
-                </div>
-            </div>
-        </div>
-      )}
+      {/* DIALOG XÓA */}
+      <AnimatePresence>
+        {confirmDialog && (
+          <div className="fixed inset-0 z-[1100] flex items-center justify-center px-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+              onClick={() => setConfirmDialog(null)}
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="bg-white rounded-2xl w-full max-w-md p-6 relative z-10 shadow-2xl"
+            >
+              <div className="w-12 h-12 rounded-xl bg-rose-50 flex items-center justify-center mb-5 text-rose-600">
+                <Trash2 size={20} />
+              </div>
+              <h3 className="text-xl font-bold text-slate-800 mb-2">{confirmDialog.title}</h3>
+              <p className="text-slate-500 text-sm leading-relaxed mb-6">{confirmDialog.message}</p>
+              
+              <div className="flex justify-end gap-3">
+                <button 
+                  className="px-4 py-2.5 rounded-xl font-semibold text-sm text-slate-600 hover:bg-slate-100 transition-colors"
+                  onClick={() => setConfirmDialog(null)} 
+                  disabled={deleteMutation.isPending}
+                >
+                  Hủy
+                </button>
+                <button
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white bg-rose-600 hover:bg-rose-700 shadow-md shadow-rose-600/20 transition-colors"
+                  onClick={handleConfirmDelete}
+                  disabled={deleteMutation.isPending}
+                >
+                  {deleteMutation.isPending && <RefreshCw size={16} className="animate-spin" />}
+                  {deleteMutation.isPending ? 'Đang xóa...' : 'Xác nhận xóa'}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

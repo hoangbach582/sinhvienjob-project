@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useNotifications } from '../../context/NotificationContext';
-import NotificationDropdown from './NotificationDropdown';
+import React, { useState, useRef, useEffect } from "react";
+import { useNotifications } from "../../context/NotificationContext";
+import NotificationDropdown from "./NotificationDropdown";
 
 const NotificationBell = () => {
   const { unreadCount } = useNotifications();
@@ -25,8 +25,8 @@ const NotificationBell = () => {
         setIsOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
@@ -52,38 +52,40 @@ const NotificationBell = () => {
         }
       `}</style>
 
-      <div style={{ position: 'relative' }} ref={dropdownRef}>
+      <div style={{ position: "relative" }} ref={dropdownRef}>
         <button
           onClick={() => setIsOpen(!isOpen)}
           id="notification-bell-button"
           style={{
-            position: 'relative',
-            padding: '10px',
-            color: unreadCount > 0 ? '#1F2937' : '#6B7280',
-            backgroundColor: isOpen ? '#F3F4F6' : 'transparent',
-            borderRadius: '12px',
-            border: 'none',
-            cursor: 'pointer',
-            transition: 'all 0.2s ease',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            outline: 'none',
-            animation: isAnimating ? 'bellShake 0.6s ease-in-out, bellGlow 1s ease-in-out' : 'none',
+            position: "relative",
+            padding: "10px",
+            color: "#6B7280",
+            backgroundColor: isOpen ? "#F3F4F6" : "transparent",
+            borderRadius: "12px",
+            border: "none",
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            outline: "none",
+            animation: isAnimating
+              ? "bellShake 0.6s ease-in-out, bellGlow 1s ease-in-out"
+              : "none",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#F3F4F6';
-            e.currentTarget.style.transform = 'scale(1.05)';
+            e.currentTarget.style.backgroundColor = "#F3F4F6";
+            e.currentTarget.style.transform = "scale(1.05)";
           }}
           onMouseLeave={(e) => {
-            if (!isOpen) e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.transform = 'scale(1)';
+            if (!isOpen) e.currentTarget.style.backgroundColor = "transparent";
+            e.currentTarget.style.transform = "scale(1)";
           }}
           aria-label="Notifications"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            style={{ height: '22px', width: '22px' }}
+            style={{ height: "22px", width: "22px" }}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -96,35 +98,37 @@ const NotificationBell = () => {
             />
           </svg>
           {unreadCount > 0 && (
-            <span style={{
-              position: 'absolute',
-              top: '4px',
-              right: '4px',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '1px 5px',
-              fontSize: '10px',
-              fontWeight: '700',
-              lineHeight: '1',
-              color: 'white',
-              transform: 'translate(50%, -50%)',
-              background: 'linear-gradient(135deg, #EF4444, #DC2626)',
-              borderRadius: '9999px',
-              minWidth: '18px',
-              height: '18px',
-              boxShadow: '0 2px 4px rgba(239, 68, 68, 0.4)',
-              animation: isAnimating ? 'badgePulse 0.6s ease-in-out 2' : 'none',
-              border: '2px solid white',
-            }}>
-              {unreadCount > 99 ? '99+' : unreadCount}
+            <span
+              style={{
+                position: "absolute",
+                top: "4px",
+                right: "4px",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "1px 5px",
+                fontSize: "10px",
+                fontWeight: "700",
+                lineHeight: "1",
+                color: "white",
+                transform: "translate(50%, -50%)",
+                background: "linear-gradient(135deg, #EF4444, #DC2626)",
+                borderRadius: "9999px",
+                minWidth: "18px",
+                height: "18px",
+                boxShadow: "0 2px 4px rgba(239, 68, 68, 0.4)",
+                animation: isAnimating
+                  ? "badgePulse 0.6s ease-in-out 2"
+                  : "none",
+                border: "2px solid white",
+              }}
+            >
+              {unreadCount > 99 ? "99+" : unreadCount}
             </span>
           )}
         </button>
 
-        {isOpen && (
-          <NotificationDropdown onClose={() => setIsOpen(false)} />
-        )}
+        {isOpen && <NotificationDropdown onClose={() => setIsOpen(false)} />}
       </div>
     </>
   );

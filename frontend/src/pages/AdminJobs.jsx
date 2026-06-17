@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import adminJobService from '../services/adminJobService';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Briefcase, CheckCircle, XCircle, Eye, RefreshCw, X, 
+  ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, FileText
+} from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 function AdminJobs() {
   const [activeTab, setActiveTab] = useState('pending');
@@ -29,26 +35,25 @@ function AdminJobs() {
       setPagination(data);
     } catch (error) {
       console.error('Error fetching jobs:', error);
-      alert('Không thể tải danh sách tin tuyển dụng.');
+      toast.error('Không thể tải danh sách tin tuyển dụng.');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    // eslint-disable-next-line
     fetchJobs();
-  }, [activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
+  }, [activeTab]);
 
   const handleApprove = async (id) => {
-    if (!window.confirm('Bạn có chắc chắn muốn duyệt tin này?')) return;
     setActionLoadingId(id);
     try {
       await adminJobService.approveJob(id);
-      alert('Đã duyệt tin thành công!');
+      toast.success('Đã duyệt tin thành công!');
       fetchJobs();
     } catch (error) {
-      alert('Lỗi: ' + (error.response?.data?.message || 'Không thể duyệt tin.'));
+      toast.error(error.response?.data?.message || 'Không thể duyệt tin.');
     } finally {
       setActionLoadingId(null);
     }
@@ -62,17 +67,17 @@ function AdminJobs() {
 
   const handleReject = async () => {
     if (!rejectReason.trim()) {
-      alert('Vui lòng nhập lý do từ chối.');
+      toast.error('Vui lòng nhập lý do từ chối.');
       return;
     }
     setSubmitting(true);
     try {
       await adminJobService.rejectJob(rejectingJobId, rejectReason);
-      alert('Đã từ chối tin tuyển dụng.');
+      toast.success('Đã từ chối tin tuyển dụng.');
       setShowRejectModal(false);
       fetchJobs();
     } catch (error) {
-      alert('Lỗi: ' + (error.response?.data?.message || 'Không thể từ chối tin.'));
+      toast.error(error.response?.data?.message || 'Không thể từ chối tin.');
     } finally {
       setSubmitting(false);
     }
@@ -80,10 +85,10 @@ function AdminJobs() {
 
   const getBadgeClass = (status) => {
     switch (status) {
-      case 'approved': return 'badge-green';
-      case 'pending': return 'badge-orange';
-      case 'rejected': return 'badge-red';
-      default: return 'badge-blue';
+      case 'approved': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
+      case 'pending': return 'bg-amber-100 text-amber-700 border-amber-200';
+      case 'rejected': return 'bg-rose-100 text-rose-700 border-rose-200';
+      default: return 'bg-slate-100 text-slate-700 border-slate-200';
     }
   };
 
@@ -98,153 +103,226 @@ function AdminJobs() {
   };
 
   return (
-    <>
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '14px', flexWrap: 'wrap' }}>
-        <button 
-          className={`btn ${activeTab === 'pending' ? 'btn-primary' : ''}`} 
-          onClick={() => setActiveTab('pending')}
-          style={{ fontSize: '12px' }}
+    <div className="pb-10 font-sans">
+      {/* HEADER */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Tin Tuyển Dụng</h1>
+          <p className="text-sm font-medium text-slate-500 mt-1">Quản lý và xét duyệt các bài đăng tuyển dụng</p>
+        </div>
+        <button
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl font-semibold text-sm transition-colors"
+          onClick={() => fetchJobs(pagination.current_page || 1)}
         >
-          Chờ duyệt
-        </button>
-        <button 
-          className={`btn ${activeTab === 'approved' ? 'btn-primary' : ''}`} 
-          onClick={() => setActiveTab('approved')}
-          style={{ fontSize: '12px' }}
-        >
-          Đã duyệt
-        </button>
-        <button 
-          className={`btn ${activeTab === 'rejected' ? 'btn-primary' : ''}`} 
-          onClick={() => setActiveTab('rejected')}
-          style={{ fontSize: '12px' }}
-        >
-          Bị từ chối
-        </button>
-        <button 
-          className={`btn ${activeTab === 'all' ? 'btn-primary' : ''}`} 
-          onClick={() => setActiveTab('all')}
-          style={{ fontSize: '12px' }}
-        >
-          Tất cả
+          <RefreshCw size={16} className={loading ? 'animate-spin' : ''} /> Làm mới
         </button>
       </div>
 
-      <div className="table-wrap">
-        {loading ? (
-          <div style={{ padding: '20px', textAlign: 'center' }}>Đang tải...</div>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Tiêu đề</th>
-                <th>Công ty</th>
-                <th>Loại</th>
-                <th>Gửi lúc</th>
-                <th>Trạng thái</th>
-                <th>Hành động</th>
-              </tr>
-            </thead>
-            <tbody>
-              {jobs.length > 0 ? jobs.map(job => (
-                <tr key={job.id}>
-                  <td>
-                    <div style={{ fontWeight: 500 }}>{job.title}</div>
-                    <div className="text-muted" style={{ fontSize: '11px' }}>{job.location}</div>
-                  </td>
-                  <td>{job.employer?.company_name || 'N/A'}</td>
-                  <td><span className={`badge ${job.type === 'internship' ? 'badge-orange' : 'badge-blue'}`}>{job.type}</span></td>
-                  <td>{new Date(job.created_at).toLocaleDateString('vi-VN')}</td>
-                  <td><span className={`badge ${getBadgeClass(job.status)}`}>{getStatusText(job.status)}</span></td>
-                  <td style={{ display: 'flex', gap: '4px' }}>
-                    {job.status === 'pending' && (
-                      <>
-                        <button 
-                          className="btn" 
-                          onClick={() => handleApprove(job.id)}
-                          disabled={actionLoadingId !== null}
-                          style={{ fontSize: '11px', padding: '3px 8px', borderColor: '#3B6D11', color: '#3B6D11' }}
-                        >
-                          {actionLoadingId === job.id ? 'Đang duyệt...' : 'Duyệt'}
-                        </button>
-                        <button 
-                          className="btn" 
-                          onClick={() => openRejectModal(job.id)}
-                          disabled={actionLoadingId !== null}
-                          style={{ fontSize: '11px', padding: '3px 8px', borderColor: '#E24B4A', color: '#E24B4A' }}
-                        >
-                          Từ chối
-                        </button>
-                      </>
-                    )}
-                    {job.status === 'rejected' && (
-                      <button 
-                        className="btn" 
-                        title={job.rejected_reason}
-                        onClick={() => alert('Lý do từ chối: ' + job.rejected_reason)}
-                        style={{ fontSize: '11px', padding: '3px 8px' }}
-                      >
-                        Xem lý do
-                      </button>
-                    )}
-                  </td>
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        {/* TABS */}
+        <div className="flex flex-wrap border-b border-slate-200 bg-slate-50/50">
+          <TabButton active={activeTab === 'pending'} onClick={() => setActiveTab('pending')} label="Chờ duyệt" icon={<RefreshCw size={16} />} />
+          <TabButton active={activeTab === 'approved'} onClick={() => setActiveTab('approved')} label="Đã duyệt" icon={<CheckCircle size={16} />} />
+          <TabButton active={activeTab === 'rejected'} onClick={() => setActiveTab('rejected')} label="Bị từ chối" icon={<XCircle size={16} />} />
+          <TabButton active={activeTab === 'all'} onClick={() => setActiveTab('all')} label="Tất cả" icon={<Briefcase size={16} />} />
+        </div>
+
+        {/* TABLE */}
+        <div className="overflow-x-auto min-h-[400px]">
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <RefreshCw className="animate-spin text-indigo-500 mb-4" size={32} />
+              <p className="text-slate-500 font-medium">Đang tải danh sách...</p>
+            </div>
+          ) : (
+            <table className="w-full text-left border-collapse min-w-[900px]">
+              <thead>
+                <tr className="border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50/80">
+                  <th className="py-4 px-5">Tin tuyển dụng</th>
+                  <th className="py-4 px-5">Công ty</th>
+                  <th className="py-4 px-5 text-center">Hình thức</th>
+                  <th className="py-4 px-5">Ngày đăng</th>
+                  <th className="py-4 px-5">Trạng thái</th>
+                  <th className="py-4 px-5 text-right">Hành động</th>
                 </tr>
-              )) : (
-                <tr><td colSpan="6" style={{ textAlign: 'center', padding: '20px' }}>Không có tin nào.</td></tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {jobs.length > 0 ? jobs.map(job => (
+                  <tr key={job.id} className="hover:bg-slate-50 transition-colors group">
+                    <td className="py-4 px-5">
+                      <div className="font-semibold text-slate-800 text-[15px] max-w-sm truncate">{job.title}</div>
+                      <div className="text-xs text-slate-500 mt-1 max-w-sm truncate">{job.location}</div>
+                    </td>
+                    <td className="py-4 px-5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold text-xs shrink-0">
+                          {(job.employer?.company_name?.[0] || 'C').toUpperCase()}
+                        </div>
+                        <span className="font-semibold text-slate-700 text-sm truncate max-w-[150px]">
+                          {job.employer?.company_name || 'N/A'}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-5 text-center">
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold border ${job.type === 'internship' ? 'bg-orange-50 text-orange-700 border-orange-200' : 'bg-blue-50 text-blue-700 border-blue-200'}`}>
+                        {job.type}
+                      </span>
+                    </td>
+                    <td className="py-4 px-5 text-sm text-slate-600 whitespace-nowrap">
+                      {new Date(job.created_at).toLocaleDateString('vi-VN')}
+                    </td>
+                    <td className="py-4 px-5">
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold border ${getBadgeClass(job.status)}`}>
+                        {getStatusText(job.status)}
+                      </span>
+                    </td>
+                    <td className="py-4 px-5 text-right">
+                      <div className="flex justify-end gap-2">
+                        {job.status === 'pending' && (
+                          <>
+                            <button 
+                              onClick={() => handleApprove(job.id)}
+                              disabled={actionLoadingId !== null}
+                              className="px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-bold transition-colors disabled:opacity-50"
+                            >
+                              {actionLoadingId === job.id ? 'Đang duyệt...' : 'Duyệt'}
+                            </button>
+                            <button 
+                              onClick={() => openRejectModal(job.id)}
+                              disabled={actionLoadingId !== null}
+                              className="px-3 py-1.5 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-xs font-bold transition-colors disabled:opacity-50"
+                            >
+                              Từ chối
+                            </button>
+                          </>
+                        )}
+                        {job.status === 'rejected' && (
+                          <button 
+                            onClick={() => {
+                              toast((t) => (
+                                <span>
+                                  <b>Lý do từ chối:</b><br/>{job.rejected_reason}
+                                </span>
+                              ), { icon: 'ℹ️', duration: 4000 });
+                            }}
+                            className="px-3 py-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg text-xs font-bold transition-colors"
+                          >
+                            Xem lý do
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )) : (
+                  <tr>
+                    <td colSpan="6" className="py-16 text-center">
+                      <div className="flex flex-col items-center">
+                        <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mb-4">
+                          <FileText size={24} className="text-slate-400" />
+                        </div>
+                        <p className="text-slate-800 font-bold mb-1">Không có tin tuyển dụng</p>
+                        <p className="text-slate-500 text-sm">Chưa có tin tuyển dụng nào trong mục này.</p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        {/* Pagination */}
+        {pagination.last_page > 1 && (
+          <div className="flex items-center justify-between px-5 py-4 border-t border-slate-200">
+            <span className="text-sm font-medium text-slate-500">
+              Trang {pagination.current_page}/{pagination.last_page}
+            </span>
+            <div className="flex items-center gap-1.5">
+              {Array.from({ length: pagination.last_page }, (_, i) => i + 1).map(page => (
+                <button 
+                  key={page} 
+                  className={`min-w-[32px] h-[32px] flex items-center justify-center rounded-lg text-xs font-bold transition-colors ${
+                    pagination.current_page === page 
+                      ? 'bg-indigo-600 text-white' 
+                      : 'text-slate-600 hover:bg-slate-100'
+                  }`}
+                  onClick={() => fetchJobs(page)}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
+          </div>
         )}
       </div>
 
-      {/* Pagination */}
-      {pagination.total > pagination.per_page && (
-        <div style={{ marginTop: '14px', display: 'flex', justifyContent: 'center', gap: '4px' }}>
-          {Array.from({ length: pagination.last_page }, (_, i) => i + 1).map(page => (
-            <button 
-              key={page} 
-              className={`btn ${pagination.current_page === page ? 'btn-primary' : ''}`}
-              onClick={() => fetchJobs(page)}
-              style={{ padding: '4px 10px', fontSize: '12px' }}
-            >
-              {page}
-            </button>
-          ))}
-        </div>
-      )}
-
       {/* Reject Modal */}
-      {showRejectModal && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div className="card" style={{ width: '400px', padding: '20px' }}>
-            <h3 style={{ marginTop: 0 }}>Từ chối tin tuyển dụng</h3>
-            <p className="text-muted" style={{ fontSize: '13px' }}>Vui lòng nhập lý do từ chối để thông báo cho nhà tuyển dụng.</p>
-            <textarea
-              style={{ width: '100%', height: '100px', marginTop: '10px', padding: '8px', borderRadius: '4px', border: '1px solid #ddd' }}
-              placeholder="Ví dụ: Nội dung tin không phù hợp, thiếu thông tin liên hệ..."
-              value={rejectReason}
-              onChange={(e) => setRejectReason(e.target.value)}
-            ></textarea>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '14px' }}>
-              <button className="btn" onClick={() => setShowRejectModal(false)} disabled={submitting}>Hủy</button>
-              <button 
-                className="btn btn-primary" 
-                style={{ background: '#E24B4A', borderColor: '#E24B4A' }}
-                onClick={handleReject}
-                disabled={submitting}
-              >
-                {submitting ? 'Đang gửi...' : 'Xác nhận từ chối'}
-              </button>
-            </div>
+      <AnimatePresence>
+        {showRejectModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+              onClick={() => setShowRejectModal(false)}
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="bg-white rounded-2xl w-full max-w-md p-6 relative z-10 shadow-2xl"
+            >
+              <h3 className="text-xl font-bold text-slate-800 mb-2">Từ chối tin tuyển dụng</h3>
+              <p className="text-slate-500 text-sm mb-6">Vui lòng nhập lý do từ chối để thông báo cho nhà tuyển dụng khắc phục.</p>
+              
+              <textarea
+                className="w-full h-32 p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none text-slate-700 text-sm transition-all resize-none mb-6"
+                placeholder="Ví dụ: Nội dung tin không phù hợp, thiếu thông tin liên hệ..."
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+              />
+              
+              <div className="flex justify-end gap-3">
+                <button 
+                  className="px-4 py-2.5 rounded-xl font-semibold text-sm text-slate-600 hover:bg-slate-100 transition-colors"
+                  onClick={() => setShowRejectModal(false)} 
+                  disabled={submitting}
+                >
+                  Hủy bỏ
+                </button>
+                <button 
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white bg-rose-600 hover:bg-rose-700 shadow-md shadow-rose-600/20 transition-colors"
+                  onClick={handleReject}
+                  disabled={submitting}
+                >
+                  {submitting && <RefreshCw size={16} className="animate-spin" />}
+                  {submitting ? 'Đang gửi...' : 'Xác nhận từ chối'}
+                </button>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      )}
-    </>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
+
+const TabButton = ({ active, onClick, icon, label }) => (
+  <button
+    onClick={onClick}
+    className={`flex items-center gap-2 px-6 py-4 text-sm font-semibold transition-all relative ${
+      active ? 'text-indigo-600' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100/50'
+    }`}
+  >
+    {icon} {label}
+    {active && (
+      <motion.div 
+        layoutId="activeJobTabIndicator"
+        className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600"
+      />
+    )}
+  </button>
+);
 
 export default AdminJobs;

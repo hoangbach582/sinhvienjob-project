@@ -4,30 +4,20 @@ import {
   Users, FileText, CheckCircle, Lock, Unlock, Trash2,
   ExternalLink, User, BookOpen, Tag,
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import StatusBadge from './StatusBadge';
 import adminAccountService from '../../services/adminAccountService';
-import { toast } from 'react-hot-toast';
 
-/**
- * Modal hiển thị chi tiết tài khoản (Employer hoặc Student)
- * Props:
- *  - account: object tài khoản đang xem
- *  - type: 'employer' | 'student'
- *  - onClose: đóng modal
- *  - onAction: callback khi thực hiện hành động (approve/lock/delete)
- */
 const AccountModal = ({ account, type, onClose, onAction }) => {
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Lấy chi tiết tài khoản khi mở modal
   useEffect(() => {
     const fetchDetail = async () => {
       try {
         const res = await adminAccountService.getAccountDetail(account.id);
         setDetail(res.data || res);
       } catch (err) {
-        // Fallback: dùng dữ liệu ban đầu nếu API chi tiết chưa có
         setDetail(account);
       } finally {
         setLoading(false);
@@ -36,7 +26,6 @@ const AccountModal = ({ account, type, onClose, onAction }) => {
     fetchDetail();
   }, [account.id]);
 
-  // Ngăn scroll body khi modal mở
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = ''; };
@@ -45,7 +34,6 @@ const AccountModal = ({ account, type, onClose, onAction }) => {
   const d = detail || account;
   const isEmployer = type === 'employer';
 
-  // --- Các hành động nhanh trong modal ---
   const handleApprove = () => { onAction('approve', d.id); onClose(); };
   const handleToggleLock = () => {
     const newStatus = d.status === 'locked' ? 'active' : 'locked';
@@ -55,149 +43,133 @@ const AccountModal = ({ account, type, onClose, onAction }) => {
   const handleDelete = () => { onAction('delete', d.id); onClose(); };
 
   return (
-    <div
-      style={{
-        position: 'fixed', inset: 0, zIndex: 1000,
-        background: 'rgba(15, 23, 42, 0.6)',
-        backdropFilter: 'blur(4px)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: '16px',
-      }}
-      onClick={(e) => e.target === e.currentTarget && onClose()}
-    >
-      <div
-        style={{
-          background: '#fff',
-          borderRadius: '16px',
-          width: '100%',
-          maxWidth: '640px',
-          maxHeight: '90vh',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          boxShadow: '0 25px 60px rgba(0,0,0,0.2)',
-          animation: 'slideUp 0.2s ease-out',
-        }}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+        className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl relative z-10 font-sans"
       >
-        {/* Header modal */}
-        <div style={{
-          padding: '20px 24px',
-          borderBottom: '1px solid #e8ecf0',
-          display: 'flex', alignItems: 'center', gap: '12px',
-          background: isEmployer
-            ? 'linear-gradient(135deg, #EBF1FD, #f0f7ff)'
-            : 'linear-gradient(135deg, #EAF3DE, #f0f9e6)',
-        }}>
-          {/* Avatar */}
-          <div style={{
-            width: '48px', height: '48px', borderRadius: '12px',
-            background: isEmployer ? '#3B6FE8' : '#3B6D11',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#fff', fontSize: '18px', fontWeight: '700',
-            flexShrink: 0,
-          }}>
+        {/* Header */}
+        <div className={`px-6 py-5 border-b border-slate-100 flex items-center gap-4 ${isEmployer ? 'bg-indigo-50/50' : 'bg-emerald-50/50'}`}>
+          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-bold shrink-0 shadow-sm ${isEmployer ? 'bg-indigo-600 shadow-indigo-600/20' : 'bg-emerald-600 shadow-emerald-600/20'}`}>
             {isEmployer
-              ? (d.employer?.company_name?.[0] || d.name?.[0] || 'E')
-              : (d.student_profile?.full_name?.[0] || d.name?.[0] || 'S')}
+              ? (d.employer?.company_name?.[0] || d.name?.[0] || 'E').toUpperCase()
+              : (d.student_profile?.full_name?.[0] || d.name?.[0] || 'S').toUpperCase()}
           </div>
 
-          <div style={{ flex: 1 }}>
-            <h2 style={{ fontSize: '16px', fontWeight: '600', color: '#1e293b', margin: 0 }}>
+          <div className="flex-1 min-w-0">
+            <h2 className="text-xl font-bold text-slate-800 truncate">
               {isEmployer
                 ? (d.employer?.company_name || d.name)
                 : (d.student_profile?.full_name || d.name)}
             </h2>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '4px' }}>
+            <div className="flex flex-wrap items-center gap-2 mt-1.5">
               <StatusBadge status={d.status || 'active'} size="sm" />
-              <span style={{ fontSize: '12px', color: '#64748b' }}>{d.email}</span>
+              <span className="text-sm text-slate-500 truncate">{d.email}</span>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            style={{
-              width: '32px', height: '32px', border: 'none', cursor: 'pointer',
-              background: 'rgba(0,0,0,0.08)', borderRadius: '8px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}
+            className="w-8 h-8 rounded-full bg-slate-200/50 hover:bg-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors shrink-0"
           >
-            <X size={16} />
+            <X size={18} />
           </button>
         </div>
 
-        {/* Nội dung */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-6 bg-slate-50/30">
           {loading ? (
             <SkeletonLoader />
           ) : (
-            <>
+            <div className="space-y-8">
               {/* Thông tin chung */}
               <Section title="Thông tin cơ bản">
-                <InfoRow icon={<Mail size={14} />} label="Email" value={d.email} />
-                <InfoRow icon={<Calendar size={14} />} label="Ngày đăng ký"
-                  value={d.created_at ? new Date(d.created_at).toLocaleDateString('vi-VN') : '—'} />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <InfoRow icon={<Mail size={16} />} label="Email" value={d.email} />
+                  <InfoRow icon={<Calendar size={16} />} label="Ngày đăng ký" value={d.created_at ? new Date(d.created_at).toLocaleDateString('vi-VN') : '—'} />
 
-                {isEmployer ? (
-                  <>
-                    <InfoRow icon={<Building2 size={14} />} label="Công ty"
-                      value={d.employer?.company_name || '—'} />
-                    <InfoRow icon={<Tag size={14} />} label="Ngành nghề"
-                      value={d.employer?.industry || '—'} />
-                    <InfoRow icon={<Globe size={14} />} label="Website"
-                      value={d.employer?.website
-                        ? <a href={d.employer.website} target="_blank" rel="noopener noreferrer"
-                            style={{ color: '#3B6FE8', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                            {d.employer.website} <ExternalLink size={11} />
+                  {isEmployer ? (
+                    <>
+                      <InfoRow icon={<Building2 size={16} />} label="Công ty" value={d.employer?.company_name || '—'} />
+                      <InfoRow icon={<Tag size={16} />} label="Ngành nghề" value={d.employer?.industry || '—'} />
+                      <InfoRow icon={<Globe size={16} />} label="Website" value={
+                        d.employer?.website ? (
+                          <a href={d.employer.website} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-700 flex items-center gap-1 hover:underline">
+                            {d.employer.website} <ExternalLink size={12} />
                           </a>
-                        : '—'} />
-                    {d.employer?.description && (
-                      <InfoRow icon={<FileText size={14} />} label="Mô tả"
-                        value={<span style={{ color: '#64748b', lineHeight: '1.5' }}>{d.employer.description}</span>} />
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <InfoRow icon={<User size={14} />} label="Họ tên đầy đủ"
-                      value={d.student_profile?.full_name || d.name || '—'} />
-                    <InfoRow icon={<Phone size={14} />} label="Điện thoại"
-                      value={d.student_profile?.phone || '—'} />
-                    <InfoRow icon={<BookOpen size={14} />} label="Bio"
-                      value={d.student_profile?.bio || '—'} />
-                  </>
+                        ) : '—'
+                      } />
+                    </>
+                  ) : (
+                    <>
+                      <InfoRow icon={<User size={16} />} label="Họ tên đầy đủ" value={d.student_profile?.full_name || d.name || '—'} />
+                      <InfoRow icon={<Phone size={16} />} label="Điện thoại" value={d.student_profile?.phone || '—'} />
+                    </>
+                  )}
+                </div>
+                
+                {isEmployer && d.employer?.description && (
+                  <div className="mt-4 pt-4 border-t border-slate-100">
+                    <InfoRow icon={<FileText size={16} />} label="Mô tả" fullWidth value={
+                      <span className="text-slate-600 text-sm leading-relaxed block mt-1 bg-white p-4 rounded-xl border border-slate-100">
+                        {d.employer.description}
+                      </span>
+                    } />
+                  </div>
+                )}
+                
+                {!isEmployer && d.student_profile?.bio && (
+                  <div className="mt-4 pt-4 border-t border-slate-100">
+                    <InfoRow icon={<BookOpen size={16} />} label="Bio" fullWidth value={
+                      <span className="text-slate-600 text-sm leading-relaxed block mt-1 bg-white p-4 rounded-xl border border-slate-100">
+                        {d.student_profile.bio}
+                      </span>
+                    } />
+                  </div>
                 )}
               </Section>
 
               {/* Thống kê */}
               <Section title="Thống kê hoạt động">
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '4px' }}>
+                <div className="grid grid-cols-2 gap-4">
                   {isEmployer ? (
                     <>
                       <StatBox
-                        icon={<Briefcase size={16} color="#3B6FE8" />}
+                        icon={<Briefcase size={20} className="text-indigo-600" />}
                         label="Tin đã đăng"
                         value={d.jobs_count ?? d.employer?.jobs?.length ?? 0}
-                        color="#EBF1FD"
+                        bg="bg-indigo-50"
                       />
                       <StatBox
-                        icon={<Users size={16} color="#10b981" />}
+                        icon={<Users size={20} className="text-emerald-600" />}
                         label="Lượt ứng tuyển"
                         value={d.applications_count ?? 0}
-                        color="#EAF3DE"
+                        bg="bg-emerald-50"
                       />
                     </>
                   ) : (
                     <>
                       <StatBox
-                        icon={<FileText size={16} color="#3B6FE8" />}
+                        icon={<FileText size={20} className="text-indigo-600" />}
                         label="Đơn đã nộp"
                         value={d.applications_count ?? 0}
-                        color="#EBF1FD"
+                        bg="bg-indigo-50"
                       />
                       <StatBox
-                        icon={<CheckCircle size={16} color="#10b981" />}
+                        icon={<CheckCircle size={20} className="text-emerald-600" />}
                         label="Đã được nhận"
                         value={d.hired_count ?? 0}
-                        color="#EAF3DE"
+                        bg="bg-emerald-50"
                       />
                     </>
                   )}
@@ -207,12 +179,11 @@ const AccountModal = ({ account, type, onClose, onAction }) => {
               {/* Kỹ năng (Student) */}
               {!isEmployer && d.skills && d.skills.length > 0 && (
                 <Section title="Kỹ năng chính">
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '4px' }}>
+                  <div className="flex flex-wrap gap-2">
                     {d.skills.map((sk, i) => (
-                      <span key={i} style={{
-                        background: '#E6F1FB', color: '#185FA5',
-                        padding: '3px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: 500,
-                      }}>{sk.name || sk}</span>
+                      <span key={i} className="px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-semibold border border-indigo-100">
+                        {sk.name || sk}
+                      </span>
                     ))}
                   </div>
                 </Section>
@@ -221,127 +192,100 @@ const AccountModal = ({ account, type, onClose, onAction }) => {
               {/* Danh sách tin tuyển dụng (Employer) */}
               {isEmployer && d.recent_jobs && d.recent_jobs.length > 0 && (
                 <Section title="Tin tuyển dụng gần đây">
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '4px' }}>
+                  <div className="space-y-2">
                     {d.recent_jobs.slice(0, 5).map((job) => (
-                      <div key={job.id} style={{
-                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                        padding: '8px 12px', background: '#f8fafc', borderRadius: '8px',
-                        border: '1px solid #e8ecf0',
-                      }}>
-                        <span style={{ fontSize: '13px', fontWeight: 500, color: '#334155' }}>{job.title}</span>
-                        <span style={{
-                          fontSize: '11px', padding: '2px 8px', borderRadius: '20px',
-                          background: job.status === 'approved' ? '#EAF3DE' : '#FAEEDA',
-                          color: job.status === 'approved' ? '#3B6D11' : '#854F0B',
-                        }}>{job.status}</span>
+                      <div key={job.id} className="flex justify-between items-center p-3.5 bg-white rounded-xl border border-slate-100 hover:border-slate-200 hover:shadow-sm transition-all">
+                        <span className="text-sm font-semibold text-slate-700 truncate mr-4">{job.title}</span>
+                        <span className={`shrink-0 text-xs px-2.5 py-1 rounded-md font-bold ${job.status === 'approved' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                          {job.status}
+                        </span>
                       </div>
                     ))}
                   </div>
                 </Section>
               )}
-            </>
+            </div>
           )}
         </div>
 
-        {/* Action buttons footer */}
-        <div style={{
-          padding: '16px 24px',
-          borderTop: '1px solid #e8ecf0',
-          display: 'flex', gap: '8px', justifyContent: 'flex-end',
-          background: '#fafbfc',
-        }}>
-          {/* Nút Duyệt - chỉ hiện khi đang chờ duyệt */}
+        {/* Footer */}
+        <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex flex-wrap gap-3 justify-end items-center">
           {d.status === 'pending' && isEmployer && (
             <button
-              className="btn"
               onClick={handleApprove}
-              style={{ background: '#EAF3DE', color: '#3B6D11', borderColor: '#c6e0a0', gap: '6px' }}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-emerald-700 bg-emerald-100 hover:bg-emerald-200 transition-colors"
             >
-              <CheckCircle size={14} /> Duyệt tài khoản
+              <CheckCircle size={16} /> Duyệt tài khoản
             </button>
           )}
 
-          {/* Nút Khóa / Mở khóa */}
           <button
-            className="btn"
             onClick={handleToggleLock}
-            style={{
-              gap: '6px',
-              background: d.status === 'locked' ? '#EAF3DE' : '#FEF3F2',
-              color: d.status === 'locked' ? '#3B6D11' : '#B91C1C',
-              borderColor: d.status === 'locked' ? '#c6e0a0' : '#fecaca',
-            }}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+              d.status === 'locked' 
+                ? 'text-emerald-700 bg-emerald-100 hover:bg-emerald-200' 
+                : 'text-amber-700 bg-amber-100 hover:bg-amber-200'
+            }`}
           >
-            {d.status === 'locked'
-              ? <><Unlock size={14} /> Mở khóa</>
-              : <><Lock size={14} /> Khóa tài khoản</>}
+            {d.status === 'locked' ? (
+              <><Unlock size={16} /> Mở khóa</>
+            ) : (
+              <><Lock size={16} /> Khóa tài khoản</>
+            )}
           </button>
 
-          {/* Nút Xóa */}
           <button
-            className="btn"
             onClick={handleDelete}
-            style={{ gap: '6px', background: '#FEF3F2', color: '#B91C1C', borderColor: '#fecaca' }}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-rose-700 bg-rose-100 hover:bg-rose-200 transition-colors"
           >
-            <Trash2 size={14} /> Xóa
+            <Trash2 size={16} /> Xóa
           </button>
 
-          <button className="btn" onClick={onClose}>Đóng</button>
+          <button 
+            onClick={onClose}
+            className="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 transition-colors ml-2"
+          >
+            Đóng
+          </button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
 
-// --- Sub-components ---
-
 const Section = ({ title, children }) => (
-  <div style={{ marginBottom: '20px' }}>
-    <h4 style={{
-      fontSize: '12px', fontWeight: '600', color: '#94a3b8',
-      textTransform: 'uppercase', letterSpacing: '0.5px',
-      marginBottom: '10px', paddingBottom: '6px',
-      borderBottom: '1px solid #f1f5f9',
-    }}>
+  <div>
+    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">
       {title}
     </h4>
     {children}
   </div>
 );
 
-const InfoRow = ({ icon, label, value }) => (
-  <div style={{
-    display: 'flex', gap: '10px', alignItems: 'flex-start',
-    padding: '6px 0', borderBottom: '1px solid #f8fafc',
-  }}>
-    <div style={{ color: '#94a3b8', marginTop: '1px', flexShrink: 0 }}>{icon}</div>
-    <span style={{ fontSize: '12px', color: '#64748b', minWidth: '100px', flexShrink: 0 }}>{label}</span>
-    <span style={{ fontSize: '13px', color: '#334155', fontWeight: 500 }}>{value}</span>
+const InfoRow = ({ icon, label, value, fullWidth }) => (
+  <div className={`flex items-start gap-3 ${fullWidth ? 'w-full' : ''}`}>
+    <div className="text-slate-400 mt-0.5">{icon}</div>
+    <div className="flex-1">
+      <div className="text-xs font-medium text-slate-500 mb-0.5">{label}</div>
+      <div className="text-sm font-semibold text-slate-800">{value}</div>
+    </div>
   </div>
 );
 
-const StatBox = ({ icon, label, value, color }) => (
-  <div style={{
-    background: color, borderRadius: '10px', padding: '12px',
-    display: 'flex', alignItems: 'center', gap: '10px',
-  }}>
-    <div>{icon}</div>
+const StatBox = ({ icon, label, value, bg }) => (
+  <div className={`${bg} rounded-xl p-4 flex items-center gap-4`}>
+    <div className="shrink-0">{icon}</div>
     <div>
-      <div style={{ fontSize: '20px', fontWeight: '700', color: '#1e293b' }}>{value}</div>
-      <div style={{ fontSize: '11px', color: '#64748b' }}>{label}</div>
+      <div className="text-2xl font-black text-slate-800 leading-none">{value}</div>
+      <div className="text-xs font-medium text-slate-500 mt-1">{label}</div>
     </div>
   </div>
 );
 
 const SkeletonLoader = () => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+  <div className="space-y-4">
     {[1, 2, 3, 4].map(i => (
-      <div key={i} style={{
-        height: '36px', borderRadius: '8px',
-        background: 'linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%)',
-        backgroundSize: '200% 100%',
-        animation: 'shimmer 1.5s infinite',
-      }} />
+      <div key={i} className="h-10 rounded-xl bg-slate-200 animate-pulse" />
     ))}
   </div>
 );

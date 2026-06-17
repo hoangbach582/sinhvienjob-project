@@ -3306,3 +3306,63 @@ h4.text-lg.font-bold.text-white.mb-2.leading-tight.group-hover\:text-indigo-400.
 .p-3.text-center.rounded-xl.text-sm.font-medium.transition-all.text-white\/50 {
   padding: 1rem;
 }
+
+nav.flex-1.px-3.py-5.overflow-y-auto.space-y-0\.5,
+.h-\[64px\].flex.items-center.px-5.border-b.border-slate-100,
+header.h-\[64px\].shrink-0.bg-white.border-b.border-slate-200\/80.flex.items-center.justify-between.px-6.gap-4.z-20,
+.flex.flex-wrap.items-center.justify-between.gap-3,
+.grid.grid-cols-2.xl\:grid-cols-4.gap-3,
+.bg-white.rounded-2xl.p-4.border.border-slate-100.shadow-sm.hover\:shadow-md.transition-shadow,
+.grid.grid-cols-1.xl\:grid-cols-2.gap-4,
+.bg-white.rounded-2xl.border.border-slate-100.shadow-sm,
+button.w-full.flex.items-center.gap-3.px-3.py-2\.5.rounded-xl.text-\[13px\].font-semibold.text-slate-500.hover\:bg-red-50.hover\:text-red-600.transition-all.group,
+.absolute.top-\[calc\(100\%\+6px\)\].right-0.w-\[220px\].bg-white.rounded-2xl.shadow-xl.shadow-slate-200\/70.border.border-slate-100.overflow-hidden.z-50,
+.flex.border-b.border-slate-200,
+.flex.flex-col.sm\:flex-row.justify-between.items-start.sm\:items-center.gap-4,
+.flex.flex-wrap.items-center.gap-3.p-4.border-b.border-slate-100.bg-slate-50\/40,
+.flex.flex-col.md\:flex-row.justify-between.items-start.md\:items-center.gap-4.mb-8,
+button.flex.items-center.gap-2.px-6.py-4.text-sm.font-semibold.transition-all.relative.text-indigo-600,
+button.flex.items-center.gap-2.px-6.py-4.text-sm.font-semibold.transition-all.relative.text-slate-500.hover\:text-slate-700.hover\:bg-slate-100\/50 {
+  padding: 1rem;
+}
+
+h2.text-\[15px\].font-bold.text-slate-800.leading-none,
+a.group.flex.items-center.gap-3.px-3.py-2\.5.rounded-xl.text-\[13\.5px\].font-medium.transition-all.duration-150.bg-indigo-50.text-indigo-700.font-semibold,
+p.text-\[10px\].font-bold.text-slate-400.tracking-\[0\.08em\].uppercase.px-3.mb-3.mt-1,
+a.group.flex.items-center.gap-3.px-3.py-2\.5.rounded-xl.text-\[13\.5px\].font-medium.transition-all.duration-150.text-slate-500.hover\:bg-slate-50.hover\:text-slate-800,
+p.text-\[10px\].font-bold.text-slate-400.tracking-\[0\.08em\].uppercase.px-3.mb-3.mt-6
+ {
+    margin-bottom: 0.4rem;
+}
+
+select.bg-white.border.border-slate-200.text-slate-700.text-sm.font-medium.py-2.pl-3.pr-8.rounded-xl.focus\:outline-none.focus\:ring-2.focus\:ring-indigo-500\/20.focus\:border-indigo-400.appearance-none.cursor-pointer.shadow-sm,
+button.flex.items-center.gap-1\.5.bg-indigo-600.hover\:bg-indigo-700.text-white.text-sm.font-semibold.py-2.px-3\.5.rounded-xl.shadow-sm.shadow-indigo-600\/20.transition-all.whitespace-nowrap,
+button.flex.items-center.gap-2.px-3\.5.py-2.bg-white.border.border-slate-200.hover\:bg-slate-50.text-slate-700.rounded-xl.font-semibold.text-\[13px\].shadow-sm.transition-all,
+input.w-full.pl-9.pr-4.py-2.bg-white.border.border-slate-200.rounded-xl.text-sm.font-medium.text-slate-700.placeholder\:text-slate-400.focus\:ring-2.focus\:ring-indigo-500\/20.focus\:border-indigo-400.outline-none.transition-all,
+select.appearance-none.pl-3.pr-8.py-2.bg-white.border.border-slate-200.rounded-xl.text-sm.font-medium.text-slate-700.focus\:ring-2.focus\:ring-indigo-500\/20.focus\:border-indigo-400.outline-none.cursor-pointer.transition-all.min-w-\[150px\],
+button.flex.items-center.gap-2.px-4.py-2.bg-white.border.border-slate-200.hover\:border-slate-300.hover\:bg-slate-50.text-slate-700.rounded-xl.font-semibold.text-sm.transition-all.shadow-sm,
+input.w-full.pl-9.pr-4.py-2\.5.bg-white.border.border-slate-200.rounded-xl.focus\:ring-2.focus\:ring-indigo-500\/20.focus\:border-indigo-500.transition-all.outline-none.text-slate-700.text-sm.font-medium,
+select.appearance-none.pl-4.pr-10.py-2\.5.bg-white.border.border-slate-200.rounded-xl.focus\:ring-2.focus\:ring-indigo-500\/20.focus\:border-indigo-500.transition-all.outline-none.text-slate-700.text-sm.font-medium.cursor-pointer.min-w-\[170px\] {
+  padding:0.4rem;
+}
+
+.p-3.border-t.border-slate-100,
+svg.lucide.lucide-search.absolute.left-3.top-1\/2.-translate-y-1\/2.text-slate-400,
+.ml-auto.text-\[12px\].font-medium.text-slate-400
+ {
+    display: none;
+}
+
+button.relative.flex.items-center.gap-2.px-5.py-3\.5.text-\[13\.5px\].font-semibold.transition-all.text-indigo-600 {
+    padding: 0.4rem;
+    margin-right: 1rem;
+}
+
+button.relative.flex.items-center.gap-2.px-5.py-3\.5.text-\[13\.5px\].font-semibold.transition-all.text-slate-500.hover\:text-slate-700.hover\:bg-slate-50 {
+  padding: 0.4rem;
+  margin-left: 1rem;
+}
+
+.flex.flex-wrap.items-center.gap-4 {
+    margin: 1rem 0;
+}
