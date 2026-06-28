@@ -71,20 +71,21 @@ function HomeNavbar() {
           {navLinks.map((link) => {
             const isActive = location.pathname === link.to;
             return (
-            <Link
-              key={link.label}
-              to={link.to}
-              className={`relative text-sm font-medium transition-colors no-underline py-1 ${isActive ? "text-purple-400 font-semibold" : "text-white/80 hover:text-white"}`}
-            >
-              {link.label}
-              {isActive && (
-                <motion.div
-                  layoutId="navbar-indicator"
-                  className="absolute left-0 right-0 -bottom-1 h-[2px] bg-[#8b5cf6] shadow-[0_0_12px_#8b5cf6] rounded-full"
-                />
-              )}
-            </Link>
-          )})}
+              <Link
+                key={link.label}
+                to={link.to}
+                className={`relative text-sm font-medium transition-colors no-underline py-1 ${isActive ? "text-purple-400 font-semibold" : "text-white/80 hover:text-white"}`}
+              >
+                {link.label}
+                {isActive && (
+                  <motion.div
+                    layoutId="navbar-indicator"
+                    className="absolute left-0 right-0 -bottom-1 h-[2px] bg-[#8b5cf6] shadow-[0_0_12px_#8b5cf6] rounded-full"
+                  />
+                )}
+              </Link>
+            );
+          })}
         </div>
 
         <div className="hidden items-center gap-3 lg:flex">

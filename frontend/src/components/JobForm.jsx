@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
-import ConfirmDialog from './ConfirmDialog';
-import { jobService } from '../services/jobService';
+import React, { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import ConfirmDialog from "./ConfirmDialog";
+import { jobService } from "../services/jobService";
 
 /**
  * JobForm component - Form dùng chung cho Đăng tuyển (PostJob) và Sửa tin (EditJob)
@@ -23,8 +23,8 @@ function JobForm({ defaultValues, onSubmit, isSubmitting }) {
         const data = await jobService.getIndustries();
         setIndustries(data);
       } catch (error) {
-        console.error('Error fetching industries:', error);
-        toast.error('Không thể tải danh sách ngành nghề');
+        console.error("Error fetching industries:", error);
+        toast.error("Không thể tải danh sách ngành nghề");
       } finally {
         setIsLoadingIndustries(false);
       }
@@ -36,39 +36,56 @@ function JobForm({ defaultValues, onSubmit, isSubmitting }) {
   const sanitizedDefaultValues = useMemo(() => {
     if (!defaultValues) {
       return {
-        title: '',
-        type: 'full_time',
-        vacancies: '',
-        location: 'Hà Nội',
-        industry: 'IT & Phần mềm',
-        experience: 'Không yêu cầu',
-        salary_min: '',
-        salary_max: '',
-        deadline: '',
-        description: '',
-        requirements: '',
-        benefits: ''
+        title: "",
+        type: "full_time",
+        vacancies: "",
+        location: "Hà Nội",
+        industry: "IT & Phần mềm",
+        experience: "Không yêu cầu",
+        salary_min: "",
+        salary_max: "",
+        deadline: "",
+        description: "",
+        requirements: "",
+        benefits: "",
       };
     }
     return {
-      title: defaultValues.title || '',
-      type: defaultValues.type || 'full_time',
-      vacancies: defaultValues.vacancies !== null && defaultValues.vacancies !== undefined ? defaultValues.vacancies.toString() : '',
-      location: defaultValues.location || 'Hà Nội',
-      industry: defaultValues.industry || 'IT & Phần mềm',
-      experience: defaultValues.experience || 'Không yêu cầu',
-      salary_min: defaultValues.salary_min !== null && defaultValues.salary_min !== undefined ? defaultValues.salary_min.toString() : '',
-      salary_max: defaultValues.salary_max !== null && defaultValues.salary_max !== undefined ? defaultValues.salary_max.toString() : '',
-      deadline: defaultValues.deadline || '',
-      description: defaultValues.description || '',
-      requirements: defaultValues.requirements || '',
-      benefits: defaultValues.benefits || ''
+      title: defaultValues.title || "",
+      type: defaultValues.type || "full_time",
+      vacancies:
+        defaultValues.vacancies !== null &&
+        defaultValues.vacancies !== undefined
+          ? defaultValues.vacancies.toString()
+          : "",
+      location: defaultValues.location || "Hà Nội",
+      industry: defaultValues.industry || "IT & Phần mềm",
+      experience: defaultValues.experience || "Không yêu cầu",
+      salary_min:
+        defaultValues.salary_min !== null &&
+        defaultValues.salary_min !== undefined
+          ? defaultValues.salary_min.toString()
+          : "",
+      salary_max:
+        defaultValues.salary_max !== null &&
+        defaultValues.salary_max !== undefined
+          ? defaultValues.salary_max.toString()
+          : "",
+      deadline: defaultValues.deadline || "",
+      description: defaultValues.description || "",
+      requirements: defaultValues.requirements || "",
+      benefits: defaultValues.benefits || "",
     };
   }, [defaultValues]);
 
   // Khởi tạo useForm với dữ liệu đã chuẩn hóa để isDirty hoạt động chính xác nhất
-  const { register, handleSubmit, reset, formState: { errors, isDirty } } = useForm({
-    defaultValues: sanitizedDefaultValues
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isDirty },
+  } = useForm({
+    defaultValues: sanitizedDefaultValues,
   });
 
   // Lắng nghe sự kiện trước khi người dùng reload trang hoặc tắt tab khi form đã thay đổi
@@ -76,12 +93,12 @@ function JobForm({ defaultValues, onSubmit, isSubmitting }) {
     const handleBeforeUnload = (e) => {
       if (isDirty && !isSubmitting) {
         e.preventDefault();
-        e.returnValue = ''; // Hộp thoại mặc định của trình duyệt
+        e.returnValue = ""; // Hộp thoại mặc định của trình duyệt
       }
     };
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [isDirty, isSubmitting]);
 
@@ -92,7 +109,7 @@ function JobForm({ defaultValues, onSubmit, isSubmitting }) {
   const handleCancel = () => {
     // Nếu form chưa thay đổi gì -> quay về danh sách ngay lập tức
     if (!isDirty) {
-      navigate('/employer/posted-jobs');
+      navigate("/employer/posted-jobs");
       return;
     }
     // Nếu đã thay đổi -> Mở hộp thoại xác nhận hủy
@@ -106,8 +123,8 @@ function JobForm({ defaultValues, onSubmit, isSubmitting }) {
   const handleConfirmCancel = () => {
     setIsConfirmOpen(false);
     reset(sanitizedDefaultValues); // Reset form về dữ liệu ban đầu
-    toast.success('Hủy thay đổi thành công!'); // Hiển thị toast thành công
-    navigate('/employer/posted-jobs'); // Quay lại trang danh sách
+    toast.success("Hủy thay đổi thành công!"); // Hiển thị toast thành công
+    navigate("/employer/posted-jobs"); // Quay lại trang danh sách
   };
 
   /**
@@ -119,21 +136,30 @@ function JobForm({ defaultValues, onSubmit, isSubmitting }) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: '640px' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-        <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+    <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: "640px" }}>
+      <div
+        style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}
+      >
+        <div className="form-group" style={{ gridColumn: "1 / -1" }}>
           <label className="form-label">Tiêu đề vị trí *</label>
-          <input 
-            className={`form-input ${errors.title ? 'is-invalid' : ''}`}
-            placeholder="Vd: Lập trình viên Frontend" 
-            {...register('title', { required: 'Tiêu đề là bắt buộc' })}
+          <input
+            className={`form-input ${errors.title ? "is-invalid" : ""}`}
+            placeholder="Vd: Lập trình viên Frontend"
+            {...register("title", { required: "Tiêu đề là bắt buộc" })}
           />
-          {errors.title && <span style={{ color: 'red', fontSize: '12px' }}>{errors.title.message}</span>}
+          {errors.title && (
+            <span style={{ color: "red", fontSize: "12px" }}>
+              {errors.title.message}
+            </span>
+          )}
         </div>
-        
+
         <div className="form-group">
           <label className="form-label">Loại hình *</label>
-          <select className="form-input" {...register('type', { required: true })}>
+          <select
+            className="form-input"
+            {...register("type", { required: true })}
+          >
             <option value="part_time">Part-time</option>
             <option value="internship">Internship</option>
             <option value="full_time">Full-time</option>
@@ -142,131 +168,207 @@ function JobForm({ defaultValues, onSubmit, isSubmitting }) {
 
         <div className="form-group">
           <label className="form-label">Số lượng tuyển</label>
-          <input className="form-input" type="number" min="1" placeholder="Vd: 5" {...register('vacancies')} />
+          <input
+            className="form-input"
+            type="number"
+            min="1"
+            placeholder="Vd: 5"
+            {...register("vacancies")}
+          />
         </div>
-        
+
         <div className="form-group">
           <label className="form-label">Ngành nghề</label>
-          <select className="form-input" {...register('industry')} disabled={isLoadingIndustries}>
+          <select
+            className="form-input"
+            {...register("industry")}
+            disabled={isLoadingIndustries}
+          >
             {isLoadingIndustries ? (
               <option value="">Đang tải...</option>
             ) : industries.length > 0 ? (
-              industries.map(ind => (
-                <option key={ind.id} value={ind.name}>{ind.name}</option>
+              industries.map((ind) => (
+                <option key={ind.id} value={ind.name}>
+                  {ind.name}
+                </option>
               ))
             ) : (
               <option value="Khác">Khác</option>
             )}
           </select>
         </div>
-        
+
         <div className="form-group">
           <label className="form-label">Mức lương tối thiểu (VND)</label>
-          <input className="form-input" type="number" placeholder="Vd: 5000000" {...register('salary_min')} />
+          <input
+            className={`form-input ${errors.salary_min ? "is-invalid" : ""}`}
+            type="number"
+            placeholder="Vd: 5000000"
+            {...register("salary_min", {
+              max: {
+                value: 10000000,
+                message: "Mức lương tối đa không vượt quá 10.000.000 VND",
+              },
+            })}
+          />
+          {errors.salary_min && (
+            <span style={{ color: "red", fontSize: "12px" }}>
+              {errors.salary_min.message}
+            </span>
+          )}
         </div>
-        
+
         <div className="form-group">
           <label className="form-label">Mức lương tối đa (VND)</label>
-          <input className="form-input" type="number" placeholder="Vd: 10000000" {...register('salary_max')} />
+          <input
+            className={`form-input ${errors.salary_max ? "is-invalid" : ""}`}
+            type="number"
+            placeholder="Vd: 10000000"
+            {...register("salary_max", {
+              max: {
+                value: 10000000,
+                message: "Mức lương tối đa không vượt quá 10.000.000 VND",
+              },
+            })}
+          />
+          {errors.salary_max && (
+            <span style={{ color: "red", fontSize: "12px" }}>
+              {errors.salary_max.message}
+            </span>
+          )}
         </div>
-        
+
         <div className="form-group">
           <label className="form-label">Địa điểm</label>
-          <input className="form-input" placeholder="Vd: Hà Nội" {...register('location')} />
+          <select
+            className="form-input"
+            {...register("location", { required: "Vui lòng chọn địa điểm" })}
+          >
+            <option value="Hà Nội">Hà Nội</option>
+            <option value="TP.HCM">TP.HCM</option>
+            <option value="Đà Nẵng">Đà Nẵng</option>
+            <option value="Cần Thơ">Cần Thơ</option>
+            <option value="Remote">Làm việc từ xa (Remote)</option>
+            <option value="Khác">Khác</option>
+          </select>
+          {errors.location && (
+            <span style={{ color: "red", fontSize: "12px" }}>
+              {errors.location.message}
+            </span>
+          )}
         </div>
-        
+
         <div className="form-group">
           <label className="form-label">Kinh nghiệm</label>
-          <select className="form-input" {...register('experience')}>
+          <select className="form-input" {...register("experience")}>
             <option value="Không yêu cầu">Không yêu cầu</option>
             <option value="Dưới 1 năm">Dưới 1 năm</option>
             <option value="1-2 năm">1-2 năm</option>
             <option value="Trên 2 năm">Trên 2 năm</option>
           </select>
         </div>
-        
-        <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+
+        <div className="form-group" style={{ gridColumn: "1 / -1" }}>
           <label className="form-label">Hạn nộp hồ sơ</label>
-          <input className="form-input" type="date" {...register('deadline')} />
+          <input className="form-input" type="date" {...register("deadline")} />
         </div>
-        
-        <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+
+        <div className="form-group" style={{ gridColumn: "1 / -1" }}>
           <label className="form-label">Mô tả công việc *</label>
-          <textarea 
-            className={`form-input ${errors.description ? 'is-invalid' : ''}`}
-            rows="4" style={{ resize: 'none' }} 
+          <textarea
+            className={`form-input ${errors.description ? "is-invalid" : ""}`}
+            rows="4"
+            style={{ resize: "none" }}
             placeholder="Mô tả chi tiết công việc, trách nhiệm..."
-            {...register('description', { required: 'Mô tả công việc là bắt buộc' })}
+            {...register("description", {
+              required: "Mô tả công việc là bắt buộc",
+            })}
           ></textarea>
-          {errors.description && <span style={{ color: 'red', fontSize: '12px' }}>{errors.description.message}</span>}
+          {errors.description && (
+            <span style={{ color: "red", fontSize: "12px" }}>
+              {errors.description.message}
+            </span>
+          )}
         </div>
-        
-        <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+
+        <div className="form-group" style={{ gridColumn: "1 / -1" }}>
           <label className="form-label">Yêu cầu ứng viên</label>
-          <textarea className="form-input" rows="3" style={{ resize: 'none' }} placeholder="Kỹ năng, trình độ, điều kiện cần có..." {...register('requirements')}></textarea>
+          <textarea
+            className="form-input"
+            rows="3"
+            style={{ resize: "none" }}
+            placeholder="Kỹ năng, trình độ, điều kiện cần có..."
+            {...register("requirements")}
+          ></textarea>
         </div>
-        
-        <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+
+        <div className="form-group" style={{ gridColumn: "1 / -1" }}>
           <label className="form-label">Quyền lợi</label>
-          <textarea className="form-input" rows="3" style={{ resize: 'none' }} placeholder="Thưởng, bảo hiểm, môi trường làm việc..." {...register('benefits')}></textarea>
+          <textarea
+            className="form-input"
+            rows="3"
+            style={{ resize: "none" }}
+            placeholder="Thưởng, bảo hiểm, môi trường làm việc..."
+            {...register("benefits")}
+          ></textarea>
         </div>
       </div>
-      
+
       {/* Cột các nút hành động (Hủy & Lưu) */}
-      <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+      <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
         <button
           type="button"
           onClick={handleCancel}
           style={{
-            background: '#F1F5F9', // Nền xám nhạt
-            color: '#475569',
-            border: '1px solid #E2E8F0',
-            borderRadius: '8px',
-            fontSize: '13px',
-            fontWeight: '500',
-            cursor: 'pointer',
-            padding: '8px 18px',
-            transition: 'all 0.15s ease',
+            background: "#F1F5F9", // Nền xám nhạt
+            color: "#475569",
+            border: "1px solid #E2E8F0",
+            borderRadius: "8px",
+            fontSize: "13px",
+            fontWeight: "500",
+            cursor: "pointer",
+            padding: "8px 18px",
+            transition: "all 0.15s ease",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#E2E8F0'; // Hover màu xám đậm hơn rõ ràng
-            e.currentTarget.style.color = '#0F172A';
+            e.currentTarget.style.background = "#E2E8F0"; // Hover màu xám đậm hơn rõ ràng
+            e.currentTarget.style.color = "#0F172A";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#F1F5F9';
-            e.currentTarget.style.color = '#475569';
+            e.currentTarget.style.background = "#F1F5F9";
+            e.currentTarget.style.color = "#475569";
           }}
         >
           Hủy
         </button>
-        
+
         <button
           type="submit"
           className="btn"
           disabled={isSubmitting}
           style={{
-            background: '#10B981', // Đồng bộ với tông màu xanh lục của Nhà tuyển dụng
-            color: '#ffffff',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '13px',
-            fontWeight: '500',
-            padding: '8px 18px',
-            cursor: isSubmitting ? 'not-allowed' : 'pointer',
-            transition: 'all 0.15s ease',
+            background: "#10B981", // Đồng bộ với tông màu xanh lục của Nhà tuyển dụng
+            color: "#ffffff",
+            border: "none",
+            borderRadius: "8px",
+            fontSize: "13px",
+            fontWeight: "500",
+            padding: "8px 18px",
+            cursor: isSubmitting ? "not-allowed" : "pointer",
+            transition: "all 0.15s ease",
           }}
           onMouseEnter={(e) => {
             if (!isSubmitting) {
-              e.currentTarget.style.background = '#059669'; // Hover màu xanh lục đậm hơn
+              e.currentTarget.style.background = "#059669"; // Hover màu xanh lục đậm hơn
             }
           }}
           onMouseLeave={(e) => {
             if (!isSubmitting) {
-              e.currentTarget.style.background = '#10B981';
+              e.currentTarget.style.background = "#10B981";
             }
           }}
         >
-          {isSubmitting ? 'Đang lưu...' : 'Lưu công việc'}
+          {isSubmitting ? "Đang lưu..." : "Lưu công việc"}
         </button>
       </div>
 
@@ -283,4 +385,3 @@ function JobForm({ defaultValues, onSubmit, isSubmitting }) {
 }
 
 export default JobForm;
-

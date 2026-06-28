@@ -35,11 +35,11 @@ function HeroSectionNew({
   return (
     <section className="home-hero relative overflow-hidden bg-navy-deep">
       <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-navy-deep via-navy to-navy-deep"
+        className="pointer-events-none absolute inset-0 bg-linear-to-b from-navy-deep via-navy to-navy-deep"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute -right-20 top-10 h-[28rem] w-[28rem] rounded-full bg-brand/30 blur-[120px]"
+        className="pointer-events-none absolute -right-20 top-10 h-112 w-md rounded-full bg-brand/30 blur-[120px]"
         aria-hidden="true"
       />
       <div
@@ -75,7 +75,7 @@ function HeroSectionNew({
             <h1 className="text-pretty font-extrabold leading-tight text-white">
               Tìm kiếm việc làm <br className="hidden lg:block" />
               phù hợp cho{" "}
-              <span className="bg-gradient-to-r from-brand-light to-brand bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-brand-light to-brand bg-clip-text text-transparent">
                 Sinh Viên
               </span>
             </h1>

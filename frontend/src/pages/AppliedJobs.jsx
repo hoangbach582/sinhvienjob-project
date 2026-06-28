@@ -365,7 +365,9 @@ function AppliedJobs() {
                       <img
                         src={
                           app.job.employer?.logo_url
-                            ? (app.job.employer.logo_url.startsWith("http") ? app.job.employer.logo_url : `http://127.0.0.1:8000${app.job.employer.logo_url}`)
+                            ? app.job.employer.logo_url.startsWith("http")
+                              ? app.job.employer.logo_url
+                              : `http://127.0.0.1:8000${app.job.employer.logo_url}`
                             : `https://ui-avatars.com/api/?name=${encodeURIComponent(app.job.employer?.company_name || "CT")}&background=random&color=fff&size=150`
                         }
                         alt={app.job.employer?.company_name}
@@ -481,7 +483,13 @@ function AppliedJobs() {
                         </span>
                       </div>
 
-                      <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "12px",
+                          flexWrap: "wrap",
+                        }}
+                      >
                         <span
                           style={{
                             display: "inline-flex",

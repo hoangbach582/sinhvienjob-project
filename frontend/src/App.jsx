@@ -18,6 +18,7 @@ import BuildCV from './pages/BuildCV';
 import StudentSettings from './pages/StudentSettings'; 
 import GoogleCallback from './pages/GoogleCallback'; 
 import Notifications from './pages/Notifications';
+import StudentDashboard from './pages/StudentDashboard';
 
 
 import EmployerRegister from './pages/EmployerRegister'; 
@@ -73,6 +74,7 @@ function App() {
             <Route path="/companies" element={<Companies />} />
             <Route path="/companies/:id" element={<CompanyDetail />} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/dashboard" element={<StudentDashboard />} />
 
             {/* Phân hệ Nhà tuyển dụng */}
             <Route path="/employer/register" element={<EmployerRegister />} />

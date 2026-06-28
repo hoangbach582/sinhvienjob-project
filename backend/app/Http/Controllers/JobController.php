@@ -100,8 +100,6 @@ class JobController extends Controller
                 $query->where('salary_max', '>=', 3000000)->where('salary_min', '<=', 5000000);
             } elseif ($salary === '5_to_10') {
                 $query->where('salary_max', '>=', 5000000)->where('salary_min', '<=', 10000000);
-            } elseif ($salary === 'over_10') {
-                $query->where('salary_min', '>', 10000000);
             }
         }
 
@@ -109,23 +107,53 @@ class JobController extends Controller
         if ($request->has('industry') && $request->industry != '') {
             $query->where('industry', $request->industry);
         }
+
+        // 6. Lọc theo KINH NGHIỆM
+        if ($request->has('experience') && $request->experience != '') {
+            $query->where('experience', $request->experience);
+        }
         
         // Trả về danh sách, sắp xếp việc mới nhất lên đầu
         $jobs = $query->orderBy('created_at', 'desc')->get();
 
-        // Kiểm tra xem student đã lưu job nào chưa
+        // Kiểm tra xem student đã lưu job nào chưa và tính điểm gợi ý
         $user = auth('sanctum')->user();
         if ($user && $user->role === 'student') {
-            $studentProfile = StudentProfile::where('user_id', $user->id)->first();
+            $studentProfile = StudentProfile::with('skills')->where('user_id', $user->id)->first();
             if ($studentProfile) {
                 $savedJobIds = SavedJob::where('student_id', $studentProfile->id)
                                         ->pluck('job_id')
                                         ->toArray();
                 
-                $jobs->map(function($job) use ($savedJobIds) {
+                $studentSkills = $studentProfile->skills->pluck('name')->map(function($skill) {
+                    return strtolower(trim($skill));
+                })->toArray();
+                
+                $jobs->map(function($job) use ($savedJobIds, $studentSkills) {
                     $job->is_saved = in_array($job->id, $savedJobIds);
+                    
+                    // Recommendation Engine: Tính điểm phù hợp dựa trên kỹ năng
+                    $score = 0;
+                    if (!empty($studentSkills)) {
+                        $jobTitle = strtolower($job->title);
+                        $jobDesc = strtolower($job->description ?? '');
+                        $jobReq = strtolower($job->requirements ?? '');
+                        
+                        foreach ($studentSkills as $skill) {
+                            if (strpos($jobTitle, $skill) !== false) $score += 3; // Kỹ năng có trong tiêu đề -> điểm cao
+                            if (strpos($jobReq, $skill) !== false) $score += 2; // Kỹ năng có trong yêu cầu -> điểm vừa
+                            if (strpos($jobDesc, $skill) !== false) $score += 1; // Kỹ năng có trong mô tả -> điểm thấp
+                        }
+                    }
+                    $job->match_score = $score;
+                    $job->is_recommended = $score > 0;
                     return $job;
                 });
+
+                // Nếu request yêu cầu ưu tiên gợi ý, ta sắp xếp lại danh sách
+                if ($request->has('recommended') && $request->recommended == 'true') {
+                    $jobs = $jobs->sortByDesc('match_score')->values();
+                }
             }
         }
 

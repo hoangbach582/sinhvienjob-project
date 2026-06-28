@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -11,25 +11,49 @@ export const AuthProvider = ({ children }) => {
 
   // 1. KHÔI PHỤC TRẠNG THÁI (Đọc được cả chuẩn cũ lẫn chuẩn mới)
   useEffect(() => {
-    const token = localStorage.getItem('access_token') || localStorage.getItem('token');
+    const rawToken = localStorage.getItem('access_token') || localStorage.getItem('token');
+    const token = (rawToken && rawToken !== 'null' && rawToken !== 'undefined') ? rawToken : null;
     
     // Thử lấy object user (Cách mới)
     let userData = null;
     try {
-        userData = JSON.parse(localStorage.getItem('user'));
+        const userStr = localStorage.getItem('user');
+        if (userStr && userStr !== 'null' && userStr !== 'undefined') {
+            userData = JSON.parse(userStr);
+        }
     } catch (e) {}
 
     // Lấy thông tin (Ưu tiên các biến rời rạc của cách cũ, nếu không có thì lấy từ object)
-    const role = localStorage.getItem('role') || (userData ? userData.role : '');
-    const name = localStorage.getItem('name') || (userData ? (userData.name || userData.full_name) : '');
-    const avatar = localStorage.getItem('avatar') || (userData ? userData.avatar : '');
+    const rawRole = localStorage.getItem('role');
+    const role = (rawRole && rawRole !== 'null' && rawRole !== 'undefined') ? rawRole : (userData ? userData.role : '');
+    
+    const rawName = localStorage.getItem('name');
+    const name = (rawName && rawName !== 'null' && rawName !== 'undefined') ? rawName : (userData ? (userData.name || userData.full_name) : '');
+    
+    const rawAvatar = localStorage.getItem('avatar');
+    const avatar = (rawAvatar && rawAvatar !== 'null' && rawAvatar !== 'undefined') ? rawAvatar : (userData ? userData.avatar : '');
 
-    if (token && (role || name)) {
+    // Cần có đủ token, role và name thì mới coi là đăng nhập hợp lệ
+    if (token && role && name) {
       setIsLoggedIn(true);
       setUser(userData || null);
       setUserName(name || '');
       setUserRole(role || '');
       setUserAvatar(avatar || '');
+    } else {
+      // Dọn dẹp local storage nếu trạng thái không hợp lệ (corrupted data)
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('role');
+      localStorage.removeItem('name');
+      localStorage.removeItem('avatar');
+
+      setIsLoggedIn(false);
+      setUser(null);
+      setUserName('');
+      setUserRole('');
+      setUserAvatar('');
     }
   }, []);
 

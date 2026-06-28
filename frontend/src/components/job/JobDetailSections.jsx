@@ -23,14 +23,12 @@ function JobDetailSimilar({ currentJobId, formatSalary, translateType }) {
 
   if (similarJobs.length === 0) return null;
 
-
-
   const cardStyleLg = {
-    background: 'rgba(255,255,255,0.05)',
-    border: '1px solid rgba(255,255,255,0.08)',
-    backdropFilter: 'blur(12px)',
-    borderRadius: '1rem',
-    padding: '1.5rem 2rem',
+    background: "rgba(255,255,255,0.05)",
+    border: "1px solid rgba(255,255,255,0.08)",
+    backdropFilter: "blur(12px)",
+    borderRadius: "1rem",
+    padding: "1.5rem 2rem",
   };
 
   return (
@@ -93,27 +91,31 @@ function JobDetailSimilar({ currentJobId, formatSalary, translateType }) {
                       color: "white",
                     }}
                   >
-                    {job.employer?.company_name?.substring(0, 2).toUpperCase() ||
-                      "CT"}
+                    {job.employer?.company_name
+                      ?.substring(0, 2)
+                      .toUpperCase() || "CT"}
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="text-white font-bold text-sm mb-1 truncate group-hover:text-brand-light transition-colors">
                       {job.title}
                     </h4>
-                    
                   </div>
-                  <div onClick={(e) => e.preventDefault()} className="shrink-0 pt-1">
+                  <div
+                    onClick={(e) => e.preventDefault()}
+                    className="shrink-0 pt-1"
+                  >
                     <SaveButton jobId={job.id} size={18} variant="minimal" />
                   </div>
                 </div>
-                
+
                 <div className="mt-auto">
                   <div className="flex items-center gap-4 text-xs text-white/60 mb-4">
                     <span className="flex items-center gap-1.5">
                       <MapPin className="w-3.5 h-3.5" /> {job.location}
                     </span>
                     <span className="flex items-center gap-1.5 text-amber-400 font-semibold">
-                      <Briefcase className="w-3.5 h-3.5" /> {formatSalary(job.salary_min, job.salary_max)}
+                      <Briefcase className="w-3.5 h-3.5" />{" "}
+                      {formatSalary(job.salary_min, job.salary_max)}
                     </span>
                   </div>
                   <div className="flex">

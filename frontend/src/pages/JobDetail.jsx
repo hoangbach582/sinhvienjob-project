@@ -22,6 +22,7 @@ function JobDetail() {
   // --- STATE DÀNH RIÊNG CHO MODAL ỨNG TUYỂN ---
   const [showApplyModal, setShowApplyModal] = useState(false);
   const [coverLetter, setCoverLetter] = useState("");
+  const [loginPromptParams, setLoginPromptParams] = useState({ show: false, message: "" });
 
   // Các state mới cho tính năng Upload nâng cao
   const [cvOption, setCvOption] = useState("profile"); // 'profile' hoặc 'upload'
@@ -73,10 +74,10 @@ function JobDetail() {
       localStorage.getItem("access_token") || localStorage.getItem("token");
 
     if (!token || !isLoggedIn) {
-      const confirmLogin = window.confirm(
-        "Bạn cần đăng nhập tài khoản Sinh viên để ứng tuyển. Đi đến trang Đăng nhập ngay?",
-      );
-      if (confirmLogin) navigate("/login");
+      setLoginPromptParams({
+        show: true,
+        message: "Bạn cần đăng nhập tài khoản Sinh viên để ứng tuyển. Đi đến trang Đăng nhập ngay?"
+      });
       return;
     }
 
@@ -96,10 +97,10 @@ function JobDetail() {
       localStorage.getItem("access_token") || localStorage.getItem("token");
 
     if (!token || !isLoggedIn) {
-      const confirmLogin = window.confirm(
-        "Bạn cần đăng nhập tài khoản Sinh viên để lưu việc làm. Đi đến trang Đăng nhập ngay?",
-      );
-      if (confirmLogin) navigate("/login");
+      setLoginPromptParams({
+        show: true,
+        message: "Bạn cần đăng nhập tài khoản Sinh viên để lưu việc làm. Đi đến trang Đăng nhập ngay?"
+      });
       return;
     }
 
@@ -340,6 +341,72 @@ function JobDetail() {
       }}
     >
       <HomeNavbar />
+
+      {/* --- LOGIN PROMPT MODAL --- */}
+      {loginPromptParams.show && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.6)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+            backdropFilter: "blur(8px)",
+          }}
+        >
+          <div
+            className="rounded-2xl overflow-hidden w-full max-w-[400px] mx-5 text-center shadow-2xl"
+            style={{
+              padding: "2rem",
+              background: "rgba(18,14,45,0.98)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              animation: "slideUp 0.3s ease-out"
+            }}
+          >
+            <div className="w-16 h-16 rounded-full bg-brand/20 flex items-center justify-center mx-auto mb-4" style={{ background: "rgba(130,63,235,0.15)", border: "1px solid rgba(130,63,235,0.3)" }}>
+              <span className="text-3xl">🔒</span>
+            </div>
+            
+            <h3 className="text-white font-bold text-xl mb-3">
+              Yêu cầu đăng nhập
+            </h3>
+            
+            <p className="text-white/70 text-sm leading-relaxed mb-6">
+              {loginPromptParams.message}
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setLoginPromptParams({ show: false, message: "" })}
+                className="flex-1 py-2.5 rounded-xl text-white/70 font-semibold text-sm border cursor-pointer hover:bg-white/5 transition-colors"
+                style={{
+                  background: "transparent",
+                  borderColor: "rgba(255,255,255,0.1)",
+                }}
+              >
+                Hủy bỏ
+              </button>
+              <button
+                onClick={() => {
+                  setLoginPromptParams({ show: false, message: "" });
+                  navigate("/login");
+                }}
+                className="flex-1 py-2.5 rounded-xl text-white font-semibold text-sm border-none cursor-pointer hover:opacity-90 transition-opacity"
+                style={{
+                  background: "linear-gradient(135deg, #823feb, #6366f1)",
+                }}
+              >
+                Đăng nhập
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* --- APPLY MODAL (Dark themed) --- */}
       {showApplyModal && (

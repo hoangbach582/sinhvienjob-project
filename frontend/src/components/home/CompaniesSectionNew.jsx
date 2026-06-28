@@ -1,12 +1,12 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Briefcase } from 'lucide-react';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { ArrowRight, Briefcase } from "lucide-react";
 
 const partners = [
-  { name: 'Techcombank', color: 'text-red-600' },
-  { name: 'FPT', color: 'text-orange-500' },
-  { name: 'VNG', color: 'text-blue-600' },
-  { name: 'viettel', color: 'text-red-500' },
+  { name: "Techcombank", color: "text-red-600" },
+  { name: "FPT", color: "text-orange-500" },
+  { name: "VNG", color: "text-blue-600" },
+  { name: "viettel", color: "text-red-500" },
 ];
 
 function CompaniesSectionNew() {
@@ -25,7 +25,8 @@ function CompaniesSectionNew() {
               Công ty đang tuyển dụng mạnh
             </h2>
             <p className="mt-3 text-pretty text-muted-foreground">
-              Kết nối với các doanh nghiệp, tập đoàn công nghệ hàng đầu tại Việt Nam.
+              Kết nối với các doanh nghiệp, tập đoàn công nghệ hàng đầu tại Việt
+              Nam.
             </p>
           </div>
 
@@ -34,16 +35,16 @@ function CompaniesSectionNew() {
               <button
                 key={partner.name}
                 type="button"
-                onClick={() => navigate('/companies')}
-                className={`flex h-16 w-16 items-center justify-center rounded-full border border-border bg-background text-sm font-bold shadow-sm ${partner.color} cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand`}
+                onClick={() => navigate("/companies")}
+                className={`flex h-16 w-16 items-center justify-center rounded-full border border-border bg-background text-sm font-bold shadow-sm ${partner.color} cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand`}
               >
                 {partner.name.slice(0, 4)}
               </button>
             ))}
             <button
               type="button"
-              onClick={() => navigate('/companies')}
-              className="flex h-16 w-16 items-center justify-center rounded-full border-none bg-gradient-to-br from-brand to-brand-light text-sm font-bold text-white shadow-md shadow-brand/30 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              onClick={() => navigate("/companies")}
+              className="flex h-16 w-16 items-center justify-center rounded-full border-none bg-linear-to-br from-brand to-brand-light text-sm font-bold text-white shadow-md shadow-brand/30 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
             >
               +100
             </button>
@@ -53,8 +54,8 @@ function CompaniesSectionNew() {
         <div className="mt-8 flex justify-center">
           <button
             type="button"
-            onClick={() => navigate('/companies')}
-            className="flex items-center gap-2 rounded-xl border-none bg-gradient-to-r from-brand to-brand-light px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-opacity hover:opacity-90 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            onClick={() => navigate("/companies")}
+            className="flex items-center gap-2 rounded-xl border-none bg-linear-to-r from-brand to-brand-light px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-opacity hover:opacity-90 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           >
             Khám phá tất cả các doanh nghiệp đối tác
             <ArrowRight className="h-4 w-4" aria-hidden="true" />

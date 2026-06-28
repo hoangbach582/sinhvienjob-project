@@ -24,11 +24,11 @@ class JobRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            'type' => 'required|in:internship,part_time,full_time',
+            'type' => 'required|in:internship,part_time,full_time,remote',
             'vacancies' => 'nullable|integer|min:1',
             'industry' => 'nullable|string|max:255',
-            'salary_min' => 'nullable|numeric|min:0',
-            'salary_max' => 'nullable|numeric|min:0|gte:salary_min',
+            'salary_min' => 'nullable|numeric|min:0|max:10000000',
+            'salary_max' => 'nullable|numeric|min:0|max:10000000|gte:salary_min',
             'location' => 'nullable|string|max:255',
             'experience' => 'nullable|string|max:255',
             'deadline' => 'nullable|date|after_or_equal:today',
@@ -46,6 +46,8 @@ class JobRequest extends FormRequest
             'type.in' => 'Loại hình công việc không hợp lệ.',
             'description.required' => 'Vui lòng nhập mô tả công việc.',
             'salary_max.gte' => 'Lương tối đa phải lớn hơn hoặc bằng lương tối thiểu.',
+            'salary_min.max' => 'Vì đây là nền tảng dành cho sinh viên, mức lương tối đa không được vượt quá 10.000.000 VND.',
+            'salary_max.max' => 'Vì đây là nền tảng dành cho sinh viên, mức lương tối đa không được vượt quá 10.000.000 VND.',
             'deadline.after_or_equal' => 'Hạn nộp hồ sơ phải từ hôm nay trở đi.'
         ];
     }

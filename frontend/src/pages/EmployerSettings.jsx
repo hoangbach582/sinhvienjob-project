@@ -418,9 +418,7 @@ function EmployerSettings() {
                 style={{
                   ...inputStyle,
                   borderColor:
-                    deleteConfirm === "XOA TAI KHOAN"
-                      ? "#EF4444"
-                      : "#CBD5E1",
+                    deleteConfirm === "XOA TAI KHOAN" ? "#EF4444" : "#CBD5E1",
                   textAlign: "center",
                   fontFamily: "monospace",
                   fontSize: "16px",
@@ -429,15 +427,11 @@ function EmployerSettings() {
                 }}
                 onFocus={(e) =>
                   (e.target.style.borderColor =
-                    deleteConfirm === "XOA TAI KHOAN"
-                      ? "#EF4444"
-                      : "#94A3B8")
+                    deleteConfirm === "XOA TAI KHOAN" ? "#EF4444" : "#94A3B8")
                 }
                 onBlur={(e) =>
                   (e.target.style.borderColor =
-                    deleteConfirm === "XOA TAI KHOAN"
-                      ? "#EF4444"
-                      : "#CBD5E1")
+                    deleteConfirm === "XOA TAI KHOAN" ? "#EF4444" : "#CBD5E1")
                 }
               />
             </div>
@@ -607,7 +601,11 @@ function EmployerSettings() {
                     <Building size={16} /> Tên công ty
                   </div>
                   <span
-                    style={{ color: "#0F172A", fontWeight: 500, fontSize: "15px" }}
+                    style={{
+                      color: "#0F172A",
+                      fontWeight: 500,
+                      fontSize: "15px",
+                    }}
                   >
                     {userName || "—"}
                   </span>
@@ -625,7 +623,11 @@ function EmployerSettings() {
                     <Mail size={16} /> Email đăng nhập
                   </div>
                   <span
-                    style={{ color: "#0F172A", fontWeight: 500, fontSize: "15px" }}
+                    style={{
+                      color: "#0F172A",
+                      fontWeight: 500,
+                      fontSize: "15px",
+                    }}
                   >
                     {accountInfo.email || "—"}
                   </span>
@@ -671,7 +673,11 @@ function EmployerSettings() {
                     <Calendar size={16} /> Ngày tạo tài khoản
                   </div>
                   <span
-                    style={{ color: "#0F172A", fontWeight: 500, fontSize: "15px" }}
+                    style={{
+                      color: "#0F172A",
+                      fontWeight: 500,
+                      fontSize: "15px",
+                    }}
                   >
                     {formatDate(accountInfo.created_at)}
                   </span>
@@ -707,9 +713,7 @@ function EmployerSettings() {
                   marginBottom: "24px",
                   borderRadius: "12px",
                   backgroundColor:
-                    passwordMsg.type === "error"
-                      ? "#FEF2F2"
-                      : "#ECFDF5",
+                    passwordMsg.type === "error" ? "#FEF2F2" : "#ECFDF5",
                   color: passwordMsg.type === "error" ? "#DC2626" : "#059669",
                   border: `1px solid ${passwordMsg.type === "error" ? "#FECACA" : "#A7F3D0"}`,
                   fontSize: "14px",
@@ -747,12 +751,8 @@ function EmployerSettings() {
                     }
                     placeholder="Nhập mật khẩu hiện tại..."
                     style={inputStyle}
-                    onFocus={(e) =>
-                      (e.target.style.borderColor = "#10B981")
-                    }
-                    onBlur={(e) =>
-                      (e.target.style.borderColor = "#CBD5E1")
-                    }
+                    onFocus={(e) => (e.target.style.borderColor = "#10B981")}
+                    onBlur={(e) => (e.target.style.borderColor = "#CBD5E1")}
                   />
                   <button
                     type="button"
@@ -782,12 +782,8 @@ function EmployerSettings() {
                     }
                     placeholder="Ít nhất 6 ký tự..."
                     style={inputStyle}
-                    onFocus={(e) =>
-                      (e.target.style.borderColor = "#10B981")
-                    }
-                    onBlur={(e) =>
-                      (e.target.style.borderColor = "#CBD5E1")
-                    }
+                    onFocus={(e) => (e.target.style.borderColor = "#10B981")}
+                    onBlur={(e) => (e.target.style.borderColor = "#CBD5E1")}
                   />
                   <button
                     type="button"
@@ -813,12 +809,8 @@ function EmployerSettings() {
                     }
                     placeholder="Nhập lại mật khẩu mới..."
                     style={inputStyle}
-                    onFocus={(e) =>
-                      (e.target.style.borderColor = "#10B981")
-                    }
-                    onBlur={(e) =>
-                      (e.target.style.borderColor = "#CBD5E1")
-                    }
+                    onFocus={(e) => (e.target.style.borderColor = "#10B981")}
+                    onBlur={(e) => (e.target.style.borderColor = "#CBD5E1")}
                   />
                   <button
                     type="button"

@@ -101,14 +101,14 @@ function EmployerLogin() {
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#10b981] rounded-full blur-[120px] opacity-20 pointer-events-none"></div>
 
       {/* Simplified Header */}
-      <header class="absolute inset-x-0 top-0 z-50">
-        <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
+      <header className="absolute inset-x-0 top-0 z-50">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
           <a
-            class="flex items-center gap-2.5 no-underline"
+            className="flex items-center gap-2.5 no-underline"
             href="/"
             data-discover="true"
           >
-            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-lg">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-lg">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -116,10 +116,10 @@ function EmployerLogin() {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-graduation-cap h-5 w-5 text-brand"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-graduation-cap h-5 w-5 text-brand"
                 aria-hidden="true"
               >
                 <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"></path>
@@ -127,9 +127,9 @@ function EmployerLogin() {
                 <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path>
               </svg>
             </span>
-            <span class="text-lg font-bold text-white">SinhVienJob</span>
+            <span className="text-lg font-bold text-white">SinhVienJob</span>
           </a>
-          <div class="hidden items-center gap-4 lg:flex">
+          <div className="hidden items-center gap-4 lg:flex">
             <Link to="/jobs" className="hover:text-white transition-colors">
               Tìm việc
             </Link>
@@ -149,7 +149,7 @@ function EmployerLogin() {
 
           <button
             type="button"
-            class="border-none bg-transparent text-white lg:hidden cursor-pointer"
+            className="border-none bg-transparent text-white lg:hidden cursor-pointer"
             aria-label="Mở menu"
           >
             <svg
@@ -159,10 +159,10 @@ function EmployerLogin() {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-menu h-6 w-6"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-menu h-6 w-6"
               aria-hidden="true"
             >
               <path d="M4 5h16"></path>

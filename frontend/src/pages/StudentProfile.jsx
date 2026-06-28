@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import MainLayout from "../layouts/MainLayout";
 import { useAuth } from "../context/AuthContext";
+import ProfileExtendedFields from "../components/profile/ProfileExtendedFields";
 
 function StudentProfile() {
   const [loading, setLoading] = useState(true);
@@ -16,6 +17,11 @@ function StudentProfile() {
     bio: "",
     avatarUrl: "",
     cvUrl: "",
+    portfolio_url: "",
+    education: "",
+    experience: "",
+    projects: "",
+    skills: "",
   });
 
   const [avatarFile, setAvatarFile] = useState(null);
@@ -41,6 +47,19 @@ function StudentProfile() {
             bio: data.bio || "",
             avatarUrl: data.avatar || "",
             cvUrl: data.cv_url || "",
+            portfolio_url: data.portfolio_url || "",
+            education: Array.isArray(data.education)
+              ? data.education.join("\n")
+              : "",
+            experience: Array.isArray(data.experience)
+              ? data.experience.join("\n")
+              : "",
+            projects: Array.isArray(data.projects)
+              ? data.projects.join("\n")
+              : "",
+            skills: Array.isArray(data.skills)
+              ? data.skills.map((s) => (s.id ? s.id : s)).join("\n")
+              : "",
           });
         }
       } catch (error) {
@@ -71,7 +90,10 @@ function StudentProfile() {
     e.preventDefault();
 
     if (formData.phone && formData.phone.length > 12) {
-      setMessage({ text: "Số điện thoại không được vượt quá 12 số!", type: "error" });
+      setMessage({
+        text: "Số điện thoại không được vượt quá 12 số!",
+        type: "error",
+      });
       return;
     }
 
@@ -85,6 +107,30 @@ function StudentProfile() {
 
     if (avatarFile) submitData.append("avatar", avatarFile);
     if (cvFile) submitData.append("cv", cvFile);
+    submitData.append("portfolio_url", formData.portfolio_url);
+    submitData.append(
+      "education",
+      JSON.stringify(formData.education.split("\n").filter(Boolean)),
+    );
+    submitData.append(
+      "experience",
+      JSON.stringify(formData.experience.split("\n").filter(Boolean)),
+    );
+    submitData.append(
+      "projects",
+      JSON.stringify(formData.projects.split("\n").filter(Boolean)),
+    );
+
+    // Skills temporarily handled as simple strings for now if no autocomplete
+    const parsedSkills = formData.skills
+      .split("\n")
+      .filter(Boolean)
+      .map((skillName) => ({
+        skill_id: null, // Since we don't have skill_id mapping here, we might need backend to handle creation or we just don't sync this way.
+        name: skillName,
+        level: "beginner",
+      }));
+    submitData.append("skills", JSON.stringify(parsedSkills));
 
     try {
       const token =
@@ -570,7 +616,9 @@ function StudentProfile() {
                         width: "100%",
                         padding: "12px 16px",
                         borderRadius: "8px",
-                        border: phoneError ? "1px solid #ef4444" : "1px solid rgba(255, 255, 255, 0.1)",
+                        border: phoneError
+                          ? "1px solid #ef4444"
+                          : "1px solid rgba(255, 255, 255, 0.1)",
                         backgroundColor: "rgba(15, 23, 42, 0.6)",
                         color: "#f8fafc",
                         outline: "none",
@@ -579,17 +627,45 @@ function StudentProfile() {
                         transition: "all 0.2s",
                       }}
                       onFocus={(e) => {
-                        e.target.style.borderColor = phoneError ? "#ef4444" : "#6366f1";
-                        e.target.style.boxShadow = phoneError ? "0 0 0 1px #ef4444" : "0 0 0 1px #6366f1";
+                        e.target.style.borderColor = phoneError
+                          ? "#ef4444"
+                          : "#6366f1";
+                        e.target.style.boxShadow = phoneError
+                          ? "0 0 0 1px #ef4444"
+                          : "0 0 0 1px #6366f1";
                       }}
                       onBlur={(e) => {
-                        e.target.style.borderColor = phoneError ? "#ef4444" : "rgba(255, 255, 255, 0.1)";
+                        e.target.style.borderColor = phoneError
+                          ? "#ef4444"
+                          : "rgba(255, 255, 255, 0.1)";
                         e.target.style.boxShadow = "none";
                       }}
                     />
                     {phoneError && (
-                      <div style={{ color: "#ef4444", fontSize: "13px", marginTop: "6px", display: "flex", alignItems: "center", gap: "4px" }}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                      <div
+                        style={{
+                          color: "#ef4444",
+                          fontSize: "13px",
+                          marginTop: "6px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px",
+                        }}
+                      >
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="12" y1="8" x2="12" y2="12"></line>
+                          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
                         {phoneError}
                       </div>
                     )}
@@ -798,10 +874,11 @@ function StudentProfile() {
                             strokeLinecap="round"
                             strokeLinejoin="round"
                           >
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                            <polyline points="15 3 21 3 21 9"></polyline>
+                            <line x1="10" y1="14" x2="21" y2="3"></line>
                           </svg>
-                          Xem CV hiện tại của bạn
+                          Xem CV hiện tại
                         </a>
                       ) : (
                         <span style={{ fontSize: "14px", color: "#64748b" }}>
@@ -810,6 +887,12 @@ function StudentProfile() {
                       )}
                     </div>
                   </div>
+
+                  {/* Thêm phần mở rộng (Education, Experience, Projects, Skills, Portfolio) */}
+                  <ProfileExtendedFields
+                    formData={formData}
+                    handleInputChange={handleInputChange}
+                  />
                 </div>
               </div>
 

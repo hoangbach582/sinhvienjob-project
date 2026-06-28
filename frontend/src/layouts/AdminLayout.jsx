@@ -1,11 +1,22 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Outlet, Link, useNavigate, useLocation, Navigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import React, { useState, useRef, useEffect } from "react";
 import {
-  LayoutDashboard, Users, Briefcase, Settings, LogOut,
-  ChevronDown, ListTree
-} from 'lucide-react';
-import NotificationBell from '../components/notifications/NotificationBell';
+  Outlet,
+  Link,
+  useNavigate,
+  useLocation,
+  Navigate,
+} from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import {
+  LayoutDashboard,
+  Users,
+  Briefcase,
+  Settings,
+  LogOut,
+  ChevronDown,
+  ListTree,
+} from "lucide-react";
+import NotificationBell from "../components/notifications/NotificationBell";
 
 function AdminLayout() {
   const { logout, userRole } = useAuth();
@@ -20,45 +31,45 @@ function AdminLayout() {
         setShowDropdown(false);
       }
     }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Fallback: đọc từ localStorage phòng khi context chưa load kịp
-  const token = localStorage.getItem('access_token') || localStorage.getItem('token');
+  const token =
+    localStorage.getItem("access_token") || localStorage.getItem("token");
   let role = userRole;
   if (!role) {
-    role = localStorage.getItem('role');
+    role = localStorage.getItem("role");
     try {
-      const userData = JSON.parse(localStorage.getItem('user'));
+      const userData = JSON.parse(localStorage.getItem("user"));
       if (userData?.role) role = userData.role;
     } catch {
       // ignore JSON parse errors
     }
   }
 
-  if (!token || role !== 'admin') {
+  if (!token || role !== "admin") {
     return <Navigate to="/admin/login" replace />;
   }
 
-
   const isActive = (path) =>
-    location.pathname === path || location.pathname.startsWith(path + '/');
+    location.pathname === path || location.pathname.startsWith(path + "/");
 
   const navItems = [
-    { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Tổng quan' },
-    { to: '/admin/accounts', icon: Users, label: 'Tài khoản' },
-    { to: '/admin/jobs', icon: Briefcase, label: 'Tin tuyển dụng' },
-    { to: '/admin/industries', icon: ListTree, label: 'Ngành nghề' },
+    { to: "/admin/dashboard", icon: LayoutDashboard, label: "Tổng quan" },
+    { to: "/admin/accounts", icon: Users, label: "Tài khoản" },
+    { to: "/admin/jobs", icon: Briefcase, label: "Tin tuyển dụng" },
+    { to: "/admin/industries", icon: ListTree, label: "Ngành nghề" },
   ];
 
   const handleLogout = () => {
     logout();
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('role');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("role");
     setShowDropdown(false);
-    navigate('/admin/login');
+    navigate("/admin/login");
   };
 
   return (
@@ -72,15 +83,21 @@ function AdminLayout() {
               <span className="text-white font-black text-base">A</span>
             </div>
             <div>
-              <div className="text-[14px] font-bold text-slate-800 leading-none">SinhVienJob</div>
-              <div className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mt-0.5">Admin Portal</div>
+              <div className="text-[14px] font-bold text-slate-800 leading-none">
+                SinhVienJob
+              </div>
+              <div className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mt-0.5">
+                Admin Portal
+              </div>
             </div>
           </div>
         </div>
 
         {/* Nav */}
         <nav className="flex-1 px-3 py-5 overflow-y-auto space-y-0.5">
-          <p className="text-[10px] font-bold text-slate-400 tracking-[0.08em] uppercase px-3 mb-3 mt-1">Quản lý chính</p>
+          <p className="text-[10px] font-bold text-slate-400 tracking-[0.08em] uppercase px-3 mb-3 mt-1">
+            Quản lý chính
+          </p>
 
           {navItems.map(({ to, icon: Icon, label }) => {
             // eslint-disable-next-line no-unused-vars
@@ -91,13 +108,17 @@ function AdminLayout() {
                 to={to}
                 className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13.5px] font-medium transition-all duration-150 ${
                   active
-                    ? 'bg-indigo-50 text-indigo-700 font-semibold'
-                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+                    ? "bg-indigo-50 text-indigo-700 font-semibold"
+                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
                 }`}
               >
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
-                  active ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'
-                }`}>
+                <div
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                    active
+                      ? "bg-indigo-100 text-indigo-600"
+                      : "bg-slate-100 text-slate-500 group-hover:bg-slate-200"
+                  }`}
+                >
                   <Icon size={16} strokeWidth={active ? 2.5 : 2} />
                 </div>
                 {label}
@@ -108,20 +129,29 @@ function AdminLayout() {
             );
           })}
 
-          <p className="text-[10px] font-bold text-slate-400 tracking-[0.08em] uppercase px-3 mb-3 mt-6">Cài đặt</p>
+          <p className="text-[10px] font-bold text-slate-400 tracking-[0.08em] uppercase px-3 mb-3 mt-6">
+            Cài đặt
+          </p>
 
           <Link
             to="/admin/settings"
             className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13.5px] font-medium transition-all duration-150 ${
-              isActive('/admin/settings')
-                ? 'bg-indigo-50 text-indigo-700 font-semibold'
-                : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+              isActive("/admin/settings")
+                ? "bg-indigo-50 text-indigo-700 font-semibold"
+                : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
             }`}
           >
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
-              isActive('/admin/settings') ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'
-            }`}>
-              <Settings size={16} strokeWidth={isActive('/admin/settings') ? 2.5 : 2} />
+            <div
+              className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                isActive("/admin/settings")
+                  ? "bg-indigo-100 text-indigo-600"
+                  : "bg-slate-100 text-slate-500 group-hover:bg-slate-200"
+              }`}
+            >
+              <Settings
+                size={16}
+                strokeWidth={isActive("/admin/settings") ? 2.5 : 2}
+              />
             </div>
             Cấu hình
           </Link>
@@ -143,7 +173,6 @@ function AdminLayout() {
 
       {/* ===== MAIN ===== */}
       <div className="flex-1 flex flex-col overflow-hidden">
-
         {/* TOPBAR */}
         <header className="h-[64px] shrink-0 bg-white border-b border-slate-200/80 flex items-center justify-between px-6 gap-4 z-20">
           {/* Left: Page context */}
@@ -175,20 +204,28 @@ function AdminLayout() {
                   AD
                 </div>
                 <div className="text-left hidden sm:block">
-                  <div className="text-[13px] font-semibold text-slate-700 leading-none">Administrator</div>
-                  <div className="text-[11px] text-slate-400 font-medium mt-0.5">Quản trị viên</div>
+                  <div className="text-[13px] font-semibold text-slate-700 leading-none">
+                    Administrator
+                  </div>
+                  <div className="text-[11px] text-slate-400 font-medium mt-0.5">
+                    Quản trị viên
+                  </div>
                 </div>
                 <ChevronDown
                   size={14}
-                  className={`text-slate-400 transition-transform duration-200 ${showDropdown ? 'rotate-180' : ''}`}
+                  className={`text-slate-400 transition-transform duration-200 ${showDropdown ? "rotate-180" : ""}`}
                 />
               </button>
 
               {showDropdown && (
                 <div className="absolute top-[calc(100%+6px)] right-0 w-[220px] bg-white rounded-2xl shadow-xl shadow-slate-200/70 border border-slate-100 overflow-hidden z-50">
                   <div className="px-4 py-3.5 border-b border-slate-50 bg-gradient-to-br from-slate-50 to-indigo-50/30">
-                    <p className="text-[14px] font-bold text-slate-800">Administrator</p>
-                    <p className="text-[12px] text-slate-500 mt-0.5">admin@sinhvienjob.vn</p>
+                    <p className="text-[14px] font-bold text-slate-800">
+                      Administrator
+                    </p>
+                    <p className="text-[12px] text-slate-500 mt-0.5">
+                      admin@sinhvienjob.vn
+                    </p>
                   </div>
                   <div className="p-1.5">
                     <button

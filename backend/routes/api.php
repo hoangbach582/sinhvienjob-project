@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\AdminAccountController;
 use App\Http\Controllers\SavedJobController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\EmployerDashboardController; // Thêm import này
+use App\Http\Controllers\StudentDashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,6 +56,7 @@ Route::get('/categories/industries', [JobController::class, 'getIndustries']);
 
 Route::get('/employers', [EmployerProfileController::class, 'publicIndex']);
 Route::get('/employers/{id}', [EmployerProfileController::class, 'publicShow']);
+Route::get('/employers/{id}/reviews', [\App\Http\Controllers\CompanyReviewController::class, 'index']);
 
 // ==========================================
 // NHÓM 2: YÊU CẦU PHẢI CÓ TOKEN (ĐÃ ĐĂNG NHẬP)
@@ -81,6 +83,12 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     // 4. Việc làm đã lưu
     Route::post('/jobs/{jobId}/save', [SavedJobController::class, 'toggle']);
     Route::get('/saved-jobs', [SavedJobController::class, 'index']);
+
+    // 4.5 Student Dashboard
+    Route::get('/dashboard/student/stats', [StudentDashboardController::class, 'getStats']);
+
+    // 4.6 Đánh giá công ty
+    Route::post('/employers/{id}/reviews', [\App\Http\Controllers\CompanyReviewController::class, 'store']);
 
     // 5. Cài đặt tài khoản
     Route::put('/account/change-password', [AccountController::class, 'changePassword']);

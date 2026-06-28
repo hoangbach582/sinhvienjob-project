@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams, Link, useNavigate } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import {
   Search,
   MapPin,
@@ -32,22 +32,25 @@ const popularTags = [
 
 function Jobs() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
   const initialKeyword = searchParams.get("keyword") || "";
   const initialLocation = searchParams.get("location") || "";
   const initialType = searchParams.get("type") || "";
   const initialSalary = searchParams.get("salary") || "";
   const initialIndustry = searchParams.get("industry") || "";
+  const initialExperience = searchParams.get("experience") || "";
+  const initialRecommended = searchParams.get("recommended") === "true";
 
   const [keyword, setKeyword] = useState(initialKeyword);
   const [location, setLocation] = useState(initialLocation);
   const [type, setType] = useState(initialType);
   const [salary, setSalary] = useState(initialSalary);
   const [industry, setIndustry] = useState(initialIndustry);
-  
+  const [experience, setExperience] = useState(initialExperience);
+  const [isRecommended, setIsRecommended] = useState(initialRecommended);
+
   const [searchKeyword, setSearchKeyword] = useState(initialKeyword);
   const [searchLocation, setSearchLocation] = useState(initialLocation);
-  
+
   const [searchHistory, setSearchHistory] = useState(() => {
     const saved = localStorage.getItem("jobSearchHistory");
     return saved ? JSON.parse(saved) : [];
@@ -66,54 +69,64 @@ function Jobs() {
     searchParams.get("location") ||
     searchParams.get("type") ||
     searchParams.get("salary") ||
-    searchParams.get("industry");
-
-  const fetchJobs = async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (searchParams.get("keyword"))
-        params.append("keyword", searchParams.get("keyword"));
-      if (searchParams.get("location"))
-        params.append("location", searchParams.get("location"));
-      if (searchParams.get("type"))
-        params.append("type", searchParams.get("type"));
-      if (searchParams.get("salary"))
-        params.append("salary", searchParams.get("salary"));
-      if (searchParams.get("industry"))
-        params.append("industry", searchParams.get("industry"));
-
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/jobs?${params.toString()}`,
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setJobs(data);
-      }
-    } catch (error) {
-      console.error("Lỗi tải danh sách việc làm:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchIndustries = async () => {
-    try {
-      const response = await fetch("http://127.0.0.1:8000/api/categories/industries");
-      if (response.ok) {
-        const data = await response.json();
-        setIndustries(data);
-      }
-    } catch (error) {
-      console.error("Lỗi tải danh sách ngành nghề:", error);
-    }
-  };
+    searchParams.get("industry") ||
+    searchParams.get("experience") ||
+    searchParams.get("recommended") === "true";
 
   useEffect(() => {
+    const fetchIndustries = async () => {
+      try {
+        const response = await fetch(
+          "http://127.0.0.1:8000/api/categories/industries",
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setIndustries(data);
+        }
+      } catch (error) {
+        console.error("Lỗi tải danh sách ngành nghề:", error);
+      }
+    };
     fetchIndustries();
   }, []);
 
   useEffect(() => {
+    const fetchJobs = async () => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams();
+        if (searchParams.get("keyword"))
+          params.append("keyword", searchParams.get("keyword"));
+        if (searchParams.get("location"))
+          params.append("location", searchParams.get("location"));
+        if (searchParams.get("type"))
+          params.append("type", searchParams.get("type"));
+        if (searchParams.get("salary"))
+          params.append("salary", searchParams.get("salary"));
+        if (searchParams.get("industry"))
+          params.append("industry", searchParams.get("industry"));
+        if (searchParams.get("experience"))
+          params.append("experience", searchParams.get("experience"));
+        if (searchParams.get("recommended") === "true")
+          params.append("recommended", "true");
+
+        const token = localStorage.getItem("token");
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+        const response = await fetch(
+          `http://127.0.0.1:8000/api/jobs?${params.toString()}`,
+          { headers },
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setJobs(data);
+        }
+      } catch (error) {
+        console.error("Lỗi tải danh sách việc làm:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchJobs();
   }, [searchParams]);
 
@@ -125,6 +138,8 @@ function Jobs() {
     if (type) params.append("type", type);
     if (salary) params.append("salary", salary);
     if (industry) params.append("industry", industry);
+    if (experience) params.append("experience", experience);
+    if (isRecommended) params.append("recommended", "true");
     setSearchParams(params);
     setCurrentPage(1);
   };
@@ -139,9 +154,12 @@ function Jobs() {
     setKeyword(searchKeyword);
     setLocation(searchLocation);
     setCurrentPage(1);
-    
+
     if (searchKeyword.trim()) {
-      const newHistory = [searchKeyword.trim(), ...searchHistory.filter(k => k !== searchKeyword.trim())].slice(0, 5);
+      const newHistory = [
+        searchKeyword.trim(),
+        ...searchHistory.filter((k) => k !== searchKeyword.trim()),
+      ].slice(0, 5);
       setSearchHistory(newHistory);
       localStorage.setItem("jobSearchHistory", JSON.stringify(newHistory));
     }
@@ -157,8 +175,11 @@ function Jobs() {
     if (industry) params.append("industry", industry);
     setSearchParams(params);
     setCurrentPage(1);
-    
-    const newHistory = [tag, ...searchHistory.filter(k => k !== tag)].slice(0, 5);
+
+    const newHistory = [tag, ...searchHistory.filter((k) => k !== tag)].slice(
+      0,
+      5,
+    );
     setSearchHistory(newHistory);
     localStorage.setItem("jobSearchHistory", JSON.stringify(newHistory));
     setIsSearchFocused(false);
@@ -170,6 +191,8 @@ function Jobs() {
     setType("");
     setSalary("");
     setIndustry("");
+    setExperience("");
+    setIsRecommended(false);
     setSearchKeyword("");
     setSearchLocation("");
     setSearchParams({});
@@ -202,6 +225,20 @@ function Jobs() {
       internship: "bg-pink-500/15 text-pink-400 border-pink-500/20",
     };
     return colors[jobType] || "bg-brand/15 text-brand-light border-brand/20";
+  };
+
+  const getTimeLabel = (createdAt) => {
+    if (!createdAt) return "Mới";
+    const now = new Date();
+    const createdDate = new Date(createdAt);
+    const diffTime = Math.abs(now - createdDate);
+    const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffHours < 24) {
+      return "Mới";
+    }
+    return `${diffDays} ngày trước`;
   };
 
   // Pagination
@@ -238,12 +275,12 @@ function Jobs() {
       <HomeNavbar />
 
       {/* Hero Search Section */}
-      <section 
+      <section
         className="relative px-4"
         style={{
           minHeight: "auto",
           paddingTop: "8rem",
-          paddingBottom: "3rem"
+          paddingBottom: "0.9rem",
         }}
       >
         {/* Background decorative elements */}
@@ -251,18 +288,20 @@ function Jobs() {
           <div
             className="absolute top-20 right-10 w-72 h-72 rounded-full opacity-10"
             style={{
-              background: "radial-gradient(circle, #823feb 0%, transparent 70%)",
+              background:
+                "radial-gradient(circle, #823feb 0%, transparent 70%)",
             }}
           />
           <div
             className="absolute bottom-0 left-10 w-48 h-48 rounded-full opacity-8"
             style={{
-              background: "radial-gradient(circle, #3B82F6 0%, transparent 70%)",
+              background:
+                "radial-gradient(circle, #3B82F6 0%, transparent 70%)",
             }}
           />
         </div>
 
-        <div 
+        <div
           className="max-w-6xl relative z-10"
           style={{ margin: "0 auto", width: "100%" }}
         >
@@ -291,93 +330,94 @@ function Jobs() {
                 padding: "1.6rem",
                 border: "1px solid rgba(255,255,255,0.1)",
                 backdropFilter: "blur(12px)",
-                borderRadius: "1.5rem"
+                borderRadius: "1.5rem",
               }}
             >
-            <div className="flex flex-col sm:flex-row items-stretch gap-3 rounded-2xl p-0">
-              <div
-                className="flex items-center gap-3 flex-1 rounded-xl px-4 py-3 transition-all focus-within:bg-white/10 focus-within:ring-1 focus-within:ring-brand/50"
-                style={{
-                  background: "rgba(255,255,255,0.07)",
-                  paddingLeft: "1rem",
-                }}
-              >
-                <Search className="w-5 h-5 text-brand-light/70 shrink-0" />
-                <input
-                  type="text"
-                  placeholder="Vị trí tuyển dụng, kỹ năng, công ty..."
-                  value={searchKeyword}
-                  onChange={(e) => setSearchKeyword(e.target.value)}
-                  onFocus={() => setIsSearchFocused(true)}
-                  onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
-                  className="w-full bg-transparent border-none outline-none text-white placeholder-white/40 text-sm"
-                />
-              </div>
-              <div
-                className="flex items-center gap-3 rounded-xl px-4 py-3 sm:w-56 transition-all focus-within:bg-white/10 focus-within:ring-1 focus-within:ring-brand/50"
-                style={{
-                  background: "rgba(255,255,255,0.07)",
-                  padding: "0 1rem",
-                }}
-              >
-                <MapPin className="w-5 h-5 text-brand-light/70 shrink-0" />
-                <select
-                  value={searchLocation}
-                  onChange={(e) => setSearchLocation(e.target.value)}
-                  className="w-full bg-transparent border-none outline-none text-white text-sm cursor-pointer appearance-none"
-                  style={{ WebkitAppearance: "none" }}
+              <div className="flex flex-col sm:flex-row items-stretch gap-3 rounded-2xl p-0">
+                <div
+                  className="flex items-center gap-3 flex-1 rounded-xl px-4 py-3 transition-all focus-within:bg-white/10 focus-within:ring-1 focus-within:ring-brand/50"
+                  style={{
+                    background: "rgba(255,255,255,0.07)",
+                    paddingLeft: "1rem",
+                  }}
                 >
-                  <option
-                    value=""
-                    style={{ background: "#1a1145", color: "white" }}
+                  <Search className="w-5 h-5 text-brand-light/70 shrink-0" />
+                  <input
+                    type="text"
+                    placeholder="Vị trí tuyển dụng, kỹ năng, công ty..."
+                    value={searchKeyword}
+                    onChange={(e) => setSearchKeyword(e.target.value)}
+                    onFocus={() => setIsSearchFocused(true)}
+                    onBlur={() =>
+                      setTimeout(() => setIsSearchFocused(false), 200)
+                    }
+                    className="w-full bg-transparent border-none outline-none text-white placeholder-white/40 text-sm"
+                  />
+                </div>
+                <div
+                  className="flex items-center gap-3 rounded-xl px-4 py-3 sm:w-56 transition-all focus-within:bg-white/10 focus-within:ring-1 focus-within:ring-brand/50"
+                  style={{
+                    background: "rgba(255,255,255,0.07)",
+                    padding: "0 1rem",
+                  }}
+                >
+                  <MapPin className="w-5 h-5 text-brand-light/70 shrink-0" />
+                  <select
+                    value={searchLocation}
+                    onChange={(e) => setSearchLocation(e.target.value)}
+                    className="w-full bg-transparent border-none outline-none text-white text-sm cursor-pointer appearance-none"
+                    style={{ WebkitAppearance: "none" }}
                   >
-                    Tất cả địa điểm
-                  </option>
-                  <option
-                    value="Hà Nội"
-                    style={{ background: "#1a1145", color: "white" }}
-                  >
-                    Hà Nội
-                  </option>
-                  <option
-                    value="TP.HCM"
-                    style={{ background: "#1a1145", color: "white" }}
-                  >
-                    TP.HCM
-                  </option>
-                  <option
-                    value="Đà Nẵng"
-                    style={{ background: "#1a1145", color: "white" }}
-                  >
-                    Đà Nẵng
-                  </option>
-                  <option
-                    value="Remote"
-                    style={{ background: "#1a1145", color: "white" }}
-                  >
-                    Remote
-                  </option>
-                </select>
-                <ChevronDown className="w-4 h-4 text-white/40 shrink-0" />
+                    <option
+                      value=""
+                      style={{ background: "#1a1145", color: "white" }}
+                    >
+                      Tất cả địa điểm
+                    </option>
+                    <option
+                      value="Hà Nội"
+                      style={{ background: "#1a1145", color: "white" }}
+                    >
+                      Hà Nội
+                    </option>
+                    <option
+                      value="TP.HCM"
+                      style={{ background: "#1a1145", color: "white" }}
+                    >
+                      TP.HCM
+                    </option>
+                    <option
+                      value="Đà Nẵng"
+                      style={{ background: "#1a1145", color: "white" }}
+                    >
+                      Đà Nẵng
+                    </option>
+                    <option
+                      value="Remote"
+                      style={{ background: "#1a1145", color: "white" }}
+                    >
+                      Remote
+                    </option>
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-white/40 shrink-0" />
+                </div>
+                <button
+                  type="submit"
+                  className="flex items-center justify-center gap-2 rounded-xl px-8 py-3 text-white font-semibold text-sm border-none cursor-pointer transition-all hover:shadow-[0_0_20px_rgba(130,63,235,0.4)] hover:-translate-y-0.5"
+                  style={{
+                    background: "linear-gradient(135deg, #823feb, #6366f1)",
+                    marginTop: "0",
+                    marginBottom: "0",
+                  }}
+                >
+                  Tìm kiếm <ArrowRight className="w-4 h-4" />
+                </button>
               </div>
-              <button
-                type="submit"
-                className="flex items-center justify-center gap-2 rounded-xl px-8 py-3 text-white font-semibold text-sm border-none cursor-pointer transition-all hover:shadow-[0_0_20px_rgba(130,63,235,0.4)] hover:-translate-y-0.5"
-                style={{
-                  background: "linear-gradient(135deg, #823feb, #6366f1)",
-                  marginTop: "0",
-                  marginBottom: "0",
-                }}
-              >
-                Tìm kiếm <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-            
             </form>
 
             {/* Search Dropdown / History */}
             {isSearchFocused && (
-              <div className="absolute top-full mt-2 left-0 right-0 bg-[#16103a] rounded-2xl border border-white/10 p-5 shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-[100]">
+              <div className="absolute top-full mt-2 left-0 right-0 bg-[#16103a] rounded-2xl border border-white/10 p-5 shadow-[0_20px_40px_rgba(0,0,0,0.5)] z-100">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-white/60 text-sm font-medium flex items-center gap-2">
                     <RotateCcw className="w-4 h-4" /> Lịch sử tìm kiếm
@@ -396,10 +436,12 @@ function Jobs() {
                       </button>
                     ))
                   ) : (
-                    <span className="text-white/30 text-sm italic">Chưa có lịch sử tìm kiếm</span>
+                    <span className="text-white/30 text-sm italic">
+                      Chưa có lịch sử tìm kiếm
+                    </span>
                   )}
                 </div>
-                
+
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-white/60 text-sm font-medium flex items-center gap-2">
                     <Search className="w-4 h-4" /> Gợi ý việc làm
@@ -486,7 +528,11 @@ function Jobs() {
                       Tất cả ngành nghề
                     </option>
                     {industries.map((ind) => (
-                      <option key={ind.id} value={ind.name} style={{ background: "#1a1145" }}>
+                      <option
+                        key={ind.id}
+                        value={ind.name}
+                        style={{ background: "#1a1145" }}
+                      >
                         {ind.name}
                       </option>
                     ))}
@@ -570,7 +616,6 @@ function Jobs() {
                     { value: "under_3", label: "Dưới 3 triệu" },
                     { value: "3_to_5", label: "3 - 5 triệu" },
                     { value: "5_to_10", label: "5 - 10 triệu" },
-                    { value: "over_10", label: "Trên 10 triệu" },
                   ].map((item) => (
                     <button
                       key={item.value}
@@ -616,12 +661,53 @@ function Jobs() {
               style={{ marginBottom: "0.8rem" }}
             >
               <p className="text-white/70 text-sm m-0">
-                <span className="text-white font-bold text-lg">
-                  {jobs.length.toLocaleString()}
-                </span>{" "}
-                việc làm phù hợp
+                {isSearching ? (
+                  <>
+                    <span className="text-white font-bold text-lg">
+                      {jobs.length.toLocaleString()}
+                    </span>{" "}
+                    việc làm phù hợp
+                  </>
+                ) : (
+                  <>
+                    Tất cả{" "}
+                    <span className="text-white font-bold text-lg">
+                      {jobs.length.toLocaleString()}
+                    </span>{" "}
+                    việc làm
+                  </>
+                )}
               </p>
               <div className="flex items-center gap-3">
+                <button
+                  onClick={() => {
+                    const newValue = !isRecommended;
+                    setIsRecommended(newValue);
+                    const params = new URLSearchParams(searchParams);
+                    if (newValue) {
+                      params.set("recommended", "true");
+                    } else {
+                      params.delete("recommended");
+                    }
+                    setSearchParams(params);
+                  }}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm border cursor-pointer transition-all ${isRecommended ? "bg-indigo-500/20 text-indigo-400 border-indigo-500/50" : "bg-transparent text-white/50 border-white/10 hover:text-white/80 hover:bg-white/5"}`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                  Gợi ý cho bạn
+                </button>
                 <div
                   className="flex items-center gap-2"
                   style={{
@@ -658,11 +744,11 @@ function Jobs() {
                     fill="#fff"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                    stroke-width="2"
+                    strokeWidth="2"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       d="M19 9l-7 7-7-7"
                     />
                   </svg>
@@ -849,14 +935,35 @@ function Jobs() {
                                 {job.title}
                               </Link>
                               <span
-                                className="px-2 py-0.5 rounded text-[10px] font-bold text-emerald-300 shrink-0"
+                                className={`px-2 py-0.5 rounded text-[10px] font-bold shrink-0 ${
+                                  getTimeLabel(job.created_at) === "Mới"
+                                    ? "text-emerald-300"
+                                    : "text-white/60"
+                                }`}
                                 style={{
-                                  background: "rgba(16,185,129,0.15)",
-                                  border: "1px solid rgba(16,185,129,0.25)",
+                                  background:
+                                    getTimeLabel(job.created_at) === "Mới"
+                                      ? "rgba(16,185,129,0.15)"
+                                      : "rgba(255,255,255,0.1)",
+                                  border:
+                                    getTimeLabel(job.created_at) === "Mới"
+                                      ? "1px solid rgba(16,185,129,0.25)"
+                                      : "1px solid rgba(255,255,255,0.15)",
                                 }}
                               >
-                                Mới
+                                {getTimeLabel(job.created_at)}
                               </span>
+                              {job.is_recommended && (
+                                <span
+                                  className="px-2 py-0.5 rounded text-[10px] font-bold text-indigo-300 shrink-0 flex items-center gap-1"
+                                  style={{
+                                    background: "rgba(99,102,241,0.15)",
+                                    border: "1px solid rgba(99,102,241,0.25)",
+                                  }}
+                                >
+                                  ✨ Phù hợp
+                                </span>
+                              )}
                             </div>
                             <Link
                               to={`/job/${job.id}`}
@@ -894,7 +1001,10 @@ function Jobs() {
                               <MapPin className="w-3.5 h-3.5" /> {job.location}
                             </span>
                             <span className="flex items-center gap-1.5 text-white/50">
-                              <Users className="w-3.5 h-3.5" /> {job.vacancies ? `${job.vacancies} người` : 'Không giới hạn'}
+                              <Users className="w-3.5 h-3.5" />{" "}
+                              {job.vacancies
+                                ? `${job.vacancies} người`
+                                : "Không giới hạn"}
                             </span>
                             <span className="flex items-center gap-1.5 text-amber-400 font-semibold">
                               💰 {formatSalary(job.salary_min, job.salary_max)}

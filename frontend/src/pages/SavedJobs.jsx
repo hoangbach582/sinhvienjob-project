@@ -241,9 +241,12 @@ function SavedJobs() {
                         <span className="w-1 h-1 rounded-full bg-white/20 hidden md:block"></span>
                         <span className="flex items-center gap-1.5">
                           <Eye className="w-3.5 h-3.5" /> Đã xem:{" "}
-                          {item.created_at 
-                            ? formatDistanceToNow(new Date(item.created_at), { addSuffix: true, locale: vi }).replace('khoảng ', '') 
-                            : 'Vừa xong'}
+                          {item.created_at
+                            ? formatDistanceToNow(new Date(item.created_at), {
+                                addSuffix: true,
+                                locale: vi,
+                              }).replace("khoảng ", "")
+                            : "Vừa xong"}
                         </span>
                       </div>
                     </div>
@@ -255,12 +258,15 @@ function SavedJobs() {
 
           {/* Pagination */}
           {!loading && pagination.last_page > 0 && (
-            <div className="flex items-center justify-center gap-2 mt-8" style={{ marginTop: '1rem' }}>
-              <button 
+            <div
+              className="flex items-center justify-center gap-2 mt-8"
+              style={{ marginTop: "1rem" }}
+            >
+              <button
                 disabled={pagination.current_page === 1}
                 onClick={() => fetchSavedJobs(pagination.current_page - 1)}
-                className="w-9 h-9 rounded-lg flex items-center justify-center border-none cursor-pointer transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-white/60 hover:text-white" 
-                style={{ background: 'rgba(255, 255, 255, 0.06)' }}
+                className="w-9 h-9 rounded-lg flex items-center justify-center border-none cursor-pointer transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-white/60 hover:text-white"
+                style={{ background: "rgba(255, 255, 255, 0.06)" }}
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -274,19 +280,25 @@ function SavedJobs() {
                   onClick={() => fetchSavedJobs(page)}
                   className="w-9 h-9 rounded-lg flex items-center justify-center border-none cursor-pointer text-sm font-semibold transition-all"
                   style={{
-                    background: pagination.current_page === page ? 'linear-gradient(135deg, rgb(130, 63, 235), rgb(99, 102, 241))' : 'rgba(255, 255, 255, 0.06)',
-                    color: pagination.current_page === page ? 'white' : 'rgba(255, 255, 255, 0.6)'
+                    background:
+                      pagination.current_page === page
+                        ? "linear-gradient(135deg, rgb(130, 63, 235), rgb(99, 102, 241))"
+                        : "rgba(255, 255, 255, 0.06)",
+                    color:
+                      pagination.current_page === page
+                        ? "white"
+                        : "rgba(255, 255, 255, 0.6)",
                   }}
                 >
                   {page}
                 </button>
               ))}
 
-              <button 
+              <button
                 disabled={pagination.current_page === pagination.last_page}
                 onClick={() => fetchSavedJobs(pagination.current_page + 1)}
-                className="w-9 h-9 rounded-lg flex items-center justify-center border-none cursor-pointer transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-white/60 hover:text-white" 
-                style={{ background: 'rgba(255, 255, 255, 0.06)' }}
+                className="w-9 h-9 rounded-lg flex items-center justify-center border-none cursor-pointer transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-white/60 hover:text-white"
+                style={{ background: "rgba(255, 255, 255, 0.06)" }}
               >
                 <ChevronRight className="w-4 h-4" />
               </button>

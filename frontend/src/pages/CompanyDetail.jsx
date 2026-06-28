@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
 import HomeNavbar from "../components/home/HomeNavbar";
 import FooterNew from "../components/FooterNew";
+import { AuthContext } from "../context/AuthContext";
 import {
   MapPin,
   Briefcase,
@@ -27,7 +28,7 @@ import {
   Sparkles,
   Landmark,
   CreditCard,
-  Building2
+  Building2,
 } from "lucide-react";
 
 function CompanyDetail() {
@@ -36,6 +37,19 @@ function CompanyDetail() {
   const [loading, setLoading] = useState(true);
   const [savedJobs, setSavedJobs] = useState({});
   const [similarCompaniesList, setSimilarCompaniesList] = useState([]);
+
+  // Reviews state
+  const [reviewsData, setReviewsData] = useState({
+    reviews: [],
+    average_rating: 0,
+    total_reviews: 0,
+  });
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reviewForm, setReviewForm] = useState({ rating: 5, review: "" });
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [reviewError, setReviewError] = useState("");
+
+  const { user } = useContext(AuthContext);
 
   const galleryRef = useRef(null);
   const similarRef = useRef(null);
@@ -82,22 +96,47 @@ function CompanyDetail() {
         );
         if (response.ok) {
           const data = await response.json();
+
+          // Fetch reviews
+          try {
+            const reviewsRes = await fetch(
+              `http://127.0.0.1:8000/api/employers/${id}/reviews`,
+              {
+                headers: { Accept: "application/json" },
+              },
+            );
+            if (reviewsRes.ok) {
+              const reviewsDataRaw = await reviewsRes.json();
+              if (active) setReviewsData(reviewsDataRaw);
+            }
+          } catch (err) {
+            console.error("Lỗi tải đánh giá:", err);
+          }
+
           if (active) {
             setCompany(data);
-            
+
             // Lấy thêm công ty từ database thật để làm gợi ý nếu chưa đủ
             let similar = data.similar_companies || [];
             if (similar.length < 8) {
               try {
-                const allRes = await fetch(`http://127.0.0.1:8000/api/employers`, {
-                  headers: { Accept: "application/json" }
-                });
+                const allRes = await fetch(
+                  `http://127.0.0.1:8000/api/employers`,
+                  {
+                    headers: { Accept: "application/json" },
+                  },
+                );
                 if (allRes.ok) {
                   const allData = await allRes.json();
                   const employersList = allData.data || allData;
                   if (Array.isArray(employersList)) {
-                    const existingIds = new Set([data.id, ...similar.map(s => s.id)]);
-                    const more = employersList.filter(e => !existingIds.has(e.id));
+                    const existingIds = new Set([
+                      data.id,
+                      ...similar.map((s) => s.id),
+                    ]);
+                    const more = employersList.filter(
+                      (e) => !existingIds.has(e.id),
+                    );
                     similar = [...similar, ...more].slice(0, 8);
                   }
                 }
@@ -230,37 +269,74 @@ function CompanyDetail() {
     "https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=800&q=80",
     "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=80",
     "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80"
+    "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80",
   ];
   let galleryImages = company.gallery_images || [];
   if (galleryImages.length < 5) {
     const needed = 5 - galleryImages.length;
-    galleryImages = [...galleryImages, ...defaultGalleryImages.slice(0, needed)];
+    galleryImages = [
+      ...galleryImages,
+      ...defaultGalleryImages.slice(0, needed),
+    ];
   }
 
   // Reviews Data
   const ratingAverage = parseFloat(rating);
-  const ratingCount = 120;
-  const ratingBreakdown = [
-    { stars: 5, percentage: 85 },
-    { stars: 4, percentage: 12 },
-    { stars: 3, percentage: 3 },
-    { stars: 2, percentage: 0 },
-    { stars: 1, percentage: 0 },
-  ];
-  const featuredReview = {
-    text: "Môi trường làm việc tuyệt vời, đồng nghiệp thân thiện và luôn hỗ trợ nhau. Cơ hội học hỏi và phát triển rất nhiều!",
-    author: "Nguyễn Minh Anh",
-    role: "Nhân viên Marketing",
-    avatar:
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
-  };
 
   // Jobs data
   const displayJobs = company.jobs || [];
 
   // Similar Companies List
   const similarCompanies = similarCompaniesList;
+
+  // Review submission
+  const submitReview = async (e) => {
+    e.preventDefault();
+    if (!user || user.role !== "student") return;
+
+    setSubmittingReview(true);
+    setReviewError("");
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `http://127.0.0.1:8000/api/employers/${id}/reviews`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(reviewForm),
+        },
+      );
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setShowReviewForm(false);
+        setReviewForm({ rating: 5, review: "" });
+        // Refresh reviews
+        const reviewsRes = await fetch(
+          `http://127.0.0.1:8000/api/employers/${id}/reviews`,
+          {
+            headers: { Accept: "application/json" },
+          },
+        );
+        if (reviewsRes.ok) {
+          const reviewsDataRaw = await reviewsRes.json();
+          setReviewsData(reviewsDataRaw);
+        }
+      } else {
+        setReviewError(data.message || "Có lỗi xảy ra khi gửi đánh giá.");
+      }
+    } catch (err) {
+      setReviewError("Lỗi kết nối máy chủ.");
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
 
   const toggleSaveJob = (jobId) => {
     setSavedJobs((prev) => ({
@@ -396,34 +472,90 @@ function CompanyDetail() {
             {/* Right side illustration (composite HTML) */}
             <div className="w-full lg:w-[500px] xl:w-[550px] shrink-0 flex items-center justify-center lg:justify-end lg:-mr-8 lg:-mb-8 mt-6 lg:mt-0 relative z-10">
               <div className="relative w-[320px] h-[260px] md:w-[400px] md:h-[320px] xl:w-[480px] xl:h-[380px] select-none pointer-events-none">
-                
                 {/* Main central card - representing the Bank */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 md:w-60 md:h-60 rounded-3xl float-element" style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.15), rgba(130,63,235,0.15))', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(12px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', boxShadow: '0 25px 50px rgba(0,0,0,0.3)' }}>
-                  <div className="w-16 h-16 md:w-20 md:h-20 mb-3 md:mb-4 rounded-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', boxShadow: '0 10px 25px rgba(59,130,246,0.5)' }}>
+                <div
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 md:w-60 md:h-60 rounded-3xl float-element"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, rgba(59,130,246,0.15), rgba(130,63,235,0.15))",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    backdropFilter: "blur(12px)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxShadow: "0 25px 50px rgba(0,0,0,0.3)",
+                  }}
+                >
+                  <div
+                    className="w-16 h-16 md:w-20 md:h-20 mb-3 md:mb-4 rounded-2xl flex items-center justify-center"
+                    style={{
+                      background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
+                      boxShadow: "0 10px 25px rgba(59,130,246,0.5)",
+                    }}
+                  >
                     <Landmark className="w-8 h-8 md:w-10 md:h-10 text-white" />
                   </div>
-                  <div className="text-white font-bold text-base md:text-lg tracking-wider">TÀI CHÍNH</div>
-                  <div className="text-white/60 text-xs mt-1 uppercase text-center px-4 leading-tight">{companyIndustry !== "Chưa cập nhật" ? companyIndustry : "NGÂN HÀNG SỐ"}</div>
+                  <div className="text-white font-bold text-base md:text-lg tracking-wider">
+                    TÀI CHÍNH
+                  </div>
+                  <div className="text-white/60 text-xs mt-1 uppercase text-center px-4 leading-tight">
+                    {companyIndustry !== "Chưa cập nhật"
+                      ? companyIndustry
+                      : "NGÂN HÀNG SỐ"}
+                  </div>
                 </div>
 
                 {/* Floating Credit Card (Left) */}
-                <div className="absolute top-12 md:top-20 left-4 md:left-8 w-16 h-12 md:w-20 md:h-16 rounded-xl float-element flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #6366f1, #a855f7)', border: '1px solid rgba(255,255,255,0.2)', animationDelay: '1s', transform: 'rotate(-15deg)', boxShadow: '0 15px 30px rgba(99,102,241,0.4)' }}>
+                <div
+                  className="absolute top-12 md:top-20 left-4 md:left-8 w-16 h-12 md:w-20 md:h-16 rounded-xl float-element flex items-center justify-center"
+                  style={{
+                    background: "linear-gradient(135deg, #6366f1, #a855f7)",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    animationDelay: "1s",
+                    transform: "rotate(-15deg)",
+                    boxShadow: "0 15px 30px rgba(99,102,241,0.4)",
+                  }}
+                >
                   <CreditCard className="w-6 h-6 md:w-8 md:h-8 text-white/90" />
                 </div>
 
                 {/* Floating Shield (Right) */}
-                <div className="absolute bottom-12 md:bottom-16 right-4 md:right-8 w-14 h-14 md:w-16 md:h-16 rounded-2xl float-element flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #10b981, #059669)', border: '1px solid rgba(255,255,255,0.2)', animationDelay: '2s', transform: 'rotate(10deg)', boxShadow: '0 15px 30px rgba(16,185,129,0.4)' }}>
+                <div
+                  className="absolute bottom-12 md:bottom-16 right-4 md:right-8 w-14 h-14 md:w-16 md:h-16 rounded-2xl float-element flex items-center justify-center"
+                  style={{
+                    background: "linear-gradient(135deg, #10b981, #059669)",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    animationDelay: "2s",
+                    transform: "rotate(10deg)",
+                    boxShadow: "0 15px 30px rgba(16,185,129,0.4)",
+                  }}
+                >
                   <ShieldCheck className="w-6 h-6 md:w-8 md:h-8 text-white/90" />
                 </div>
 
                 {/* Floating Star/Badge (Top Right) */}
-                <div className="absolute top-8 md:top-10 right-12 md:right-16 w-10 h-10 md:w-12 md:h-12 rounded-full float-element flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', border: '1px solid rgba(255,255,255,0.2)', animationDelay: '0.5s', boxShadow: '0 10px 20px rgba(245,158,11,0.4)' }}>
-                  <Star className="w-5 h-5 md:w-6 md:h-6 text-white" fill="currentColor" />
+                <div
+                  className="absolute top-8 md:top-10 right-12 md:right-16 w-10 h-10 md:w-12 md:h-12 rounded-full float-element flex items-center justify-center"
+                  style={{
+                    background: "linear-gradient(135deg, #f59e0b, #d97706)",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    animationDelay: "0.5s",
+                    boxShadow: "0 10px 20px rgba(245,158,11,0.4)",
+                  }}
+                >
+                  <Star
+                    className="w-5 h-5 md:w-6 md:h-6 text-white"
+                    fill="currentColor"
+                  />
                 </div>
 
                 {/* Glowing orbs and dots */}
                 <div className="absolute top-1/4 right-1/4 w-2 h-2 md:w-3 md:h-3 rounded-full bg-blue-400/50 animate-pulse" />
-                <div className="absolute bottom-1/3 left-1/4 w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-purple-400/50 animate-pulse" style={{ animationDelay: '1s' }} />
+                <div
+                  className="absolute bottom-1/3 left-1/4 w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-purple-400/50 animate-pulse"
+                  style={{ animationDelay: "1s" }}
+                />
                 <div className="absolute top-1/2 left-10 w-24 h-24 md:w-32 md:h-32 bg-blue-500/20 rounded-full blur-3xl -z-10" />
                 <div className="absolute bottom-1/4 right-10 w-24 h-24 md:w-32 md:h-32 bg-purple-500/20 rounded-full blur-3xl -z-10" />
               </div>
@@ -450,11 +582,13 @@ function CompanyDetail() {
             <div className="flex items-center gap-1">
               <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
               <span className="text-xl md:text-2xl text-white font-extrabold">
-                {rating}
+                {reviewsData.average_rating > 0
+                  ? reviewsData.average_rating
+                  : rating}
               </span>
             </div>
             <span className="text-xs text-white/55 font-medium mt-2">
-              Đánh giá
+              Đánh giá ({reviewsData.total_reviews})
             </span>
           </div>
 
@@ -587,7 +721,10 @@ function CompanyDetail() {
                   backdropFilter: "blur(12px)",
                 }}
               >
-                <div style={{marginBottom:'0.6rem'}} className="flex items-center justify-between mb-5">
+                <div
+                  style={{ marginBottom: "0.6rem" }}
+                  className="flex items-center justify-between mb-5"
+                >
                   <h2 className="text-lg md:text-xl text-white font-bold flex items-center gap-2 m-0">
                     <Globe className="w-5 h-5 text-violet-400" />
                     Hình ảnh công ty
@@ -635,78 +772,146 @@ function CompanyDetail() {
                 backdropFilter: "blur(12px)",
               }}
             >
-              <h2 className="text-lg md:text-xl text-white font-bold mb-6 flex items-center gap-2">
-                <Star className="w-5 h-5 text-violet-400" />
-                Đánh giá từ nhân viên
-              </h2>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg md:text-xl text-white font-bold flex items-center gap-2 m-0">
+                  <Star className="w-5 h-5 text-violet-400" />
+                  Đánh giá công ty
+                </h2>
+                {user && user.role === "student" && (
+                  <button
+                    onClick={() => setShowReviewForm(!showReviewForm)}
+                    className="px-4 py-2 rounded-xl text-white text-sm font-semibold border-none cursor-pointer transition-all hover:opacity-90"
+                    style={{
+                      background: "linear-gradient(135deg, #823feb, #6366f1)",
+                    }}
+                  >
+                    {showReviewForm ? "Hủy" : "Viết đánh giá"}
+                  </button>
+                )}
+              </div>
+
+              {showReviewForm && (
+                <form
+                  onSubmit={submitReview}
+                  className="mb-8 p-5 rounded-xl border border-white/10 bg-white/5"
+                >
+                  <h3 className="text-white font-medium mb-3 text-sm">
+                    Bạn đánh giá thế nào về {company.company_name}?
+                  </h3>
+                  {reviewError && (
+                    <div className="text-red-400 text-sm mb-3">
+                      {reviewError}
+                    </div>
+                  )}
+                  <div className="flex gap-2 mb-4">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() =>
+                          setReviewForm({ ...reviewForm, rating: s })
+                        }
+                        className="bg-transparent border-none p-1 cursor-pointer transition-transform hover:scale-110"
+                      >
+                        <Star
+                          className={`w-8 h-8 ${s <= reviewForm.rating ? "fill-amber-400 text-amber-400" : "text-white/20"}`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                  <textarea
+                    value={reviewForm.review}
+                    onChange={(e) =>
+                      setReviewForm({ ...reviewForm, review: e.target.value })
+                    }
+                    placeholder="Chia sẻ trải nghiệm làm việc hoặc phỏng vấn của bạn..."
+                    className="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-white text-sm outline-none mb-4 min-h-[100px] resize-none focus:border-brand/50 transition-colors box-border"
+                  />
+                  <button
+                    type="submit"
+                    disabled={submittingReview}
+                    className="px-6 py-2 rounded-xl text-white text-sm font-semibold border-none cursor-pointer transition-all hover:opacity-90 disabled:opacity-50"
+                    style={{
+                      background: "linear-gradient(135deg, #823feb, #6366f1)",
+                    }}
+                  >
+                    {submittingReview ? "Đang gửi..." : "Gửi đánh giá"}
+                  </button>
+                </form>
+              )}
 
               <div className="flex flex-col lg:flex-row gap-8 items-stretch">
                 {/* Left side average block */}
                 <div className="w-full lg:w-[240px] flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-white/10 pb-6 lg:pb-0 lg:pr-8">
                   <div className="text-center lg:text-left">
                     <div className="text-5xl md:text-6xl text-white font-black leading-none mb-2">
-                      {ratingAverage}
+                      {reviewsData.average_rating > 0
+                        ? reviewsData.average_rating
+                        : ratingAverage}
                     </div>
                     <div className="flex items-center justify-center lg:justify-start gap-0.5 mb-1.5">
                       {[1, 2, 3, 4, 5].map((s) => (
                         <Star
                           key={s}
-                          className="w-5 h-5 fill-amber-400 text-amber-400"
+                          className={`w-5 h-5 ${s <= Math.round(reviewsData.average_rating || ratingAverage) ? "fill-amber-400 text-amber-400" : "text-white/20"}`}
                         />
                       ))}
                     </div>
                     <span className="text-xs text-white/50 font-medium">
-                      ({ratingCount} đánh giá)
+                      ({reviewsData.total_reviews} đánh giá)
                     </span>
-                  </div>
-
-                  {/* Stars breakdown */}
-                  <div className="flex flex-col gap-2 mt-5">
-                    {ratingBreakdown.map((row) => (
-                      <div
-                        key={row.stars}
-                        className="flex items-center gap-3 text-xs"
-                      >
-                        <span className="text-white/60 font-semibold w-8 shrink-0">
-                          {row.stars} sao
-                        </span>
-                        <div className="flex-1 h-2 rounded-full bg-white/5 overflow-hidden">
-                          <div
-                            className="rating-bar-fill"
-                            style={{ width: `${row.percentage}%` }}
-                          />
-                        </div>
-                        <span className="text-white/40 w-8 text-right shrink-0">
-                          {row.percentage}%
-                        </span>
-                      </div>
-                    ))}
                   </div>
                 </div>
 
-                {/* Right side featured testimonial quote card */}
-                <div className="flex-1 flex flex-col justify-between p-5 rounded-2xl bg-white/3 border border-white/5 relative">
-                  <Quote className="w-8 h-8 text-violet-500/20 absolute top-4 right-4" />
-
-                  <p className="text-white/80 text-sm italic leading-relaxed mb-6 font-medium relative z-10">
-                    "{featuredReview.text}"
-                  </p>
-
-                  <div className="flex items-center gap-3 mt-auto">
-                    <img
-                      src={featuredReview.avatar}
-                      alt={featuredReview.author}
-                      className="w-10 h-10 rounded-full object-cover border border-white/10"
-                    />
-                    <div>
-                      <h4 className="text-white font-bold text-xs">
-                        {featuredReview.author}
-                      </h4>
-                      <p className="text-white/55 text-2xs m-0">
-                        {featuredReview.role}
-                      </p>
+                {/* Right side reviews list */}
+                <div className="flex-1 flex flex-col gap-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                  {reviewsData.reviews.length > 0 ? (
+                    reviewsData.reviews.map((r, i) => (
+                      <div
+                        key={i}
+                        className="flex flex-col justify-between p-5 rounded-2xl bg-white/3 border border-white/5 relative mb-2"
+                      >
+                        <Quote className="w-6 h-6 text-violet-500/10 absolute top-4 right-4" />
+                        <div className="flex items-center gap-1 mb-3">
+                          {[1, 2, 3, 4, 5].map((s) => (
+                            <Star
+                              key={s}
+                              className={`w-3.5 h-3.5 ${s <= r.rating ? "fill-amber-400 text-amber-400" : "text-white/20"}`}
+                            />
+                          ))}
+                        </div>
+                        <p className="text-white/80 text-sm italic leading-relaxed mb-4 font-medium relative z-10">
+                          "{r.review || "Đánh giá tốt."}"
+                        </p>
+                        <div className="flex items-center gap-3 mt-auto">
+                          <img
+                            src={
+                              r.student?.user?.avatar ||
+                              "https://ui-avatars.com/api/?name=" +
+                                (r.student?.full_name || "SV") +
+                                "&background=823feb&color=fff"
+                            }
+                            alt={r.student?.full_name}
+                            className="w-8 h-8 rounded-full object-cover border border-white/10"
+                          />
+                          <div>
+                            <h4 className="text-white font-bold text-xs m-0">
+                              {r.student?.full_name || "Sinh viên"}
+                            </h4>
+                            <p className="text-white/40 text-[10px] m-0">
+                              {new Date(r.created_at).toLocaleDateString(
+                                "vi-VN",
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex-1 flex flex-col justify-center items-center text-center p-5 rounded-2xl bg-white/3 border border-white/5 text-white/40 text-sm italic">
+                      Chưa có đánh giá nào cho công ty này.
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </section>
@@ -890,7 +1095,7 @@ function CompanyDetail() {
                 {/* Logo and Name card */}
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 rounded-xl bg-white p-1.5 flex items-center justify-center shrink-0 shadow-lg border border-white/5 overflow-hidden">
-                    {(c.logo_url || c.logo) ? (
+                    {c.logo_url || c.logo ? (
                       <img
                         src={c.logo_url || c.logo}
                         alt={c.company_name}

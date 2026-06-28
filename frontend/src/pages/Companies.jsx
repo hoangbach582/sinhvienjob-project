@@ -110,18 +110,31 @@ function Companies() {
 
   const filteredCompanies = companies.filter((company) => {
     const matchesKeyword =
-      (company.company_name || "").toLowerCase().includes(currentKeyword.toLowerCase()) ||
-      (company.description || "").toLowerCase().includes(currentKeyword.toLowerCase()) ||
-      (company.industry || "").toLowerCase().includes(currentKeyword.toLowerCase());
+      (company.company_name || "")
+        .toLowerCase()
+        .includes(currentKeyword.toLowerCase()) ||
+      (company.description || "")
+        .toLowerCase()
+        .includes(currentKeyword.toLowerCase()) ||
+      (company.industry || "")
+        .toLowerCase()
+        .includes(currentKeyword.toLowerCase());
 
-    const matchesLocation = !currentLocation ||
-      (company.address || "").toLowerCase().includes(currentLocation.toLowerCase());
+    const matchesLocation =
+      !currentLocation ||
+      (company.address || "")
+        .toLowerCase()
+        .includes(currentLocation.toLowerCase());
 
-    const matchesType = !currentType ||
-      (company.industry || "").toLowerCase().includes(currentType.toLowerCase());
+    const matchesType =
+      !currentType ||
+      (company.industry || "")
+        .toLowerCase()
+        .includes(currentType.toLowerCase());
 
     const jobsCount = company.jobs_count !== undefined ? company.jobs_count : 0;
-    const matchesSalary = !currentSalary ||
+    const matchesSalary =
+      !currentSalary ||
       (currentSalary === "has_jobs" ? jobsCount > 0 : jobsCount === 0);
 
     return matchesKeyword && matchesLocation && matchesType && matchesSalary;
@@ -184,8 +197,16 @@ function Companies() {
           className="mx-auto max-w-6xl relative z-10 flex flex-col items-center text-center"
         >
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-white/50 mb-6 w-full flex-wrap" style={{marginLeft: "0.5rem"}}>
-            <Link to="/" className="hover:text-white transition-colors no-underline text-white/50">Trang chủ</Link>
+          <nav
+            className="flex items-center gap-2 text-sm text-white/50 mb-6 w-full flex-wrap"
+            style={{ marginLeft: "0.5rem" }}
+          >
+            <Link
+              to="/"
+              className="hover:text-white transition-colors no-underline text-white/50"
+            >
+              Trang chủ
+            </Link>
             <span>›</span>
             <span className="text-white/80">Công ty</span>
           </nav>
@@ -237,9 +258,9 @@ function Companies() {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -430,7 +451,10 @@ function Companies() {
                       <option value="" style={{ background: "#1a1145" }}>
                         Tất cả quy mô tuyển
                       </option>
-                      <option value="has_jobs" style={{ background: "#1a1145" }}>
+                      <option
+                        value="has_jobs"
+                        style={{ background: "#1a1145" }}
+                      >
                         Đang tuyển dụng (&gt; 0)
                       </option>
                       <option value="no_jobs" style={{ background: "#1a1145" }}>
@@ -557,27 +581,45 @@ function Companies() {
                       Phổ biến
                     </option>
                   </select>
-                  <svg style={{marginLeft: "-1.6rem", color: "aliceblue", cursor: "pointer"}} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                    </svg>
+                  <svg
+                    style={{
+                      marginLeft: "-1.6rem",
+                      color: "aliceblue",
+                      cursor: "pointer",
+                    }}
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
                 </div>
                 <div
                   className="flex rounded-lg overflow-hidden"
                   style={{ border: "1px solid rgba(255,255,255,0.1)" }}
                 >
-                  <button style={{padding: '0.4rem'}}
+                  <button
+                    style={{ padding: "0.4rem" }}
                     onClick={() => setViewMode("list")}
                     className={`p-2 border-none cursor-pointer transition-colors ${viewMode === "list" ? "bg-brand/80 text-white" : "bg-transparent text-white/40 hover:text-white/70"}`}
                   >
                     <List className="w-4 h-4" />
                   </button>
-                  <button style={{padding:'0.4rem'}}
+                  <button
+                    style={{ padding: "0.4rem" }}
                     onClick={() => setViewMode("grid")}
                     className={`p-2 border-none cursor-pointer transition-colors ${viewMode === "grid" ? "bg-brand/80 text-white" : "bg-transparent text-white/40 hover:text-white/70"}`}
                   >
                     <LayoutGrid className="w-4 h-4" />
                   </button>
-                  
                 </div>
               </div>
             </div>
@@ -648,13 +690,25 @@ function Companies() {
                 }
               >
                 {paginatedCompanies.map((company) => {
-                  const colors = ["#1E3A8A", "#4C1D95", "#064E3B", "#7C2D12", "#0F172A", "#B45309", "#4338CA"];
-                  const avatarBg = colors[company.id % colors.length] || "#1E3A8A";
-                  const jobsCount = company.jobs_count !== undefined ? company.jobs_count : 0;
-                  const badgeClass = jobsCount > 0
-                    ? "bg-violet-500/15 text-violet-400 border-violet-500/20"
-                    : "bg-slate-500/15 text-slate-400 border-slate-500/20";
-                  const typeBadge = jobsCount > 0 ? `${jobsCount} việc làm` : "Chưa tuyển dụng";
+                  const colors = [
+                    "#1E3A8A",
+                    "#4C1D95",
+                    "#064E3B",
+                    "#7C2D12",
+                    "#0F172A",
+                    "#B45309",
+                    "#4338CA",
+                  ];
+                  const avatarBg =
+                    colors[company.id % colors.length] || "#1E3A8A";
+                  const jobsCount =
+                    company.jobs_count !== undefined ? company.jobs_count : 0;
+                  const badgeClass =
+                    jobsCount > 0
+                      ? "bg-violet-500/15 text-violet-400 border-violet-500/20"
+                      : "bg-slate-500/15 text-slate-400 border-slate-500/20";
+                  const typeBadge =
+                    jobsCount > 0 ? `${jobsCount} việc làm` : "Chưa tuyển dụng";
 
                   return (
                     <div
@@ -744,7 +798,8 @@ function Companies() {
                                 {company.address || "Đang cập nhật"}
                               </span>
                               <span className="flex items-center gap-1.5 text-amber-400 font-medium">
-                                <Briefcase className="w-4 h-4" /> {company.industry || "Ngành nghề chưa cập nhật"}
+                                <Briefcase className="w-4 h-4" />{" "}
+                                {company.industry || "Ngành nghề chưa cập nhật"}
                               </span>
                             </div>
                           </div>
@@ -758,7 +813,10 @@ function Companies() {
 
             {/* Pagination */}
             {!loading && filteredCompanies.length > ITEMS_PER_PAGE && (
-              <div className="flex items-center justify-center gap-2 mt-8" style={{marginTop: '1rem'}}>
+              <div
+                className="flex items-center justify-center gap-2 mt-8"
+                style={{ marginTop: "1rem" }}
+              >
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
@@ -827,7 +885,7 @@ const mockCompanies = [
     jobs_count: 5,
     industry: "Tài chính",
     website: "https://techcombank.com.vn",
-    logo_url: ""
+    logo_url: "",
   },
   {
     id: 2,
@@ -837,7 +895,7 @@ const mockCompanies = [
     jobs_count: 2,
     industry: "Giải trí",
     website: "https://youtube.com",
-    logo_url: ""
+    logo_url: "",
   },
   {
     id: 3,
@@ -847,7 +905,7 @@ const mockCompanies = [
     jobs_count: 0,
     industry: "Marketing",
     website: "https://swagbucks.com",
-    logo_url: ""
+    logo_url: "",
   },
   {
     id: 4,
@@ -857,7 +915,7 @@ const mockCompanies = [
     jobs_count: 8,
     industry: "Công nghệ thông tin",
     website: "https://vng.com.vn",
-    logo_url: ""
+    logo_url: "",
   },
   {
     id: 5,
@@ -867,7 +925,7 @@ const mockCompanies = [
     jobs_count: 4,
     industry: "Công nghệ thông tin",
     website: "https://fpt.com.vn",
-    logo_url: ""
+    logo_url: "",
   },
   {
     id: 6,
@@ -877,7 +935,7 @@ const mockCompanies = [
     jobs_count: 6,
     industry: "Thương mại điện tử",
     website: "https://shopee.vn",
-    logo_url: ""
+    logo_url: "",
   },
 ];
 

@@ -128,14 +128,14 @@ function Login() {
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#4f46e5] rounded-full blur-[120px] opacity-20 pointer-events-none"></div>
 
       {/* Simplified Header */}
-      <header class="absolute inset-x-0 top-0 z-50">
-        <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
+      <header className="absolute inset-x-0 top-0 z-50">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
           <a
-            class="flex items-center gap-2.5 no-underline"
+            className="flex items-center gap-2.5 no-underline"
             href="/"
             data-discover="true"
           >
-            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-lg">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-lg">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -143,10 +143,10 @@ function Login() {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-graduation-cap h-5 w-5 text-brand"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-graduation-cap h-5 w-5 text-brand"
                 aria-hidden="true"
               >
                 <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"></path>
@@ -154,9 +154,9 @@ function Login() {
                 <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path>
               </svg>
             </span>
-            <span class="text-lg font-bold text-white">SinhVienJob</span>
+            <span className="text-lg font-bold text-white">SinhVienJob</span>
           </a>
-          <div class="hidden items-center gap-4 lg:flex">
+          <div className="hidden items-center gap-4 lg:flex">
             <Link to="/jobs" className="hover:text-white transition-colors">
               Tìm việc
             </Link>
@@ -176,7 +176,7 @@ function Login() {
 
           <button
             type="button"
-            class="border-none bg-transparent text-white lg:hidden cursor-pointer"
+            className="border-none bg-transparent text-white lg:hidden cursor-pointer"
             aria-label="Mở menu"
           >
             <svg
@@ -186,10 +186,10 @@ function Login() {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-menu h-6 w-6"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-menu h-6 w-6"
               aria-hidden="true"
             >
               <path d="M4 5h16"></path>
@@ -206,7 +206,7 @@ function Login() {
           <div className="hidden md:flex flex-col items-start">
             <h1 className="text-5xl font-bold leading-tight mb-4">
               Chào mừng trở lại <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ad74ff] to-[#823feb]">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-light to-[#823feb]">
                 Sinh viên
               </span>
             </h1>
@@ -216,19 +216,19 @@ function Login() {
 
             {/* Placeholder for 3D Illustration */}
             <div className="relative w-full max-w-md mx-auto aspect-square">
-              <div className="absolute inset-0 bg-gradient-to-b from-[#823feb]/20 to-transparent rounded-full blur-3xl"></div>
+              <div className="absolute inset-0 bg-linear-to-b from-[#823feb]/20 to-transparent rounded-full blur-3xl"></div>
               <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-4/5 h-8 bg-[#823feb]/30 rounded-[100%] blur-xl"></div>
 
               <div className="w-full h-full relative float-element flex items-center justify-center">
                 {/* Simulated 3D character with shapes */}
-                <div className="relative z-10 w-48 h-64 bg-gradient-to-br from-[#4f46e5] to-[#823feb] rounded-3xl shadow-2xl flex flex-col items-center p-6 border border-white/10">
+                <div className="relative z-10 w-48 h-64 bg-linear-to-br from-[#4f46e5] to-[#823feb] rounded-3xl shadow-2xl flex flex-col items-center p-6 border border-white/10">
                   <div className="w-20 h-20 rounded-full bg-white/20 mb-4 border-2 border-white/30 backdrop-blur-sm"></div>
                   <div className="w-32 h-24 bg-white/10 rounded-xl border border-white/20 mt-auto flex items-center justify-center backdrop-blur-sm">
                     <div className="w-8 h-8 rounded-full bg-white/30"></div>
                   </div>
                 </div>
                 {/* Floating props */}
-                <div className="absolute top-10 right-10 w-16 h-16 bg-[#ad74ff]/40 rounded-2xl backdrop-blur-md border border-white/20 animate-pulse flex items-center justify-center">
+                <div className="absolute top-10 right-10 w-16 h-16 bg-brand-light/40 rounded-2xl backdrop-blur-md border border-white/20 animate-pulse flex items-center justify-center">
                   <Star className="text-white w-8 h-8" />
                 </div>
                 <div className="absolute bottom-20 left-4 w-12 h-12 bg-blue-500/40 rounded-full backdrop-blur-md border border-white/20 animate-bounce delay-150"></div>
@@ -300,7 +300,7 @@ function Login() {
                 <div className="flex justify-end">
                   <Link
                     to="/forgot-password"
-                    className="text-sm text-[#ad74ff] hover:text-white transition-colors"
+                    className="text-sm text-brand-light hover:text-white transition-colors"
                   >
                     Quên mật khẩu?
                   </Link>
@@ -309,7 +309,7 @@ function Login() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 px-4 bg-gradient-to-r from-[#a45bff] via-[#8f4bff] to-[#7b3fff] hover:opacity-90 text-white font-medium rounded-xl transition-all btn-glow shadow-lg shadow-[#823feb]/20 flex justify-center items-center"
+                  className="w-full py-3.5 px-4 bg-linear-to-r from-[#a45bff] via-[#8f4bff] to-[#7b3fff] hover:opacity-90 text-white font-medium rounded-xl transition-all btn-glow shadow-lg shadow-[#823feb]/20 flex justify-center items-center"
                 >
                   {loading ? "Đang xử lý..." : "Đăng nhập"}
                 </button>
@@ -349,14 +349,13 @@ function Login() {
                   </svg>
                   <span className="text-sm font-medium">Google</span>
                 </button>
-                
               </div>
 
               <div className="mt-8 text-center text-sm text-gray-400">
                 Chưa có tài khoản?{" "}
                 <Link
                   to="/register"
-                  className="text-[#ad74ff] hover:text-white font-medium transition-colors"
+                  className="text-brand-light hover:text-white font-medium transition-colors"
                 >
                   Đăng ký ngay
                 </Link>
@@ -365,10 +364,6 @@ function Login() {
           </div>
         </div>
       </main>
-
-      
-
-      
     </div>
   );
 }

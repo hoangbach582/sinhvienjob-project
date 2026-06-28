@@ -101,14 +101,14 @@ function Register() {
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#4f46e5] rounded-full blur-[120px] opacity-20 pointer-events-none"></div>
 
       {/* Simplified Header */}
-      <header class="absolute inset-x-0 top-0 z-50">
-        <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
+      <header className="absolute inset-x-0 top-0 z-50">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
           <a
-            class="flex items-center gap-2.5 no-underline"
+            className="flex items-center gap-2.5 no-underline"
             href="/"
             data-discover="true"
           >
-            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-lg">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-lg">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -116,10 +116,10 @@ function Register() {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-graduation-cap h-5 w-5 text-brand"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-graduation-cap h-5 w-5 text-brand"
                 aria-hidden="true"
               >
                 <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"></path>
@@ -127,9 +127,9 @@ function Register() {
                 <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path>
               </svg>
             </span>
-            <span class="text-lg font-bold text-white">SinhVienJob</span>
+            <span className="text-lg font-bold text-white">SinhVienJob</span>
           </a>
-          <div class="hidden items-center gap-4 lg:flex">
+          <div className="hidden items-center gap-4 lg:flex">
             <Link to="/jobs" className="hover:text-white transition-colors">
               Tìm việc
             </Link>
@@ -149,7 +149,7 @@ function Register() {
 
           <button
             type="button"
-            class="border-none bg-transparent text-white lg:hidden cursor-pointer"
+            className="border-none bg-transparent text-white lg:hidden cursor-pointer"
             aria-label="Mở menu"
           >
             <svg
@@ -159,10 +159,10 @@ function Register() {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-menu h-6 w-6"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-menu h-6 w-6"
               aria-hidden="true"
             >
               <path d="M4 5h16"></path>
@@ -189,7 +189,7 @@ function Register() {
           <div className="flex items-center justify-between relative">
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-0.5 bg-white/10 z-0"></div>
             <div
-              className="absolute left-0 top-1/2 -translate-y-1/2 h-0.5 bg-gradient-to-r from-[#ad74ff] to-[#823feb] z-0 transition-all duration-500"
+              className="absolute left-0 top-1/2 -translate-y-1/2 h-0.5 bg-linear-to-r from-brand-light to-[#823feb] z-0 transition-all duration-500"
               style={{
                 width: step === 1 ? "0%" : step === 2 ? "50%" : "100%",
               }}
@@ -197,7 +197,7 @@ function Register() {
 
             <div className="relative z-10 flex flex-col items-center gap-2">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${step >= 1 ? "bg-gradient-to-br from-[#a45bff] to-[#7b3fff] text-white shadow-lg shadow-[#823feb]/30" : "bg-[#1a1636] text-gray-400 border border-white/10"}`}
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${step >= 1 ? "bg-linear-to-br from-[#a45bff] to-[#7b3fff] text-white shadow-lg shadow-[#823feb]/30" : "bg-[#1a1636] text-gray-400 border border-white/10"}`}
               >
                 1
               </div>
@@ -210,7 +210,7 @@ function Register() {
 
             <div className="relative z-10 flex flex-col items-center gap-2">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${step >= 2 ? "bg-gradient-to-br from-[#a45bff] to-[#7b3fff] text-white shadow-lg shadow-[#823feb]/30" : "bg-[#1a1636] text-gray-400 border border-white/10"}`}
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${step >= 2 ? "bg-linear-to-br from-[#a45bff] to-[#7b3fff] text-white shadow-lg shadow-[#823feb]/30" : "bg-[#1a1636] text-gray-400 border border-white/10"}`}
               >
                 2
               </div>
@@ -223,7 +223,7 @@ function Register() {
 
             <div className="relative z-10 flex flex-col items-center gap-2">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${step >= 3 ? "bg-gradient-to-br from-[#a45bff] to-[#7b3fff] text-white shadow-lg shadow-[#823feb]/30" : "bg-[#1a1636] text-gray-400 border border-white/10"}`}
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${step >= 3 ? "bg-linear-to-br from-[#a45bff] to-[#7b3fff] text-white shadow-lg shadow-[#823feb]/30" : "bg-[#1a1636] text-gray-400 border border-white/10"}`}
               >
                 3
               </div>
@@ -246,14 +246,14 @@ function Register() {
                 className={`cursor-pointer rounded-3xl p-8 border transition-all duration-300 flex flex-col items-center text-center group relative overflow-hidden ${role === "student" ? "bg-[#1a153c] border-[#823feb] shadow-xl shadow-[#823feb]/20" : "bg-white/5 border-white/10 hover:border-white/30"}`}
               >
                 {role === "student" && (
-                  <div className="absolute inset-0 bg-gradient-to-b from-[#823feb]/10 to-transparent pointer-events-none"></div>
+                  <div className="absolute inset-0 bg-linear-to-b from-[#823feb]/10 to-transparent pointer-events-none"></div>
                 )}
 
                 <div
                   className={`w-24 h-24 rounded-full flex items-center justify-center mb-6 transition-colors ${role === "student" ? "bg-[#823feb]/20" : "bg-white/10 group-hover:bg-white/20"}`}
                 >
                   <GraduationCap
-                    className={`w-12 h-12 ${role === "student" ? "text-[#ad74ff]" : "text-gray-400 group-hover:text-white"}`}
+                    className={`w-12 h-12 ${role === "student" ? "text-brand-light" : "text-gray-400 group-hover:text-white"}`}
                   />
                 </div>
                 <h3
@@ -266,7 +266,7 @@ function Register() {
                 </p>
 
                 {role === "student" && (
-                  <div className="absolute top-4 right-4 text-[#ad74ff]">
+                  <div className="absolute top-4 right-4 text-brand-light">
                     <CheckCircle2 className="w-6 h-6" />
                   </div>
                 )}
@@ -278,7 +278,7 @@ function Register() {
                 className={`cursor-pointer rounded-3xl p-8 border transition-all duration-300 flex flex-col items-center text-center group relative overflow-hidden ${role === "employer" ? "bg-[#0f2c25] border-[#10b981] shadow-xl shadow-[#10b981]/20" : "bg-white/5 border-white/10 hover:border-white/30"}`}
               >
                 {role === "employer" && (
-                  <div className="absolute inset-0 bg-gradient-to-b from-[#10b981]/10 to-transparent pointer-events-none"></div>
+                  <div className="absolute inset-0 bg-linear-to-b from-[#10b981]/10 to-transparent pointer-events-none"></div>
                 )}
 
                 <div
@@ -316,19 +316,19 @@ function Register() {
                 {role === "student" ? (
                   <>
                     <li className="flex items-center gap-3 text-sm text-gray-300">
-                      <CheckCircle2 className="w-4 h-4 text-[#ad74ff] shrink-0" />{" "}
+                      <CheckCircle2 className="w-4 h-4 text-brand-light shrink-0" />{" "}
                       Tìm kiếm hàng ngàn việc làm phù hợp
                     </li>
                     <li className="flex items-center gap-3 text-sm text-gray-300">
-                      <CheckCircle2 className="w-4 h-4 text-[#ad74ff] shrink-0" />{" "}
+                      <CheckCircle2 className="w-4 h-4 text-brand-light shrink-0" />{" "}
                       Tạo CV chuyên nghiệp miễn phí
                     </li>
                     <li className="flex items-center gap-3 text-sm text-gray-300">
-                      <CheckCircle2 className="w-4 h-4 text-[#ad74ff] shrink-0" />{" "}
+                      <CheckCircle2 className="w-4 h-4 text-brand-light shrink-0" />{" "}
                       Nhận gợi ý việc làm thông minh
                     </li>
                     <li className="flex items-center gap-3 text-sm text-gray-300">
-                      <CheckCircle2 className="w-4 h-4 text-[#ad74ff] shrink-0" />{" "}
+                      <CheckCircle2 className="w-4 h-4 text-brand-light shrink-0" />{" "}
                       Kết nối trực tiếp với nhà tuyển dụng
                     </li>
                   </>
@@ -356,7 +356,7 @@ function Register() {
 
               <button
                 onClick={handleNextStep}
-                className={`w-full max-w-md py-4 px-6 rounded-xl font-medium flex items-center justify-center gap-2 transition-all shadow-lg ${role === "student" ? "bg-gradient-to-r from-[#a45bff] to-[#7b3fff] hover:opacity-90 shadow-[#823feb]/20" : "bg-gradient-to-r from-[#059669] to-[#10b981] hover:opacity-90 shadow-[#10b981]/20"}`}
+                className={`w-full max-w-md py-4 px-6 rounded-xl font-medium flex items-center justify-center gap-2 transition-all shadow-lg ${role === "student" ? "bg-linear-to-r from-[#a45bff] to-[#7b3fff] hover:opacity-90 shadow-[#823feb]/20" : "bg-linear-to-r from-[#059669] to-[#10b981] hover:opacity-90 shadow-[#10b981]/20"}`}
               >
                 Tiếp tục <ChevronRight className="w-5 h-5" />
               </button>
@@ -373,7 +373,7 @@ function Register() {
                   className={`w-12 h-12 rounded-full mx-auto flex items-center justify-center mb-4 ${role === "student" ? "bg-[#823feb]/20" : "bg-[#10b981]/20"}`}
                 >
                   {role === "student" ? (
-                    <GraduationCap className="w-6 h-6 text-[#ad74ff]" />
+                    <GraduationCap className="w-6 h-6 text-brand-light" />
                   ) : (
                     <Briefcase className="w-6 h-6 text-[#34d399]" />
                   )}
@@ -470,7 +470,7 @@ function Register() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className={`w-2/3 py-3.5 px-4 flex items-center justify-center gap-2 hover:opacity-90 text-white font-medium rounded-xl transition-all shadow-lg ${role === "student" ? "bg-gradient-to-r from-[#a45bff] to-[#7b3fff] shadow-[#823feb]/20" : "bg-gradient-to-r from-[#059669] to-[#10b981] shadow-[#10b981]/20"}`}
+                    className={`w-2/3 py-3.5 px-4 flex items-center justify-center gap-2 hover:opacity-90 text-white font-medium rounded-xl transition-all shadow-lg ${role === "student" ? "bg-linear-to-r from-[#a45bff] to-[#7b3fff] shadow-[#823feb]/20" : "bg-linear-to-r from-[#059669] to-[#10b981] shadow-[#10b981]/20"}`}
                   >
                     {loading ? "Đang xử lý..." : "Đăng ký ngay"}
                   </button>
@@ -484,7 +484,7 @@ function Register() {
         {step === 3 && (
           <div className="w-full max-w-md mx-auto text-center">
             <div
-              className={`w-24 h-24 rounded-full mx-auto flex items-center justify-center mb-6 shadow-2xl ${role === "student" ? "bg-[#823feb]/20 shadow-[#823feb]/20 text-[#ad74ff]" : "bg-[#10b981]/20 shadow-[#10b981]/20 text-[#34d399]"}`}
+              className={`w-24 h-24 rounded-full mx-auto flex items-center justify-center mb-6 shadow-2xl ${role === "student" ? "bg-[#823feb]/20 shadow-[#823feb]/20 text-brand-light" : "bg-[#10b981]/20 shadow-[#10b981]/20 text-[#34d399]"}`}
             >
               <CheckCircle2 className="w-12 h-12" />
             </div>
@@ -502,7 +502,7 @@ function Register() {
           Đã có tài khoản?{" "}
           <Link
             to={role === "student" ? "/login" : "/employer/login"}
-            className={`font-medium transition-colors ${role === "student" ? "text-[#ad74ff] hover:text-white" : "text-[#34d399] hover:text-white"}`}
+            className={`font-medium transition-colors ${role === "student" ? "text-brand-light hover:text-white" : "text-[#34d399] hover:text-white"}`}
           >
             Đăng nhập ngay
           </Link>

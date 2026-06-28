@@ -9,7 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Skill extends Model
 {
-    use HasUuids;// Thêm trait này để tự động sinh UUID khi tạo mới bản ghi
-    
+    use HasUuids; // Thêm trait này để tự động sinh UUID khi tạo mới bản ghi
     use HasFactory;
+
+    protected $fillable = [
+        'name',
+    ];
 }

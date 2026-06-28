@@ -20,7 +20,17 @@ class StudentProfile extends Model
         'phone',
         'avatar',
         'bio',
-        'cv_url'
+        'cv_url',
+        'education',
+        'experience',
+        'projects',
+        'portfolio_url'
+    ];
+
+    protected $casts = [
+        'education' => 'array',
+        'experience' => 'array',
+        'projects' => 'array',
     ];
 
     public function savedJobs()
@@ -31,5 +41,11 @@ class StudentProfile extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function skills()
+    {
+        return $this->belongsToMany(Skill::class, 'student_skills', 'student_id', 'skill_id')
+                    ->withPivot('level');
     }
 }
