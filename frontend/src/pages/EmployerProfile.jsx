@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import employerService from '../services/employerService';
+import { useAuth } from '../context/AuthContext';
 
 function EmployerProfile() {
+  const { updateUser } = useAuth();
   const [formData, setFormData] = useState({
     company_name: '',
     industry: '',
@@ -17,10 +19,6 @@ function EmployerProfile() {
   const [errors, setErrors] = useState({});
   
   const fileInputRef = useRef(null);
-
-  useEffect(() => {
-    fetchProfile();
-  }, []);
 
   const fetchProfile = async () => {
     try {
@@ -43,6 +41,10 @@ function EmployerProfile() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -88,8 +90,11 @@ function EmployerProfile() {
       const response = await employerService.updateEmployerProfile(data);
       setMessage({ type: 'success', text: response.message || 'Cập nhật thông tin thành công!' });
       // Cập nhật lại logo_url nếu có thay đổi từ server
-      if (response.employer && response.employer.logo_url) {
-          setPreviewUrl(response.employer.logo_url);
+      if (response.employer) {
+          if (response.employer.logo_url !== undefined) {
+              setPreviewUrl(response.employer.logo_url);
+              updateUser({ avatar: response.employer.logo_url });
+          }
       }
     } catch (error) {
       console.error('Error updating profile:', error);

@@ -14,7 +14,7 @@ import NotificationBell from "../components/notifications/NotificationBell";
 import { useNotifications } from "../context/NotificationContext";
 
 function EmployerLayout() {
-  const { userName, logout } = useAuth(); // Lấy Tên và hàm Đăng xuất
+  const { userName, userAvatar, logout } = useAuth(); // Lấy Tên, Avatar và hàm Đăng xuất
   const { unreadCount } = useNotifications();
   const navigate = useNavigate();
   const location = useLocation(); // Dùng để xác định route hiện tại
@@ -393,6 +393,27 @@ function EmployerLayout() {
                 {userName || "Doanh nghiệp"}
               </span>
               {/* AVATAR ĐỘNG */}
+              {userAvatar ? (
+                <img
+                  src={userAvatar}
+                  alt={userName}
+                  style={{
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    transition: "box-shadow 0.2s",
+                    boxShadow: showDropdown
+                      ? "0 0 0 3px rgba(16, 185, 129, 0.3)"
+                      : "none",
+                  }}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
+                  }}
+                />
+              ) : null}
               <div
                 style={{
                   width: "36px",
@@ -400,7 +421,7 @@ function EmployerLayout() {
                   backgroundColor: "#D1FAE5",
                   color: "#10B981",
                   borderRadius: "50%",
-                  display: "flex",
+                  display: userAvatar ? "none" : "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   fontWeight: 600,

@@ -64,6 +64,12 @@ class EmployerProfileController extends Controller
 
         // Xử lý upload logo
         if ($request->hasFile('logo')) {
+            $file = $request->file('logo');
+            $mimeType = $file->getMimeType();
+            if (!in_array($mimeType, ['image/jpeg', 'image/png', 'image/webp'])) {
+                return response()->json(['message' => 'Logo không hợp lệ. Chỉ chấp nhận JPG, PNG, WEBP.'], 422);
+            }
+
             // Xóa logo cũ nếu có
             if ($employer->logo_url) {
                 // Xóa file cũ
@@ -73,7 +79,7 @@ class EmployerProfileController extends Controller
                 }
             }
 
-            $path = $request->file('logo')->store('company_logos', 'public');
+            $path = $file->store('company_logos', 'public');
             $employer->logo_url = asset('storage/' . $path);
         } elseif ($request->input('logo') === 'null' || $request->input('logo') === '') {
             // Xóa logo cũ nếu yêu cầu từ frontend

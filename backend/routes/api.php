@@ -13,6 +13,7 @@ use App\Http\Controllers\EmployerProfileController; // Import EmployerProfileCon
 use App\Http\Controllers\Admin\AdminJobController;
 use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\Admin\AdminAccountController;
+use App\Http\Controllers\Admin\AdminActivityController;
 use App\Http\Controllers\SavedJobController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\EmployerDashboardController; // Thêm import này
@@ -32,8 +33,8 @@ use App\Http\Controllers\StudentDashboardController;
 // ==========================================
 // NHÓM 1: KHÔNG CẦN ĐĂNG NHẬP VẪN GỌI ĐƯỢC
 // ==========================================
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::middleware('throttle:register')->post('/register', [AuthController::class, 'register']);
+Route::middleware('throttle:login')->post('/login', [AuthController::class, 'login']);
 
 // Đăng nhập bằng Google (Socialite)
 Route::get('/auth/google/url', [\App\Http\Controllers\SocialAuthController::class, 'getGoogleUrl']);
@@ -57,6 +58,7 @@ Route::get('/categories/industries', [JobController::class, 'getIndustries']);
 Route::get('/employers', [EmployerProfileController::class, 'publicIndex']);
 Route::get('/employers/{id}', [EmployerProfileController::class, 'publicShow']);
 Route::get('/employers/{id}/reviews', [\App\Http\Controllers\CompanyReviewController::class, 'index']);
+Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index']);
 
 // ==========================================
 // NHÓM 2: YÊU CẦU PHẢI CÓ TOKEN (ĐÃ ĐĂNG NHẬP)
@@ -72,10 +74,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     
     // 1. Quản lý Hồ sơ sinh viên
     Route::get('/profile', [ProfileController::class, 'getProfile']);
-    Route::post('/profile', [ProfileController::class, 'updateProfile']); 
+    Route::middleware('throttle:upload')->post('/profile', [ProfileController::class, 'updateProfile']); 
     
     // 2. Nộp đơn ứng tuyển
-    Route::post('/jobs/{jobId}/apply', [ApplicationController::class, 'apply']);
+    Route::middleware('throttle:upload')->post('/jobs/{jobId}/apply', [ApplicationController::class, 'apply']);
     
     // 3. Lịch sử ứng tuyển
     Route::get('/applications/me', [ApplicationController::class, 'getAppliedJobs']);
@@ -97,7 +99,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     // 6. Quản lý tuyển dụng (Dành cho Employer)
     Route::prefix('employer')->group(function () {
         Route::get('/profile', [EmployerProfileController::class, 'show']);
-        Route::post('/profile', [EmployerProfileController::class, 'update']);
+        Route::middleware('throttle:upload')->post('/profile', [EmployerProfileController::class, 'update']);
         
         // Dashboard Stats & Recent Data
         Route::get('/dashboard/stats', [EmployerDashboardController::class, 'stats']);
@@ -129,6 +131,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         // Báo cáo & Thống kê
         Route::get('/reports/stats', [AdminReportController::class, 'getDashboardStats']);
         Route::get('/reports/export', [AdminReportController::class, 'exportReport']);
+
+        // Activity Logs
+        Route::get('/activity-logs', [AdminActivityController::class, 'index']);
 
         // Quản lý Tài khoản (Employer & Student)
         Route::get('/accounts/export', [AdminAccountController::class, 'export']);

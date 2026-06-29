@@ -105,15 +105,18 @@ class AuthController extends Controller
 
         // 4. Lấy Tên hiển thị (NẾU KHÔNG TÌM THẤY TÊN, TRẢ VỀ EMAIL)
         $name = $user->email; 
+        $avatar = null;
         if ($user->role === 'student') {
             $profile = StudentProfile::where('user_id', $user->id)->first();
             if ($profile) {
                 $name = $profile->full_name;
+                $avatar = $profile->avatar ?? null;
             }
         } elseif ($user->role === 'employer') {
             $employer = \App\Models\Employer::where('user_id', $user->id)->first();
             if ($employer) {
                 $name = $employer->company_name;
+                $avatar = $employer->logo_url ?? null;
             }
         }
 
@@ -124,7 +127,8 @@ class AuthController extends Controller
             'message' => 'Đăng nhập thành công!',
             'access_token' => $token,
             'user' => $user,
-            'name' => $name // Dòng chữ vàng này quyết định việc hiện Tên trên Topbar
+            'name' => $name, // Dòng chữ vàng này quyết định việc hiện Tên trên Topbar
+            'avatar' => $avatar
         ]);
     }
 }

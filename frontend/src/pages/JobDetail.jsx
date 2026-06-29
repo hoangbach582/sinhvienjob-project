@@ -4,6 +4,8 @@ import { useAuth } from "../context/AuthContext";
 import HomeNavbar from "../components/home/HomeNavbar";
 import FooterNew from "../components/FooterNew";
 import JobDetailHero from "../components/job/JobDetailHero";
+import NotificationBell from "../components/notifications/NotificationBell";
+import SEOHead from "../components/SEOHead";
 import JobDetailContent from "../components/job/JobDetailContent";
 import { JobDetailSimilar } from "../components/job/JobDetailSections";
 import { toast } from "react-hot-toast";
@@ -333,13 +335,19 @@ function JobDetail() {
   }
 
   return (
-    <div
-      className="home-page min-h-screen flex flex-col"
-      style={{
-        background:
-          "linear-gradient(135deg, #09144B 0%, #0B1656 45%, #1a0a3e 100%)",
-      }}
-    >
+    <>
+      <SEOHead 
+        title={job?.title || "Chi tiết công việc"} 
+        description={job ? `Ứng tuyển ngay công việc ${job.title} tại ${job.employer?.company_name}` : "Chi tiết công việc part-time, internship tại SinhVienJob"} 
+        image={job?.employer?.logo_url ? (job.employer.logo_url.startsWith('http') ? job.employer.logo_url : `http://127.0.0.1:8000${job.employer.logo_url}`) : null}
+      />
+      <div 
+        className="home-page min-h-screen flex flex-col pt-24 pb-12"
+        style={{
+          background:
+            "linear-gradient(135deg, #09144B 0%, #0B1656 45%, #1a0a3e 100%)",
+        }}
+      >
       <HomeNavbar />
 
       {/* --- LOGIN PROMPT MODAL --- */}
@@ -674,6 +682,7 @@ function JobDetail() {
 
       <FooterNew />
     </div>
+    </>
   );
 }
 

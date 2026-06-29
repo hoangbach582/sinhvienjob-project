@@ -51,8 +51,14 @@ class ApplicationController extends Controller
 
         // 6. Xử lý CV: Ưu tiên CV tải lên trực tiếp, nếu không có thì lấy CV trong Profile
         if ($request->hasFile('cv_file')) {
+            $file = $request->file('cv_file');
+            $mimeType = $file->getMimeType();
+            if (!in_array($mimeType, ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])) {
+                return response()->json(['message' => 'File CV không hợp lệ. Vui lòng upload PDF hoặc Word.'], 422);
+            }
+
             // Lưu file vào storage/app/public/cvs
-            $path = $request->file('cv_file')->store('cvs', 'public');
+            $path = $file->store('cvs', 'public');
             $cvUrl = asset('storage/' . $path);
         } else {
             // Nếu không upload file mới, kiểm tra xem đã có CV mặc định chưa
@@ -100,7 +106,7 @@ class ApplicationController extends Controller
         $applications = Application::with(['job.employer'])
                                    ->where('student_id', $studentProfile->id)
                                    ->orderBy('applied_at', 'desc') // Sắp xếp cái mới nhất lên đầu
-                                   ->get();
+                                   ->paginate(10);
 
         return response()->json($applications);
     }
@@ -205,10 +211,10 @@ class ApplicationController extends Controller
             });
         }
 
-        $applications = $query->orderBy('created_at', 'desc')->get();
+        $applications = $query->orderBy('created_at', 'desc')->paginate(15);
 
         // Định dạng lại dữ liệu trả về cho frontend
-        $formattedApplications = $applications->map(function($app) {
+        $applications->getCollection()->transform(function($app) {
             $app->student_name = $app->student->user->name ?? 'Ứng viên';
             $app->student_email = $app->student->user->email ?? 'Email';
             $app->student_avatar = $app->student->avatar ?? null;
@@ -217,6 +223,6 @@ class ApplicationController extends Controller
             return $app;
         });
 
-        return response()->json($formattedApplications);
+        return response()->json($applications);
     }
 }

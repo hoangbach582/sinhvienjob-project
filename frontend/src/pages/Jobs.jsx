@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSearchParams, Link } from "react-router-dom";
+import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 import {
   Search,
   MapPin,
@@ -18,6 +19,7 @@ import {
 } from "lucide-react";
 import HomeNavbar from "../components/home/HomeNavbar";
 import FooterNew from "../components/FooterNew";
+import SEOHead from "../components/SEOHead";
 import SaveButton from "../components/SaveButton";
 
 const ITEMS_PER_PAGE = 5;
@@ -59,8 +61,10 @@ function Jobs() {
   const [industries, setIndustries] = useState([]);
 
   const [jobs, setJobs] = useState([]);
+  const [totalJobs, setTotalJobs] = useState(0);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [sortBy, setSortBy] = useState("newest");
   const [viewMode, setViewMode] = useState("list");
 
@@ -90,45 +94,56 @@ function Jobs() {
     fetchIndustries();
   }, []);
 
-  useEffect(() => {
-    const fetchJobs = async () => {
-      setLoading(true);
-      try {
-        const params = new URLSearchParams();
-        if (searchParams.get("keyword"))
-          params.append("keyword", searchParams.get("keyword"));
-        if (searchParams.get("location"))
-          params.append("location", searchParams.get("location"));
-        if (searchParams.get("type"))
-          params.append("type", searchParams.get("type"));
-        if (searchParams.get("salary"))
-          params.append("salary", searchParams.get("salary"));
-        if (searchParams.get("industry"))
-          params.append("industry", searchParams.get("industry"));
-        if (searchParams.get("experience"))
-          params.append("experience", searchParams.get("experience"));
-        if (searchParams.get("recommended") === "true")
-          params.append("recommended", "true");
+  const fetchJobs = useCallback(async (page) => {
+    if (page === 1) setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (searchParams.get("keyword")) params.append("keyword", searchParams.get("keyword"));
+      if (searchParams.get("location")) params.append("location", searchParams.get("location"));
+      if (searchParams.get("type")) params.append("type", searchParams.get("type"));
+      if (searchParams.get("salary")) params.append("salary", searchParams.get("salary"));
+      if (searchParams.get("industry")) params.append("industry", searchParams.get("industry"));
+      if (searchParams.get("experience")) params.append("experience", searchParams.get("experience"));
+      if (searchParams.get("recommended") === "true") params.append("recommended", "true");
+      params.append("page", page);
 
-        const token = localStorage.getItem("token");
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const token = localStorage.getItem("token");
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-        const response = await fetch(
-          `http://127.0.0.1:8000/api/jobs?${params.toString()}`,
-          { headers },
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setJobs(data);
+      const response = await fetch(`http://127.0.0.1:8000/api/jobs?${params.toString()}`, { headers });
+      if (response.ok) {
+        const result = await response.json();
+        if (page === 1) {
+          setJobs(result.data);
+        } else {
+          setJobs(prev => [...prev, ...result.data]);
         }
-      } catch (error) {
-        console.error("Lỗi tải danh sách việc làm:", error);
-      } finally {
-        setLoading(false);
+        setTotalJobs(result.total);
+        setHasMore(page < result.last_page);
       }
-    };
-    fetchJobs();
+    } catch (error) {
+      console.error("Lỗi tải danh sách việc làm:", error);
+    } finally {
+      if (page === 1) setLoading(false);
+    }
   }, [searchParams]);
+
+  useEffect(() => {
+    // eslint-disable-next-line
+    fetchJobs(1);
+    // currentPage is already reset in handle functions or initial state
+  }, [searchParams, fetchJobs]);
+
+  useEffect(() => {
+    if (currentPage > 1) {
+      // eslint-disable-next-line
+      fetchJobs(currentPage);
+    }
+  }, [currentPage, fetchJobs]);
+
+  const { lastElementRef, isFetching } = useInfiniteScroll(async () => {
+    setCurrentPage(prev => prev + 1);
+  }, hasMore);
 
   const handleFilter = (e) => {
     e.preventDefault();
@@ -241,37 +256,20 @@ function Jobs() {
     return `${diffDays} ngày trước`;
   };
 
-  // Pagination
-  const totalPages = Math.ceil(jobs.length / ITEMS_PER_PAGE) || 1;
-  const paginatedJobs = jobs.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE,
-  );
-
-  const getPageNumbers = () => {
-    const pages = [];
-    if (totalPages <= 5) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      pages.push(1);
-      if (currentPage > 3) pages.push("...");
-      const start = Math.max(2, currentPage - 1);
-      const end = Math.min(totalPages - 1, currentPage + 1);
-      for (let i = start; i <= end; i++) pages.push(i);
-      if (currentPage < totalPages - 2) pages.push("...");
-      pages.push(totalPages);
-    }
-    return pages;
-  };
+  // Pagination is handled by infinite scroll now
 
   return (
     <div
-      className="home-page min-h-screen flex flex-col"
+      className="home-page min-h-screen flex flex-col overflow-x-hidden"
       style={{
         background:
           "linear-gradient(135deg, #09144B 0%, #0B1656 45%, #1a0a3e 100%)",
       }}
     >
+      <SEOHead 
+        title="Việc làm Sinh Viên" 
+        description="Hàng ngàn cơ hội việc làm part-time, thực tập và freelancer đang chờ đón bạn." 
+      />
       <HomeNavbar />
 
       {/* Hero Search Section */}
@@ -664,7 +662,7 @@ function Jobs() {
                 {isSearching ? (
                   <>
                     <span className="text-white font-bold text-lg">
-                      {jobs.length.toLocaleString()}
+                      {totalJobs.toLocaleString()}
                     </span>{" "}
                     việc làm phù hợp
                   </>
@@ -672,7 +670,7 @@ function Jobs() {
                   <>
                     Tất cả{" "}
                     <span className="text-white font-bold text-lg">
-                      {jobs.length.toLocaleString()}
+                      {totalJobs.toLocaleString()}
                     </span>{" "}
                     việc làm
                   </>
@@ -858,7 +856,7 @@ function Jobs() {
                     : "flex flex-col gap-4"
                 }
               >
-                {paginatedJobs.map((job) => (
+                {jobs.map((job) => (
                   <div
                     key={job.id}
                     className="group rounded-2xl p-5 transition-all duration-300 hover:-translate-y-0.5 flex flex-col h-full"
@@ -1036,62 +1034,16 @@ function Jobs() {
               </div>
             )}
 
-            {/* Pagination */}
-            {!loading && jobs.length > ITEMS_PER_PAGE && (
-              <div
-                style={{ marginTop: "1rem" }}
-                className="flex items-center justify-center gap-2 mt-8"
-              >
-                <button
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                  className="w-9 h-9 rounded-lg flex items-center justify-center border-none cursor-pointer transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-white/60 hover:text-white"
-                  style={{ background: "rgba(255,255,255,0.06)" }}
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-
-                {getPageNumbers().map((page, idx) =>
-                  page === "..." ? (
-                    <span
-                      key={`dots-${idx}`}
-                      className="w-9 h-9 flex items-center justify-center text-white/30 text-sm"
-                    >
-                      ...
-                    </span>
-                  ) : (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className="w-9 h-9 rounded-lg flex items-center justify-center border-none cursor-pointer text-sm font-semibold transition-all"
-                      style={{
-                        background:
-                          currentPage === page
-                            ? "linear-gradient(135deg, #823feb, #6366f1)"
-                            : "rgba(255,255,255,0.06)",
-                        color:
-                          currentPage === page
-                            ? "white"
-                            : "rgba(255,255,255,0.6)",
-                      }}
-                    >
-                      {page}
-                    </button>
-                  ),
+            {/* Infinite Scroll Loader */}
+            {hasMore && !loading && (
+              <div ref={lastElementRef} className="flex justify-center py-8">
+                {isFetching && (
+                  <div className="w-8 h-8 rounded-full border-2 border-brand/20 border-t-brand animate-spin" />
                 )}
-
-                <button
-                  onClick={() =>
-                    setCurrentPage((p) => Math.min(totalPages, p + 1))
-                  }
-                  disabled={currentPage === totalPages}
-                  className="w-9 h-9 rounded-lg flex items-center justify-center border-none cursor-pointer transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-white/60 hover:text-white"
-                  style={{ background: "rgba(255,255,255,0.06)" }}
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
               </div>
             )}
+
+            {/* Removed Local Pagination UI */}
           </div>
         </div>
       </section>

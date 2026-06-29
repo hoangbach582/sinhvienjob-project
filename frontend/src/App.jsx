@@ -40,6 +40,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminAccounts from './pages/AdminAccounts'; 
 import AdminJobs from './pages/AdminJobs'; 
 import AdminIndustries from './pages/AdminIndustries'; 
+import AdminActivityLog from './pages/AdminActivityLog';
 import AdminLogin from './pages/AdminLogin'; 
 
 import { AuthProvider } from './context/AuthContext'; 
@@ -98,6 +99,7 @@ function App() {
               <Route path="accounts" element={<AdminAccounts />} />
               <Route path="jobs" element={<AdminJobs />} />
               <Route path="industries" element={<AdminIndustries />} />
+              <Route path="activity-logs" element={<AdminActivityLog />} />
             </Route>
           </Routes>
         </BrowserRouter>

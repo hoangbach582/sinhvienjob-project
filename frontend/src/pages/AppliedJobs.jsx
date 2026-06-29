@@ -1,48 +1,70 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
+import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 
 function AppliedJobs() {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchMyApplications = async () => {
-      const token = localStorage.getItem("access_token");
-      if (!token) {
-        alert("Bạn cần đăng nhập để xem trang này!");
-        navigate("/login");
-        return;
-      }
+  const fetchMyApplications = useCallback(async (page) => {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      alert("Bạn cần đăng nhập để xem trang này!");
+      navigate("/login");
+      return;
+    }
+    
+    if (page === 1) setLoading(true);
 
-      try {
-        const response = await fetch(
-          "http://127.0.0.1:8000/api/applications/me",
-          {
-            method: "GET",
-            headers: {
-              Accept: "application/json",
-              Authorization: `Bearer ${token}`,
-            },
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/applications/me?page=${page}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
           },
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          setApplications(data);
-        } else {
-          console.error("Lỗi khi tải lịch sử ứng tuyển");
         }
-      } catch (error) {
-        console.error("Lỗi kết nối:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      );
 
-    fetchMyApplications();
+      if (response.ok) {
+        const result = await response.json();
+        if (page === 1) {
+          setApplications(result.data);
+        } else {
+          setApplications(prev => [...prev, ...result.data]);
+        }
+        setHasMore(page < result.last_page);
+      } else {
+        console.error("Lỗi khi tải lịch sử ứng tuyển");
+      }
+    } catch (error) {
+      console.error("Lỗi kết nối:", error);
+    } finally {
+      if (page === 1) setLoading(false);
+    }
   }, [navigate]);
+
+  useEffect(() => {
+    // eslint-disable-next-line
+    fetchMyApplications(1);
+  }, [fetchMyApplications]);
+
+  useEffect(() => {
+    if (currentPage > 1) {
+      // eslint-disable-next-line
+      fetchMyApplications(currentPage);
+    }
+  }, [currentPage, fetchMyApplications]);
+
+  const { lastElementRef, isFetching } = useInfiniteScroll(async () => {
+    setCurrentPage(prev => prev + 1);
+  }, hasMore);
 
   const getStatusConfig = (status) => {
     const configs = {
@@ -642,6 +664,14 @@ function AppliedJobs() {
                   </div>
                 );
               })}
+            </div>
+          )}
+          
+          {hasMore && !loading && (
+            <div ref={lastElementRef} className="flex justify-center py-8">
+              {isFetching && (
+                <div className="w-8 h-8 rounded-full border-2 border-brand/20 border-t-brand animate-spin" />
+              )}
             </div>
           )}
         </div>

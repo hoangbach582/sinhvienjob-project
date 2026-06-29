@@ -355,6 +355,7 @@ const ConfirmDialog = ({ icon, title, message, danger, confirmLabel, onConfirm, 
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 10 }}
         className="bg-white rounded-2xl w-full max-w-sm p-6 relative z-10 shadow-2xl"
+        style={{ padding: '1rem' }}
       >
         <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-4 ${danger ? 'bg-rose-50' : 'bg-indigo-50'}`}>
           {icon}
@@ -363,11 +364,13 @@ const ConfirmDialog = ({ icon, title, message, danger, confirmLabel, onConfirm, 
         <p className="text-slate-500 text-sm leading-relaxed mb-6">{message}</p>
         <div className="flex gap-2.5 justify-end">
           <button onClick={onClose} disabled={loading}
-            className="px-4 py-2 rounded-xl text-[13px] font-semibold text-slate-600 hover:bg-slate-100 transition-colors">
+            className="px-4 py-2 rounded-xl text-[13px] font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
+            style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}>
             Hủy
           </button>
           <button onClick={handleConfirm} disabled={loading}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[13px] font-semibold text-white transition-all ${danger ? 'bg-rose-600 hover:bg-rose-700' : 'bg-indigo-600 hover:bg-indigo-700'}`}>
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[13px] font-semibold text-white transition-all ${danger ? 'bg-rose-600 hover:bg-rose-700' : 'bg-indigo-600 hover:bg-indigo-700'}`}
+            style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}>
             {loading && <RefreshCw size={14} className="animate-spin" />}
             {loading ? 'Đang xử lý...' : confirmLabel}
           </button>

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import HomeNavbar from "../components/home/HomeNavbar";
 import FooterNew from "../components/FooterNew";
+import SEOHead from "../components/SEOHead";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -171,6 +172,10 @@ function Companies() {
           "linear-gradient(135deg, #09144B 0%, #0B1656 45%, #1a0a3e 100%)",
       }}
     >
+      <SEOHead 
+        title="Danh sách Công Ty" 
+        description="Khám phá các công ty hàng đầu đang tuyển dụng sinh viên. Tra cứu thông tin, môi trường làm việc và cơ hội nghề nghiệp." 
+      />
       <HomeNavbar />
 
       {/* Hero Search Section */}

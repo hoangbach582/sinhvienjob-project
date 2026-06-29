@@ -8,6 +8,7 @@ import LatestJobsSectionNew from '../components/home/LatestJobsSectionNew';
 import BenefitsSectionNew from '../components/home/BenefitsSectionNew';
 import CompaniesSectionNew from '../components/home/CompaniesSectionNew';
 import FooterNew from '../components/FooterNew';
+import SEOHead from '../components/SEOHead';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -91,6 +92,10 @@ function Home() {
   return (
     <MainLayout hideTopbar showFooter={false}>
       <main ref={mainRef} className="home-page relative min-h-screen bg-background">
+        <SEOHead 
+          title="Trang chủ" 
+          description="Tìm kiếm việc làm part-time, internship cho sinh viên dễ dàng, nhanh chóng trên SinhVienJob." 
+        />
         <HomeNavbar />
 
         <HeroSectionNew

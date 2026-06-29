@@ -78,6 +78,27 @@
   --radius: 14px;
 }
 
+.dark {
+  --background: #0B0F19;
+  --foreground: #F8FAFC;
+  --primary: #823feb;
+  --primary-foreground: #ffffff;
+  --accent: #1e1b4b;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --card: #121827;
+  --card-muted: #1e293b;
+  --border: #334155;
+  --chip-surface: rgba(255, 255, 255, 0.05);
+  
+  --color-text-primary: #F8FAFC;
+  --color-text-secondary: #94a3b8;
+  --color-border-tertiary: #334155;
+  --color-background-primary: #121827;
+  --color-background-secondary: #0B0F19;
+  --color-border-secondary: #475569;
+}
+
 /* file CSS tổng của React */
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter', system-ui, -apple-system, sans-serif;font-size:14px;background-color:var(--background);color:var(--foreground)}
@@ -3369,15 +3390,6 @@ button.relative.flex.items-center.gap-2.px-5.py-3\.5.text-\[13\.5px\].font-semib
 
 button.flex.items-center.gap-2.px-3.py-1\.5.rounded-lg.text-sm.border.cursor-pointer.transition-all.bg-transparent.text-white\/50.border-white\/10.hover\:text-white\/80.hover\:bg-white\/5 {
     padding: 0.45rem;
-    margin-bottom: 0.4rem;
-}
-
-button.px-3.py-1\.5.rounded-lg.text-xs.font-medium.transition-all.cursor-pointer.border.bg-brand\/20.text-brand-light.border-brand\/50.shadow-\[0_0_10px_rgba\(130\,63\,235\,0\.2\)\],
-button.px-3.py-1\.5.rounded-lg.text-xs.font-medium.transition-all.cursor-pointer.border.bg-white\/5.text-white\/60.border-white\/10.hover\:bg-white\/10.hover\:text-white\/90 ,
-button.px-3.py-1\.5.rounded-lg.text-xs.font-medium.transition-all.cursor-pointer.border.bg-amber-500\/20.text-amber-400.border-amber-500\/50.shadow-\[0_0_10px_rgba\(245\,158\,11\,0\.2\)\],
-button.px-3.py-1\.5.rounded-lg.text-xs.font-medium.transition-all.cursor-pointer.border.bg-white\/5.text-white\/60.border-white\/10.hover\:bg-white\/10.hover\:text-white\/90{
-    padding: 0.2rem;
-}   padding: 0.45rem;
     margin-bottom: 0.4rem;
 }
 

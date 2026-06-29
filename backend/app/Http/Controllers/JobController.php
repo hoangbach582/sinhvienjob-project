@@ -114,7 +114,7 @@ class JobController extends Controller
         }
         
         // Trả về danh sách, sắp xếp việc mới nhất lên đầu
-        $jobs = $query->orderBy('created_at', 'desc')->get();
+        $jobs = $query->orderBy('created_at', 'desc')->paginate(12);
 
         // Kiểm tra xem student đã lưu job nào chưa và tính điểm gợi ý
         $user = auth('sanctum')->user();
@@ -129,7 +129,7 @@ class JobController extends Controller
                     return strtolower(trim($skill));
                 })->toArray();
                 
-                $jobs->map(function($job) use ($savedJobIds, $studentSkills) {
+                $jobs->getCollection()->transform(function($job) use ($savedJobIds, $studentSkills) {
                     $job->is_saved = in_array($job->id, $savedJobIds);
                     
                     // Recommendation Engine: Tính điểm phù hợp dựa trên kỹ năng
@@ -152,7 +152,8 @@ class JobController extends Controller
 
                 // Nếu request yêu cầu ưu tiên gợi ý, ta sắp xếp lại danh sách
                 if ($request->has('recommended') && $request->recommended == 'true') {
-                    $jobs = $jobs->sortByDesc('match_score')->values();
+                    $sorted = $jobs->getCollection()->sortByDesc('match_score')->values();
+                    $jobs->setCollection($sorted);
                 }
             }
         }
@@ -174,7 +175,7 @@ class JobController extends Controller
         $jobs = Job::where('employer_id', $user->employer->id)
                    ->withCount('applications')
                    ->orderBy('created_at', 'desc')
-                   ->get();
+                   ->paginate(15);
 
         return response()->json($jobs);
     }

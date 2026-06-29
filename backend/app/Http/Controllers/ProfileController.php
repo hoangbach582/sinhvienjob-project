@@ -70,16 +70,28 @@ class ProfileController extends Controller
 
         // Xử lý lưu File Avatar (nếu có tải lên)
         if ($request->hasFile('avatar')) {
+            $file = $request->file('avatar');
+            $mimeType = $file->getMimeType();
+            if (!in_array($mimeType, ['image/jpeg', 'image/png', 'image/gif', 'image/webp'])) {
+                return response()->json(['message' => 'Ảnh đại diện không hợp lệ. Chỉ chấp nhận JPG, PNG, GIF, WEBP.'], 422);
+            }
+
             // Xóa file cũ nếu có (tùy chọn để tiết kiệm dung lượng)
             // if ($profile->avatar) { Storage::disk('public')->delete(str_replace('/storage/', '', parse_url($profile->avatar, PHP_URL_PATH))); }
             
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            $avatarPath = $file->store('avatars', 'public');
             $profile->avatar = asset('storage/' . $avatarPath); // Lưu dạng URL đầy đủ
         }
 
         // Xử lý lưu File CV (nếu có tải lên)
         if ($request->hasFile('cv')) {
-            $cvPath = $request->file('cv')->store('cvs', 'public');
+            $file = $request->file('cv');
+            $mimeType = $file->getMimeType();
+            if (!in_array($mimeType, ['application/pdf'])) {
+                return response()->json(['message' => 'File CV không hợp lệ. Vui lòng upload PDF.'], 422);
+            }
+
+            $cvPath = $file->store('cvs', 'public');
             $profile->cv_url = asset('storage/' . $cvPath); // Lưu dạng URL đầy đủ
         }
 

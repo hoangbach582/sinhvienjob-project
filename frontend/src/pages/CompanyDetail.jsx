@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
 import HomeNavbar from "../components/home/HomeNavbar";
 import FooterNew from "../components/FooterNew";
+import SEOHead from "../components/SEOHead";
 import { AuthContext } from "../context/AuthContext";
 import {
   MapPin,
@@ -109,8 +110,8 @@ function CompanyDetail() {
               const reviewsDataRaw = await reviewsRes.json();
               if (active) setReviewsData(reviewsDataRaw);
             }
-          } catch (err) {
-            console.error("Lỗi tải đánh giá:", err);
+          } catch (error) {
+            console.error("Lỗi tải đánh giá:", error);
           }
 
           if (active) {
@@ -346,13 +347,16 @@ function CompanyDetail() {
   };
 
   return (
-    <div
-      className="home-page min-h-screen flex flex-col"
+    <div className="home-page min-h-screen flex flex-col pt-[72px]"
       style={{
-        background:
-          "linear-gradient(135deg, #09144B 0%, #0B1656 45%, #1a0a3e 100%)",
+        background: "linear-gradient(135deg, #09144B 0%, #0B1656 45%, #1a0a3e 100%)"
       }}
     >
+      <SEOHead 
+        title={company?.company_name || "Chi tiết công ty"} 
+        description={company ? `Khám phá môi trường làm việc và các vị trí đang tuyển tại ${company.company_name}` : "Thông tin chi tiết công ty trên SinhVienJob"} 
+        image={company?.logo_url ? (company.logo_url.startsWith('http') ? company.logo_url : `http://127.0.0.1:8000${company.logo_url}`) : null}
+      />
       <HomeNavbar />
 
       <main

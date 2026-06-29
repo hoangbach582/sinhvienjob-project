@@ -10,11 +10,19 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\ResetPasswordNotification;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class User extends Authenticatable
 {
     use HasUuids;// Thêm trait này để tự động sinh UUID khi tạo mới bản ghi
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, LogsActivity;
+
+    public function getActivitylogOptions(): LogOptions {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'email', 'status', 'role'])
+            ->logOnlyDirty();
+    }
 
     /**
      * Ghi đè notification mặc định để dùng email tiếng Việt

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { jobService } from "../services/jobService";
 import { useSavedJobs } from "../context/SavedJobsContext";
 import { toast } from "react-hot-toast";
+import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 import {
   Bookmark,
   MapPin,
@@ -21,30 +22,47 @@ import { vi } from "date-fns/locale";
 function SavedJobs() {
   const [savedJobs, setSavedJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [pagination, setPagination] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [totalJobs, setTotalJobs] = useState(0);
   const navigate = useNavigate();
   const { toggleSave, isSaved } = useSavedJobs();
 
   const fetchSavedJobs = async (page = 1) => {
     try {
-      setLoading(true);
+      if (page === 1) setLoading(true);
       const data = await jobService.getSavedJobs(page);
-      setSavedJobs(data.data);
-      setPagination({
-        current_page: data.current_page,
-        last_page: data.last_page,
-        total: data.total,
-      });
+      
+      if (page === 1) {
+        setSavedJobs(data.data);
+      } else {
+        setSavedJobs(prev => [...prev, ...data.data]);
+      }
+      
+      setTotalJobs(data.total);
+      setHasMore(page < data.last_page);
     } catch (error) {
       console.error("Lỗi khi tải việc làm đã lưu:", error);
     } finally {
-      setLoading(false);
+      if (page === 1) setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchSavedJobs();
+    // eslint-disable-next-line
+    fetchSavedJobs(1);
   }, []);
+
+  useEffect(() => {
+    if (currentPage > 1) {
+      // eslint-disable-next-line
+      fetchSavedJobs(currentPage);
+    }
+  }, [currentPage]);
+
+  const { lastElementRef, isFetching } = useInfiniteScroll(async () => {
+    setCurrentPage(prev => prev + 1);
+  }, hasMore);
 
   const formatSalary = (min, max) => {
     if (!min && !max) return "Thỏa thuận";
@@ -112,7 +130,7 @@ function SavedJobs() {
               </div>
             </div>
             <div className="px-5 py-2.5 rounded-full bg-white/5 border border-white/10 text-white/90 text-sm font-semibold">
-              {pagination.total || 0} việc làm
+              {totalJobs || 0} việc làm
             </div>
           </div>
 
@@ -256,52 +274,11 @@ function SavedJobs() {
             </div>
           )}
 
-          {/* Pagination */}
-          {!loading && pagination.last_page > 0 && (
-            <div
-              className="flex items-center justify-center gap-2 mt-8"
-              style={{ marginTop: "1rem" }}
-            >
-              <button
-                disabled={pagination.current_page === 1}
-                onClick={() => fetchSavedJobs(pagination.current_page - 1)}
-                className="w-9 h-9 rounded-lg flex items-center justify-center border-none cursor-pointer transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-white/60 hover:text-white"
-                style={{ background: "rgba(255, 255, 255, 0.06)" }}
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-
-              {Array.from(
-                { length: pagination.last_page },
-                (_, i) => i + 1,
-              ).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => fetchSavedJobs(page)}
-                  className="w-9 h-9 rounded-lg flex items-center justify-center border-none cursor-pointer text-sm font-semibold transition-all"
-                  style={{
-                    background:
-                      pagination.current_page === page
-                        ? "linear-gradient(135deg, rgb(130, 63, 235), rgb(99, 102, 241))"
-                        : "rgba(255, 255, 255, 0.06)",
-                    color:
-                      pagination.current_page === page
-                        ? "white"
-                        : "rgba(255, 255, 255, 0.6)",
-                  }}
-                >
-                  {page}
-                </button>
-              ))}
-
-              <button
-                disabled={pagination.current_page === pagination.last_page}
-                onClick={() => fetchSavedJobs(pagination.current_page + 1)}
-                className="w-9 h-9 rounded-lg flex items-center justify-center border-none cursor-pointer transition-colors disabled:opacity-30 disabled:cursor-not-allowed text-white/60 hover:text-white"
-                style={{ background: "rgba(255, 255, 255, 0.06)" }}
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
+          {hasMore && !loading && savedJobs.length > 0 && (
+            <div ref={lastElementRef} className="flex justify-center py-8">
+              {isFetching && (
+                <div className="w-8 h-8 rounded-full border-2 border-brand/20 border-t-brand animate-spin" />
+              )}
             </div>
           )}
         </div>

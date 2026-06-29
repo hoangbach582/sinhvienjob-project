@@ -458,16 +458,20 @@ export default function EmployerApplicants() {
   // Queries
   const { data: jobs = [] } = useQuery({
     queryKey: ['employerJobs'],
-    queryFn: () => jobService.getEmployerJobs()
+    queryFn: async () => {
+      const res = await jobService.getEmployerJobs();
+      return res.data || res;
+    }
   });
 
   const { data: applicants = [], isLoading: isApplicantsLoading } = useQuery({
     queryKey: ['employerApplications', selectedJobId, debouncedSearchTerm, statusFilter],
     queryFn: async () => {
-      let data = await jobService.getAllEmployerApplications({
+      const res = await jobService.getAllEmployerApplications({
         job_id: selectedJobId,
         search: debouncedSearchTerm
       });
+      let data = res.data || res;
       // Filter by status if needed on frontend (if backend doesn't support status filter yet)
       if (statusFilter) {
         data = data.filter(app => app.status === statusFilter);
