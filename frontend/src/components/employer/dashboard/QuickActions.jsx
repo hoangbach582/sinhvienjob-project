@@ -25,6 +25,7 @@ function ActionButton({
         onClick={onClick}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
+        className="hover-lift ripple-button"
         style={{
           display: "flex",
           alignItems: "center",
@@ -90,6 +91,7 @@ function ActionButton({
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      className="hover-lift ripple-button"
       style={{
         display: "flex",
         alignItems: "center",

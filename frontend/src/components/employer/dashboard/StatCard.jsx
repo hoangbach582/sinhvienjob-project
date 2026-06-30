@@ -86,6 +86,7 @@ function StatCard({
       onMouseLeave={() => setHovered(false)}
       role={onClick ? "button" : undefined}
       aria-pressed={active}
+      className={onClick ? "hover-lift transition-all duration-300" : ""}
     >
       {/* Accent line bên trái */}
       <div style={accentLine} />

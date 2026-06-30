@@ -27,6 +27,8 @@ class Job extends Model
         'vacancies',
         'industry',
         'location',
+        'specific_address',
+        'working_hours',
         'experience',
         'salary_min',
         'salary_max',

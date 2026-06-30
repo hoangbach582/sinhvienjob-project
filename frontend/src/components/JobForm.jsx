@@ -40,6 +40,8 @@ function JobForm({ defaultValues, onSubmit, isSubmitting }) {
         type: "full_time",
         vacancies: "",
         location: "Hà Nội",
+        specific_address: "",
+        working_hours: "",
         industry: "IT & Phần mềm",
         experience: "Không yêu cầu",
         salary_min: "",
@@ -59,6 +61,8 @@ function JobForm({ defaultValues, onSubmit, isSubmitting }) {
           ? defaultValues.vacancies.toString()
           : "",
       location: defaultValues.location || "Hà Nội",
+      specific_address: defaultValues.specific_address || "",
+      working_hours: defaultValues.working_hours || "",
       industry: defaultValues.industry || "IT & Phần mềm",
       experience: defaultValues.experience || "Không yêu cầu",
       salary_min:
@@ -259,6 +263,15 @@ function JobForm({ defaultValues, onSubmit, isSubmitting }) {
         </div>
 
         <div className="form-group">
+          <label className="form-label">Địa chỉ cụ thể</label>
+          <input
+            className="form-input"
+            placeholder="Vd: Tầng 3, Tòa nhà ABC..."
+            {...register("specific_address")}
+          />
+        </div>
+
+        <div className="form-group">
           <label className="form-label">Kinh nghiệm</label>
           <select className="form-input" {...register("experience")}>
             <option value="Không yêu cầu">Không yêu cầu</option>
@@ -266,6 +279,15 @@ function JobForm({ defaultValues, onSubmit, isSubmitting }) {
             <option value="1-2 năm">1-2 năm</option>
             <option value="Trên 2 năm">Trên 2 năm</option>
           </select>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Thời gian làm việc</label>
+          <input
+            className="form-input"
+            placeholder="Vd: T2 - T6 (8h00 - 17h30)"
+            {...register("working_hours")}
+          />
         </div>
 
         <div className="form-group" style={{ gridColumn: "1 / -1" }}>

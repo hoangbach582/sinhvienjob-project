@@ -371,6 +371,7 @@ function JobRow({ job }) {
       <td style={{ padding: "12px 20px", textAlign: "right" }}>
         <Link to={`/employer/applicants?jobId=${job.id}`}>
           <button
+            className="hover-lift ripple-button"
             style={{
               display: "inline-flex",
               alignItems: "center",

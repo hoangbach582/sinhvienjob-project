@@ -33,7 +33,7 @@ function HeroSectionNew({
   };
 
   return (
-    <section className="home-hero relative overflow-hidden bg-navy-deep">
+    <section className="home-hero relative overflow-hidden bg-navy-deep" style={{ paddingBottom: '24px' }}>
       <div
         className="pointer-events-none absolute inset-0 bg-linear-to-b from-navy-deep via-navy to-navy-deep"
         aria-hidden="true"

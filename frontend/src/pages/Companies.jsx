@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams, Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   Search,
   MapPin,
@@ -687,7 +688,16 @@ function Companies() {
                 </button>
               </div>
             ) : (
-              <div
+              <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: { staggerChildren: 0.1 }
+                  }
+                }}
                 className={
                   viewMode === "grid"
                     ? "grid grid-cols-1 md:grid-cols-2 gap-4"
@@ -716,25 +726,13 @@ function Companies() {
                     jobsCount > 0 ? `${jobsCount} việc làm` : "Chưa tuyển dụng";
 
                   return (
-                    <div
+                    <motion.div
                       key={company.id}
-                      className="group rounded-2xl p-5 transition-all duration-300 hover:-translate-y-0.5"
-                      style={{
-                        background: "rgba(255,255,255,0.05)",
-                        border: "1px solid rgba(255,255,255,0.08)",
-                        backdropFilter: "blur(8px)",
+                      variants={{
+                        hidden: { opacity: 0, y: 20 },
+                        visible: { opacity: 1, y: 0 }
                       }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor =
-                          "rgba(130,63,235,0.4)";
-                        e.currentTarget.style.boxShadow =
-                          "0 8px 32px rgba(130,63,235,0.15)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor =
-                          "rgba(255,255,255,0.08)";
-                        e.currentTarget.style.boxShadow = "none";
-                      }}
+                      className="group rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-[0_8px_32px_rgba(130,63,235,0.15)] bg-white/5 border border-white/10 backdrop-blur-md hover-card"
                     >
                       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
                         {/* Company Avatar */}
@@ -810,10 +808,10 @@ function Companies() {
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   );
                 })}
-              </div>
+              </motion.div>
             )}
 
             {/* Pagination */}

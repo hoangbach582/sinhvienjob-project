@@ -117,9 +117,9 @@ function Topbar({ transparentTop = false }) {
         <div className="hidden items-center gap-8 lg:flex">
           <Link
             to="/jobs"
-            className={`text-sm font-medium transition-colors duration-200 text-decoration-none ${
+            className={`relative py-1 smooth-underline text-sm font-medium transition-colors duration-200 text-decoration-none ${
               isLinkActive("/jobs")
-                ? "text-white"
+                ? "text-white font-semibold"
                 : "text-white/80 hover:text-white"
             }`}
           >
@@ -127,9 +127,9 @@ function Topbar({ transparentTop = false }) {
           </Link>
           <Link
             to="/companies"
-            className={`text-sm font-medium transition-colors duration-200 text-decoration-none ${
+            className={`relative py-1 smooth-underline text-sm font-medium transition-colors duration-200 text-decoration-none ${
               isLinkActive("/companies")
-                ? "text-white"
+                ? "text-white font-semibold"
                 : "text-white/80 hover:text-white"
             }`}
           >
@@ -139,9 +139,9 @@ function Topbar({ transparentTop = false }) {
           {isLoggedIn && userRole === "student" ? (
             <Link
               to="/build-cv"
-              className={`text-sm font-medium transition-colors duration-200 text-decoration-none ${
+              className={`relative py-1 smooth-underline text-sm font-medium transition-colors duration-200 text-decoration-none ${
                 isLinkActive("/build-cv")
-                  ? "text-white"
+                  ? "text-white font-semibold"
                   : "text-white/80 hover:text-white"
               }`}
             >
@@ -150,7 +150,7 @@ function Topbar({ transparentTop = false }) {
           ) : (
             <Link
               to="/employer/login"
-              className="text-sm font-medium transition-colors duration-200 text-decoration-none text-white/80 hover:text-white"
+              className="relative py-1 smooth-underline text-sm font-medium transition-colors duration-200 text-decoration-none text-white/80 hover:text-white"
             >
               Dành cho Nhà tuyển dụng
             </Link>
@@ -188,13 +188,29 @@ function Topbar({ transparentTop = false }) {
                 <AnimatePresence>
                   {showDropdown && (
                     <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      transition={{ duration: 0.15 }}
+                      initial="hidden"
+                      animate="visible"
+                      exit="hidden"
+                      variants={{
+                        hidden: { opacity: 0, y: 10, scale: 0.95 },
+                        visible: { 
+                          opacity: 1, 
+                          y: 0, 
+                          scale: 1,
+                          transition: {
+                            type: "spring",
+                            stiffness: 300,
+                            damping: 24,
+                            staggerChildren: 0.05
+                          }
+                        }
+                      }}
                       className="absolute right-0 mt-3 w-[280px] bg-[#0f172a]/90 backdrop-blur-xl rounded-[20px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] border border-white/10 overflow-hidden z-200"
                     >
-                      <div className="p-5 border-b border-white/10 bg-linear-to-b from-white/5 to-transparent">
+                      <motion.div 
+                        variants={{ hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0 } }}
+                        className="p-5 border-b border-white/10 bg-linear-to-b from-white/5 to-transparent"
+                      >
                         <p className="text-[15px] font-bold text-white truncate m-0">
                           {userName || "Người dùng"}
                         </p>
@@ -203,68 +219,81 @@ function Topbar({ transparentTop = false }) {
                             ? "Hồ sơ Sinh viên"
                             : "Nhà tuyển dụng"}
                         </p>
-                      </div>
+                      </motion.div>
 
                       <div className="p-2.5 space-y-0.5">
-                        <Link
-                          to={
-                            userRole === "employer"
-                              ? "/employer/dashboard"
-                              : "/profile"
-                          }
-                          onClick={() => setShowDropdown(false)}
-                          className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition-all duration-200 text-[14px] font-semibold no-underline"
-                        >
-                          <User className="w-[18px] h-[18px] text-slate-400 group-hover:text-white transition-colors" />
-                          Hồ sơ cá nhân
-                        </Link>
+                        <motion.div variants={{ hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0 } }}>
+                          <Link
+                            to={
+                              userRole === "employer"
+                                ? "/employer/dashboard"
+                                : "/profile"
+                            }
+                            onClick={() => setShowDropdown(false)}
+                            className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition-all duration-200 text-[14px] font-semibold no-underline hover-lift"
+                          >
+                            <User className="w-[18px] h-[18px] text-slate-400 group-hover:text-white transition-colors" />
+                            Hồ sơ cá nhân
+                          </Link>
+                        </motion.div>
                         {userRole === "student" && (
                           <>
-                            <Link
-                              to="/dashboard"
-                              onClick={() => setShowDropdown(false)}
-                              className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition-all duration-200 text-[14px] font-semibold no-underline"
-                            >
-                              <LayoutDashboard className="w-[18px] h-[18px] text-slate-400 group-hover:text-white transition-colors" />
-                              Tổng quan
-                            </Link>
-                            <Link
-                              to="/applied-jobs"
-                              onClick={() => setShowDropdown(false)}
-                              className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition-all duration-200 text-[14px] font-semibold no-underline"
-                            >
-                              <Briefcase className="w-[18px] h-[18px] text-slate-400 group-hover:text-white transition-colors" />
-                              Việc đã ứng tuyển
-                            </Link>
-                            <Link
-                              to="/saved-jobs"
-                              onClick={() => setShowDropdown(false)}
-                              className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition-all duration-200 text-[14px] font-semibold no-underline"
-                            >
-                              <Heart className="w-[18px] h-[18px] text-slate-400 group-hover:text-white transition-colors" />
-                              Việc làm đã lưu
-                            </Link>
+                            <motion.div variants={{ hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0 } }}>
+                              <Link
+                                to="/dashboard"
+                                onClick={() => setShowDropdown(false)}
+                                className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition-all duration-200 text-[14px] font-semibold no-underline hover-lift"
+                              >
+                                <LayoutDashboard className="w-[18px] h-[18px] text-slate-400 group-hover:text-white transition-colors" />
+                                Tổng quan
+                              </Link>
+                            </motion.div>
+                            <motion.div variants={{ hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0 } }}>
+                              <Link
+                                to="/applied-jobs"
+                                onClick={() => setShowDropdown(false)}
+                                className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition-all duration-200 text-[14px] font-semibold no-underline hover-lift"
+                              >
+                                <Briefcase className="w-[18px] h-[18px] text-slate-400 group-hover:text-white transition-colors" />
+                                Việc đã ứng tuyển
+                              </Link>
+                            </motion.div>
+                            <motion.div variants={{ hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0 } }}>
+                              <Link
+                                to="/saved-jobs"
+                                onClick={() => setShowDropdown(false)}
+                                className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition-all duration-200 text-[14px] font-semibold no-underline hover-lift"
+                              >
+                                <Heart className="w-[18px] h-[18px] text-slate-400 group-hover:text-white transition-colors" />
+                                Việc làm đã lưu
+                              </Link>
+                            </motion.div>
                           </>
                         )}
-                        <Link
-                          to="/settings"
-                          onClick={() => setShowDropdown(false)}
-                          className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition-all duration-200 text-[14px] font-semibold no-underline"
-                        >
-                          <Settings className="w-[18px] h-[18px] text-slate-400 group-hover:text-white transition-colors" />
-                          Cài đặt tài khoản
-                        </Link>
+                        <motion.div variants={{ hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0 } }}>
+                          <Link
+                            to="/settings"
+                            onClick={() => setShowDropdown(false)}
+                            className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition-all duration-200 text-[14px] font-semibold no-underline hover-lift"
+                          >
+                            <Settings className="w-[18px] h-[18px] text-slate-400 group-hover:text-white transition-colors" />
+                            Cài đặt tài khoản
+                          </Link>
+                        </motion.div>
                       </div>
 
-                      <div className="p-2.5 border-t border-white/10 bg-black/20">
+                      <motion.div 
+                        variants={{ hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0 } }}
+                        className="p-2.5 border-t border-white/10 bg-black/20"
+                      >
                         <button
                           onClick={handleLogout}
-                          className="group flex items-center gap-3 w-full text-left px-3.5 py-2.5 rounded-xl text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-200 text-[14px] font-semibold border-none cursor-pointer"
+                          className="group flex items-center gap-3 w-full text-left px-3.5 py-2.5 rounded-xl text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-200 text-[14px] font-semibold border-none cursor-pointer hover-lift"
                         >
                           <LogOut className="w-[18px] h-[18px] text-red-400/80 group-hover:text-red-400 transition-colors" />
                           Đăng xuất
                         </button>
-                      </div>
+                      </motion.div>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -274,13 +303,13 @@ function Topbar({ transparentTop = false }) {
             <>
               <Link
                 to="/login"
-                className="rounded-lg px-5 py-2 text-sm font-medium transition-colors text-decoration-none border border-white/20 text-white hover:bg-white/10"
+                className="rounded-lg px-5 py-2 text-sm font-medium transition-colors text-decoration-none border border-white/20 text-white hover:bg-white/10 hover-lift"
               >
                 Đăng nhập
               </Link>
               <Link
                 to="/register"
-                className="rounded-lg px-5 py-2 text-sm font-semibold transition-colors text-decoration-none bg-white text-brand hover:bg-white/90"
+                className="rounded-lg px-5 py-2 text-sm font-semibold transition-colors text-decoration-none bg-white text-brand hover:bg-white/90 hover-lift ripple-button"
               >
                 Đăng ký
               </Link>

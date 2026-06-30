@@ -192,7 +192,7 @@ function JobDetailHero({
               <button
                 onClick={onApply}
                 disabled={isApplying || hasApplied}
-                className="inline-flex items-center justify-center gap-2 rounded-xl px-8 py-3 text-white font-semibold text-sm border-none cursor-pointer transition-all hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="inline-flex items-center justify-center gap-2 rounded-xl px-8 py-3 text-white font-semibold text-sm border-none cursor-pointer transition-all hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed hover-lift ripple-button"
                 style={{
                   background:
                     isApplying || hasApplied
@@ -209,7 +209,7 @@ function JobDetailHero({
               </button>
               <div
                 onClick={onSaveJob}
-                className="flex items-center gap-2 rounded-xl px-4 py-2.5 cursor-pointer transition-colors hover:bg-white/15"
+                className="flex items-center gap-2 rounded-xl px-4 py-2.5 cursor-pointer transition-colors hover:bg-white/15 hover-lift"
                 style={{
                   border: isSaved
                     ? "1px solid rgba(239, 68, 68, 0.5)"
@@ -234,7 +234,7 @@ function JobDetailHero({
               </div>
               <button
                 onClick={onShare}
-                className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-white/80 text-sm font-medium bg-transparent cursor-pointer transition-colors hover:bg-white/15 border"
+                className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-white/80 text-sm font-medium bg-transparent cursor-pointer transition-colors hover:bg-white/15 border hover-lift"
                 style={{ borderColor: "rgba(255,255,255,0.2)" }}
               >
                 <Share2 className="w-4 h-4" /> Chia sẻ

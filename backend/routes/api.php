@@ -49,6 +49,8 @@ Route::post('/email/verification/verify', [EmailVerificationController::class, '
 Route::post('/email/verification/resend', [EmailVerificationController::class, 'resend']);
 
 Route::get('/jobs/latest', [JobController::class, 'getLatestJobs']);
+// Gợi ý việc làm cá nhân hóa (yêu cầu đăng nhập)
+Route::middleware('auth:sanctum')->get('/jobs/recommendations', [JobController::class, 'getRecommendations']);
 // Chi tiết công việc (Hỗ trợ check is_saved nếu có token)
 Route::get('/jobs/{id}', [JobController::class, 'getJobDetail']);
 Route::get('/jobs', [JobController::class, 'index']);

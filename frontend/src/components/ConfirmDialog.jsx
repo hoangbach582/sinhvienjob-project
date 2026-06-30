@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { AlertTriangle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 /**
  * ConfirmDialog component - Hộp thoại xác nhận hành động có thiết kế premium
@@ -31,45 +32,56 @@ function ConfirmDialog({ isOpen, title, message, onConfirm, onCancel }) {
     };
   }, [isOpen, onCancel]);
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-1000 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4"
-      onClick={(e) => e.target === e.currentTarget && onCancel()} // Click ra ngoài overlay sẽ đóng
-    >
-      <div className="bg-white rounded-2xl w-full max-w-[400px] shadow-2xl animate-[slideUp_0.2s_ease-out] overflow-hidden">
-        {/* Phần nội dung cảnh báo */}
-        <div className="px-6 pt-6 pb-3 flex flex-col items-center text-center">
-          <div className="w-12 h-12 rounded-full bg-red-50 text-red-500 flex items-center justify-center mb-4">
-            <AlertTriangle size={24} />
-          </div>
-
-          <h3 className="text-base font-semibold text-slate-900 mb-2">
-            {title}
-          </h3>
-          <p className="text-[13px] text-slate-500 leading-relaxed whitespace-pre-line m-0">
-            {message}
-          </p>
-        </div>
-
-        {/* Nút hành động ở phía dưới */}
-        <div className="px-6 pt-4 pb-6 flex gap-3 justify-center">
-          <button
-            onClick={onCancel}
-            className="flex-1 py-2.5 px-4 bg-slate-100 text-slate-600 border border-slate-200 rounded-lg text-[13px] font-medium cursor-pointer transition-all duration-150 ease-in-out hover:bg-slate-200 hover:text-slate-900"
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-1000 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={(e) => e.target === e.currentTarget && onCancel()} // Click ra ngoài overlay sẽ đóng
+        >
+          <motion.div 
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 20 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className="bg-white rounded-2xl w-full max-w-[400px] shadow-2xl overflow-hidden"
           >
-            Hủy bỏ
-          </button>
-          <button
-            onClick={onConfirm}
-            className="flex-1 py-2.5 px-4 bg-red-500 text-white border-none rounded-lg text-[13px] font-medium cursor-pointer transition-all duration-150 ease-in-out hover:bg-red-600"
-          >
-            Xác nhận hủy
-          </button>
-        </div>
-      </div>
-    </div>
+            {/* Phần nội dung cảnh báo */}
+            <div className="px-6 pt-6 pb-3 flex flex-col items-center text-center">
+              <div className="w-12 h-12 rounded-full bg-red-50 text-red-500 flex items-center justify-center mb-4">
+                <AlertTriangle size={24} />
+              </div>
+
+              <h3 className="text-base font-semibold text-slate-900 mb-2">
+                {title}
+              </h3>
+              <p className="text-[13px] text-slate-500 leading-relaxed whitespace-pre-line m-0">
+                {message}
+              </p>
+            </div>
+
+            {/* Nút hành động ở phía dưới */}
+            <div className="px-6 pt-4 pb-6 flex gap-3 justify-center">
+              <button
+                onClick={onCancel}
+                className="flex-1 py-2.5 px-4 bg-slate-100 text-slate-600 border border-slate-200 rounded-lg text-[13px] font-medium cursor-pointer transition-all duration-150 ease-in-out hover:bg-slate-200 hover:text-slate-900 hover-lift ripple-button"
+              >
+                Hủy bỏ
+              </button>
+              <button
+                onClick={onConfirm}
+                className="flex-1 py-2.5 px-4 bg-red-500 text-white border-none rounded-lg text-[13px] font-medium cursor-pointer transition-all duration-150 ease-in-out hover:bg-red-600 hover-lift ripple-button"
+              >
+                Xác nhận hủy
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 

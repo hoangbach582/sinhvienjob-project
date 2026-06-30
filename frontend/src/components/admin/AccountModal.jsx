@@ -57,9 +57,10 @@ const AccountModal = ({ account, type, onClose, onAction }) => {
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
         className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl relative z-10 font-sans"
+        style={{ padding: '1rem' }}
       >
         {/* Header */}
-        <div className={`px-6 py-5 border-b border-slate-100 flex items-center gap-4 ${isEmployer ? 'bg-indigo-50/50' : 'bg-emerald-50/50'}`}>
+        <div className={`px-6 py-5 border-b border-slate-100 flex items-center gap-4 shrink-0 ${isEmployer ? 'bg-indigo-50/50' : 'bg-emerald-50/50'}`} style={{ marginBottom: '1rem' }}>
           <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-bold shrink-0 shadow-sm ${isEmployer ? 'bg-indigo-600 shadow-indigo-600/20' : 'bg-emerald-600 shadow-emerald-600/20'}`}>
             {isEmployer
               ? (d.employer?.company_name?.[0] || d.name?.[0] || 'E').toUpperCase()
@@ -81,20 +82,21 @@ const AccountModal = ({ account, type, onClose, onAction }) => {
           <button
             onClick={onClose}
             className="w-8 h-8 rounded-full bg-slate-200/50 hover:bg-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors shrink-0"
+            style={{ cursor: 'pointer' }}
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 bg-slate-50/30">
+        <div className="flex-auto overflow-y-auto p-6 bg-slate-50/30 min-h-0">
           {loading ? (
             <SkeletonLoader />
           ) : (
             <div className="space-y-8">
               {/* Thông tin chung */}
               <Section title="Thông tin cơ bản">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ marginBottom: '1rem' }}>
                   <InfoRow icon={<Mail size={16} />} label="Email" value={d.email} />
                   <InfoRow icon={<Calendar size={16} />} label="Ngày đăng ký" value={d.created_at ? new Date(d.created_at).toLocaleDateString('vi-VN') : '—'} />
 
@@ -119,7 +121,7 @@ const AccountModal = ({ account, type, onClose, onAction }) => {
                 </div>
                 
                 {isEmployer && d.employer?.description && (
-                  <div className="mt-4 pt-4 border-t border-slate-100">
+                  <div className="mt-4 pt-4 border-t border-slate-100" style={{ marginBottom: '1rem' }}>
                     <InfoRow icon={<FileText size={16} />} label="Mô tả" fullWidth value={
                       <span className="text-slate-600 text-sm leading-relaxed block mt-1 bg-white p-4 rounded-xl border border-slate-100">
                         {d.employer.description}
@@ -129,7 +131,7 @@ const AccountModal = ({ account, type, onClose, onAction }) => {
                 )}
                 
                 {!isEmployer && d.student_profile?.bio && (
-                  <div className="mt-4 pt-4 border-t border-slate-100">
+                  <div className="mt-4 pt-4 border-t border-slate-100" style={{ marginBottom: '1rem' }}>
                     <InfoRow icon={<BookOpen size={16} />} label="Bio" fullWidth value={
                       <span className="text-slate-600 text-sm leading-relaxed block mt-1 bg-white p-4 rounded-xl border border-slate-100">
                         {d.student_profile.bio}
@@ -141,7 +143,7 @@ const AccountModal = ({ account, type, onClose, onAction }) => {
 
               {/* Thống kê */}
               <Section title="Thống kê hoạt động">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4" style={{ marginBottom: '1rem' }}>
                   {isEmployer ? (
                     <>
                       <StatBox
@@ -209,7 +211,7 @@ const AccountModal = ({ account, type, onClose, onAction }) => {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex flex-wrap gap-3 justify-end items-center">
+        <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex flex-wrap gap-3 justify-end items-center shrink-0">
           {d.status === 'pending' && isEmployer && (
             <button
               onClick={handleApprove}
@@ -221,11 +223,12 @@ const AccountModal = ({ account, type, onClose, onAction }) => {
 
           <button
             onClick={handleToggleLock}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+            className={`flex items-center gap-2 rounded-xl text-sm font-semibold transition-colors ${
               d.status === 'locked' 
                 ? 'text-emerald-700 bg-emerald-100 hover:bg-emerald-200' 
                 : 'text-amber-700 bg-amber-100 hover:bg-amber-200'
             }`}
+            style={{ padding: '0.4rem', cursor: 'pointer' }}
           >
             {d.status === 'locked' ? (
               <><Unlock size={16} /> Mở khóa</>
@@ -236,7 +239,8 @@ const AccountModal = ({ account, type, onClose, onAction }) => {
 
           <button
             onClick={handleDelete}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-rose-700 bg-rose-100 hover:bg-rose-200 transition-colors"
+            className="flex items-center gap-2 rounded-xl text-sm font-semibold text-rose-700 bg-rose-100 hover:bg-rose-200 transition-colors"
+            style={{ padding: '0.4rem', cursor: 'pointer' }}
           >
             <Trash2 size={16} /> Xóa
           </button>
@@ -244,6 +248,7 @@ const AccountModal = ({ account, type, onClose, onAction }) => {
           <button 
             onClick={onClose}
             className="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 transition-colors ml-2"
+            style={{ display: 'none' }}
           >
             Đóng
           </button>
@@ -255,7 +260,7 @@ const AccountModal = ({ account, type, onClose, onAction }) => {
 
 const Section = ({ title, children }) => (
   <div>
-    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">
+    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider" style={{ marginBottom: '0.8rem' }}>
       {title}
     </h4>
     {children}
@@ -273,7 +278,7 @@ const InfoRow = ({ icon, label, value, fullWidth }) => (
 );
 
 const StatBox = ({ icon, label, value, bg }) => (
-  <div className={`${bg} rounded-xl p-4 flex items-center gap-4`}>
+  <div className={`${bg} rounded-xl flex items-center gap-4`} style={{ padding: '0.4rem' }}>
     <div className="shrink-0">{icon}</div>
     <div>
       <div className="text-2xl font-black text-slate-800 leading-none">{value}</div>

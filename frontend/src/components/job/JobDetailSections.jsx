@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { ChevronRight, MapPin, Briefcase } from "lucide-react";
 import SaveButton from "../SaveButton";
 
@@ -58,29 +59,36 @@ function JobDetailSimilar({ currentJobId, formatSalary, translateType }) {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.1 }
+              }
+            }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+          >
             {similarJobs.map((job) => (
-              <Link
+              <motion.div
                 key={job.id}
-                to={`/job/${job.id}`}
-                className="rounded-2xl p-4 no-underline transition-all duration-300 hover:-translate-y-1 group flex flex-col h-full"
-                style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  backdropFilter: "blur(8px)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(130,63,235,0.4)";
-                  e.currentTarget.style.boxShadow =
-                    "0 8px 32px rgba(130,63,235,0.15)";
-                  e.currentTarget.style.background = "rgba(255,255,255,0.05)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
-                  e.currentTarget.style.boxShadow = "none";
-                  e.currentTarget.style.background = "rgba(255,255,255,0.03)";
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0 }
                 }}
               >
+                <Link
+                  to={`/job/${job.id}`}
+                  className="rounded-2xl p-4 no-underline transition-all duration-300 hover:-translate-y-1 group flex flex-col h-full hover-card"
+                  style={{
+                    background: "rgba(255,255,255,0.03)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    backdropFilter: "blur(8px)",
+                  }}
+                >
                 <div className="flex items-start gap-3 mb-4">
                   <div
                     className="w-12 h-12 rounded-xl flex items-center justify-center text-sm font-bold shrink-0"
@@ -130,9 +138,10 @@ function JobDetailSimilar({ currentJobId, formatSalary, translateType }) {
                     </span>
                   </div>
                 </div>
-              </Link>
+                </Link>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

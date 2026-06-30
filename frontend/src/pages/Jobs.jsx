@@ -1,6 +1,11 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
+// eslint-disable-next-line no-unused-vars
+import { motion } from "framer-motion";
+
+import JobHoverPreview from "../components/job/JobHoverPreview";
+import RecommendationPanel from "../components/job/RecommendationPanel";
+import { useAuth } from "../context/AuthContext";
 import {
   Search,
   MapPin,
@@ -16,13 +21,14 @@ import {
   LayoutGrid,
   GraduationCap,
   Users,
+  Sparkles,
 } from "lucide-react";
 import HomeNavbar from "../components/home/HomeNavbar";
 import FooterNew from "../components/FooterNew";
 import SEOHead from "../components/SEOHead";
 import SaveButton from "../components/SaveButton";
 
-const ITEMS_PER_PAGE = 5;
+
 
 const popularTags = [
   "ReactJS",
@@ -33,6 +39,7 @@ const popularTags = [
 ];
 
 function Jobs() {
+  const { isLoggedIn, userRole } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialKeyword = searchParams.get("keyword") || "";
   const initialLocation = searchParams.get("location") || "";
@@ -50,6 +57,10 @@ function Jobs() {
   const [experience, setExperience] = useState(initialExperience);
   const [isRecommended, setIsRecommended] = useState(initialRecommended);
 
+  // Panel gợi ý việc làm cá nhân hóa
+  const [showRecommendations, setShowRecommendations] = useState(false);
+  const isStudent = isLoggedIn && userRole === "student";
+
   const [searchKeyword, setSearchKeyword] = useState(initialKeyword);
   const [searchLocation, setSearchLocation] = useState(initialLocation);
 
@@ -59,14 +70,18 @@ function Jobs() {
   });
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [industries, setIndustries] = useState([]);
-
   const [jobs, setJobs] = useState([]);
   const [totalJobs, setTotalJobs] = useState(0);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [totalPages, setTotalPages] = useState(1);
   const [sortBy, setSortBy] = useState("newest");
   const [viewMode, setViewMode] = useState("list");
+
+  // Hover preview state
+  const [hoveredJob, setHoveredJob] = useState(null);
+  const hoveredCardRef = useRef(null);
+  const hoverTimerRef = useRef(null);
 
   const isSearching =
     searchParams.get("keyword") ||
@@ -94,8 +109,8 @@ function Jobs() {
     fetchIndustries();
   }, []);
 
-  const fetchJobs = useCallback(async (page) => {
-    if (page === 1) setLoading(true);
+  const fetchJobs = useCallback(async () => {
+    setLoading(true);
     try {
       const params = new URLSearchParams();
       if (searchParams.get("keyword")) params.append("keyword", searchParams.get("keyword"));
@@ -105,7 +120,7 @@ function Jobs() {
       if (searchParams.get("industry")) params.append("industry", searchParams.get("industry"));
       if (searchParams.get("experience")) params.append("experience", searchParams.get("experience"));
       if (searchParams.get("recommended") === "true") params.append("recommended", "true");
-      params.append("page", page);
+      params.append("page", currentPage);
 
       const token = localStorage.getItem("token");
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
@@ -113,37 +128,21 @@ function Jobs() {
       const response = await fetch(`http://127.0.0.1:8000/api/jobs?${params.toString()}`, { headers });
       if (response.ok) {
         const result = await response.json();
-        if (page === 1) {
-          setJobs(result.data);
-        } else {
-          setJobs(prev => [...prev, ...result.data]);
-        }
+        setJobs(result.data);
         setTotalJobs(result.total);
-        setHasMore(page < result.last_page);
+        setTotalPages(result.last_page);
       }
     } catch (error) {
       console.error("Lỗi tải danh sách việc làm:", error);
     } finally {
-      if (page === 1) setLoading(false);
+      setLoading(false);
     }
-  }, [searchParams]);
+  }, [searchParams, currentPage]);
 
   useEffect(() => {
-    // eslint-disable-next-line
-    fetchJobs(1);
-    // currentPage is already reset in handle functions or initial state
-  }, [searchParams, fetchJobs]);
-
-  useEffect(() => {
-    if (currentPage > 1) {
-      // eslint-disable-next-line
-      fetchJobs(currentPage);
-    }
-  }, [currentPage, fetchJobs]);
-
-  const { lastElementRef, isFetching } = useInfiniteScroll(async () => {
-    setCurrentPage(prev => prev + 1);
-  }, hasMore);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchJobs();
+  }, [fetchJobs]);
 
   const handleFilter = (e) => {
     e.preventDefault();
@@ -401,14 +400,14 @@ function Jobs() {
                 </div>
                 <button
                   type="submit"
-                  className="flex items-center justify-center gap-2 rounded-xl px-8 py-3 text-white font-semibold text-sm border-none cursor-pointer transition-all hover:shadow-[0_0_20px_rgba(130,63,235,0.4)] hover:-translate-y-0.5"
+                  className="flex items-center justify-center gap-2 rounded-xl px-8 py-3 text-white font-semibold text-sm border-none cursor-pointer transition-all hover:-translate-y-0.5 hover-lift ripple-button"
                   style={{
                     background: "linear-gradient(135deg, #823feb, #6366f1)",
                     marginTop: "0",
                     marginBottom: "0",
                   }}
                 >
-                  Tìm kiếm <ArrowRight className="w-4 h-4" />
+                  Tìm kiếm <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
             </form>
@@ -442,7 +441,7 @@ function Jobs() {
 
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-white/60 text-sm font-medium flex items-center gap-2">
-                    <Search className="w-4 h-4" /> Gợi ý việc làm
+                    <Search className="w-4 h-4" /> Từ khóa phổ biến
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -477,7 +476,7 @@ function Jobs() {
           <aside
             className="w-72 shrink-0 rounded-2xl p-6 sticky top-24 hidden lg:block"
             style={{
-              minHeight: "49.563rem",
+              minHeight: 0,
               background: "rgba(255,255,255,0.05)",
               padding: "1rem",
               border: "1px solid rgba(255,255,255,0.08)",
@@ -485,7 +484,7 @@ function Jobs() {
             }}
           >
             <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-2">
+              <div className="hidden flex-items-center gap-2">
                 <SlidersHorizontal className="w-4 h-4 text-brand-light" />
                 <h3 className="text-white font-semibold text-base m-0">
                   Lọc công việc
@@ -677,37 +676,19 @@ function Jobs() {
                 )}
               </p>
               <div className="flex items-center gap-3">
-                <button
-                  onClick={() => {
-                    const newValue = !isRecommended;
-                    setIsRecommended(newValue);
-                    const params = new URLSearchParams(searchParams);
-                    if (newValue) {
-                      params.set("recommended", "true");
-                    } else {
-                      params.delete("recommended");
-                    }
-                    setSearchParams(params);
-                  }}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm border cursor-pointer transition-all ${isRecommended ? "bg-indigo-500/20 text-indigo-400 border-indigo-500/50" : "bg-transparent text-white/50 border-white/10 hover:text-white/80 hover:bg-white/5"}`}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                {/* Nút Gợi ý – chỉ hiện khi sinh viên đã đăng nhập */}
+                {isStudent && (
+                  <button
+                    onClick={() => setShowRecommendations(true)}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm border cursor-pointer transition-all bg-transparent text-white/60 border-white/10 hover:text-violet-300 hover:bg-violet-500/10 hover:border-violet-500/30"
+                    title="Xem việc làm được gợi ý riêng cho bạn"
                   >
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                  </svg>
-                  Gợi ý cho bạn
-                </button>
+                    <Sparkles className="w-4 h-4" />
+                    Gợi ý cho bạn
+                  </button>
+                )}
                 <div
-                  className="flex items-center gap-2"
+                  className="hidden items-center gap-2"
                   style={{
                     background: "rgba(255,255,255,0.06)",
                     padding: "0.45rem",
@@ -849,32 +830,41 @@ function Jobs() {
                 </button>
               </div>
             ) : (
-              <div
+              <>
+              <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: { staggerChildren: 0.1 }
+                  }
+                }}
                 className={
                   viewMode === "grid"
                     ? "grid grid-cols-1 md:grid-cols-2 gap-4"
                     : "flex flex-col gap-4"
                 }
               >
-                {jobs.map((job) => (
-                  <div
+                {jobs.map((job) => {
+                  return (
+                  <motion.div
                     key={job.id}
-                    className="group rounded-2xl p-5 transition-all duration-300 hover:-translate-y-0.5 flex flex-col h-full"
-                    style={{
-                      background: "rgba(255,255,255,0.05)",
-                      border: "1px solid rgba(255,255,255,0.08)",
-                      backdropFilter: "blur(8px)",
+                    ref={(el) => { if (hoveredJob?.id === job.id) hoveredCardRef.current = el; }}
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0 }
                     }}
+                    className="group rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 flex flex-col h-full hover:border-brand/40 hover:shadow-[0_8px_32px_rgba(130,63,235,0.15)] bg-white/5 border border-white/10 backdrop-blur-md hover-card"
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor =
-                        "rgba(130,63,235,0.4)";
-                      e.currentTarget.style.boxShadow =
-                        "0 8px 32px rgba(130,63,235,0.15)";
+                      hoveredCardRef.current = e.currentTarget;
+                      clearTimeout(hoverTimerRef.current);
+                      hoverTimerRef.current = setTimeout(() => setHoveredJob(job), 200);
                     }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor =
-                        "rgba(255,255,255,0.08)";
-                      e.currentTarget.style.boxShadow = "none";
+                    onMouseLeave={() => {
+                      clearTimeout(hoverTimerRef.current);
+                      hoverTimerRef.current = setTimeout(() => setHoveredJob(null), 100);
                     }}
                   >
                     <div
@@ -1023,23 +1013,100 @@ function Jobs() {
                       <div className="mt-4 pt-4 border-t border-white/10 flex justify-end">
                         <Link
                           to={`/job/${job.id}`}
-                          className="flex items-center gap-1 text-sm text-white/50 hover:text-brand-light transition-colors no-underline font-medium"
+                          className="flex items-center gap-1 text-sm text-white/50 group-hover:text-brand-light transition-colors no-underline font-medium"
                         >
-                          Chi tiết <ArrowRight className="w-3.5 h-3.5" />
+                          Chi tiết <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                         </Link>
                       </div>
                     )}
-                  </div>
-                ))}
-              </div>
-            )}
+                  </motion.div>
+                  );
+                })}
+              </motion.div>
 
-            {/* Infinite Scroll Loader */}
-            {hasMore && !loading && (
-              <div ref={lastElementRef} className="flex justify-center py-8">
-                {isFetching && (
-                  <div className="w-8 h-8 rounded-full border-2 border-brand/20 border-t-brand animate-spin" />
-                )}
+              {/* Hover Preview Portal */}
+              <JobHoverPreview
+                job={hoveredJob}
+                anchorRef={hoveredCardRef}
+                visible={!!hoveredJob}
+                formatSalary={formatSalary}
+                translateType={translateType}
+                onMouseEnter={() => clearTimeout(hoverTimerRef.current)}
+                onMouseLeave={() => {
+                  clearTimeout(hoverTimerRef.current);
+                  hoverTimerRef.current = setTimeout(() => setHoveredJob(null), 100);
+                }}
+              />
+              </>
+            )}
+            {/* Numeric Pagination */}
+            {totalPages > 1 && (
+              <div 
+                className="flex justify-center items-center gap-2 border-t border-white/10"
+                style={{ paddingTop: "1rem", marginTop: "1rem", paddingBottom: "1.5rem" }}
+              >
+                <button
+                  onClick={() => {
+                    setCurrentPage((prev) => Math.max(prev - 1, 1));
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  disabled={currentPage === 1}
+                  className="w-10 h-10 rounded-xl flex items-center justify-center border cursor-pointer transition-all bg-transparent text-white border-white/10 hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+
+                <div className="flex items-center gap-1">
+                  {[...Array(totalPages)].map((_, i) => {
+                    const pageNumber = i + 1;
+                    if (
+                      totalPages > 5 &&
+                      pageNumber !== 1 &&
+                      pageNumber !== totalPages &&
+                      Math.abs(currentPage - pageNumber) > 1
+                    ) {
+                      if (
+                        pageNumber === currentPage - 2 ||
+                        pageNumber === currentPage + 2
+                      ) {
+                        return (
+                          <span key={pageNumber} className="text-white/50 px-2">
+                            ...
+                          </span>
+                        );
+                      }
+                      return null;
+                    }
+
+                    return (
+                      <button
+                        key={pageNumber}
+                        onClick={() => {
+                          setCurrentPage(pageNumber);
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }}
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-medium transition-all cursor-pointer border ${
+                          currentPage === pageNumber
+                            ? "bg-violet-600 text-white border-violet-500 shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+                            : "bg-transparent text-white/70 border-white/10 hover:bg-white/5 hover:text-white"
+                        }`}
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  onClick={() => {
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  disabled={currentPage === totalPages}
+                  className="w-10 h-10 rounded-xl flex items-center justify-center border cursor-pointer transition-all bg-transparent text-white border-white/10 hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
               </div>
             )}
 
@@ -1049,6 +1116,15 @@ function Jobs() {
       </section>
 
       <FooterNew />
+
+      {/* Panel gợi ý việc làm cá nhân hóa */}
+      {isStudent && (
+        <RecommendationPanel
+          isOpen={showRecommendations}
+          onClose={() => setShowRecommendations(false)}
+          searchHistory={searchHistory}
+        />
+      )}
     </div>
   );
 }

@@ -74,7 +74,7 @@ function HomeNavbar() {
               <Link
                 key={link.label}
                 to={link.to}
-                className={`relative text-sm font-medium transition-colors no-underline py-1 ${isActive ? "text-purple-400 font-semibold" : "text-white/80 hover:text-white"}`}
+                className={`relative text-sm font-medium transition-colors no-underline py-1 smooth-underline ${isActive ? "text-purple-400 font-semibold" : "text-white/80 hover:text-white"}`}
               >
                 {link.label}
                 {isActive && (
@@ -117,14 +117,30 @@ function HomeNavbar() {
                 <AnimatePresence>
                   {showDropdown && (
                     <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      transition={{ duration: 0.15 }}
+                      initial="hidden"
+                      animate="visible"
+                      exit="hidden"
+                      variants={{
+                        hidden: { opacity: 0, y: 10, scale: 0.95 },
+                        visible: { 
+                          opacity: 1, 
+                          y: 0, 
+                          scale: 1,
+                          transition: {
+                            type: "spring",
+                            stiffness: 300,
+                            damping: 24,
+                            staggerChildren: 0.05
+                          }
+                        }
+                      }}
                       className="absolute right-0 mt-3 w-[280px] bg-white rounded-[20px] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden z-200"
                       style={{ padding: "0.6rem" }}
                     >
-                      <div className="p-5 border-b border-slate-100/80 bg-linear-to-b from-slate-50/80 to-white">
+                      <motion.div 
+                        variants={{ hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0 } }}
+                        className="p-5 border-b border-slate-100/80 bg-linear-to-b from-slate-50/80 to-white"
+                      >
                         <p className="text-[15px] font-bold text-slate-900 truncate m-0">
                           {userName || "Người dùng"}
                         </p>
@@ -133,60 +149,71 @@ function HomeNavbar() {
                             ? "Hồ sơ Sinh viên"
                             : "Nhà tuyển dụng"}
                         </p>
-                      </div>
+                      </motion.div>
 
                       <div className="p-2.5 space-y-0.5">
-                        <Link
-                          to={
-                            userRole === "employer"
-                              ? "/employer/dashboard"
-                              : "/profile"
-                          }
-                          onClick={() => setShowDropdown(false)}
-                          className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-blue-50/50 hover:text-brand-blue transition-all duration-200 text-[14px] font-semibold no-underline"
-                        >
-                          <User className="w-[18px] h-[18px] text-slate-400 group-hover:text-brand-blue transition-colors" />
-                          Hồ sơ cá nhân
-                        </Link>
+                        <motion.div variants={{ hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0 } }}>
+                          <Link
+                            to={
+                              userRole === "employer"
+                                ? "/employer/dashboard"
+                                : "/profile"
+                            }
+                            onClick={() => setShowDropdown(false)}
+                            className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-blue-50/50 hover:text-brand-blue transition-all duration-200 text-[14px] font-semibold no-underline hover-lift"
+                          >
+                            <User className="w-[18px] h-[18px] text-slate-400 group-hover:text-brand-blue transition-colors" />
+                            Hồ sơ cá nhân
+                          </Link>
+                        </motion.div>
                         {userRole === "student" && (
                           <>
-                            <Link
-                              to="/applied-jobs"
-                              onClick={() => setShowDropdown(false)}
-                              className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-blue-50/50 hover:text-brand-blue transition-all duration-200 text-[14px] font-semibold no-underline"
-                            >
-                              <Briefcase className="w-[18px] h-[18px] text-slate-400 group-hover:text-brand-blue transition-colors" />
-                              Việc đã ứng tuyển
-                            </Link>
-                            <Link
-                              to="/saved-jobs"
-                              onClick={() => setShowDropdown(false)}
-                              className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-blue-50/50 hover:text-brand-blue transition-all duration-200 text-[14px] font-semibold no-underline"
-                            >
-                              <Heart className="w-[18px] h-[18px] text-slate-400 group-hover:text-brand-blue transition-colors" />
-                              Việc làm đã lưu
-                            </Link>
+                            <motion.div variants={{ hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0 } }}>
+                              <Link
+                                to="/applied-jobs"
+                                onClick={() => setShowDropdown(false)}
+                                className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-blue-50/50 hover:text-brand-blue transition-all duration-200 text-[14px] font-semibold no-underline hover-lift"
+                              >
+                                <Briefcase className="w-[18px] h-[18px] text-slate-400 group-hover:text-brand-blue transition-colors" />
+                                Việc đã ứng tuyển
+                              </Link>
+                            </motion.div>
+                            <motion.div variants={{ hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0 } }}>
+                              <Link
+                                to="/saved-jobs"
+                                onClick={() => setShowDropdown(false)}
+                                className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-blue-50/50 hover:text-brand-blue transition-all duration-200 text-[14px] font-semibold no-underline hover-lift"
+                              >
+                                <Heart className="w-[18px] h-[18px] text-slate-400 group-hover:text-brand-blue transition-colors" />
+                                Việc làm đã lưu
+                              </Link>
+                            </motion.div>
                           </>
                         )}
-                        <Link
-                          to="/settings"
-                          onClick={() => setShowDropdown(false)}
-                          className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-blue-50/50 hover:text-brand-blue transition-all duration-200 text-[14px] font-semibold no-underline"
-                        >
-                          <Settings className="w-[18px] h-[18px] text-slate-400 group-hover:text-brand-blue transition-colors" />
-                          Cài đặt tài khoản
-                        </Link>
+                        <motion.div variants={{ hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0 } }}>
+                          <Link
+                            to="/settings"
+                            onClick={() => setShowDropdown(false)}
+                            className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-blue-50/50 hover:text-brand-blue transition-all duration-200 text-[14px] font-semibold no-underline hover-lift"
+                          >
+                            <Settings className="w-[18px] h-[18px] text-slate-400 group-hover:text-brand-blue transition-colors" />
+                            Cài đặt tài khoản
+                          </Link>
+                        </motion.div>
                       </div>
 
-                      <div className="p-2.5 border-t border-slate-100/80 bg-slate-50/30">
+                      <motion.div 
+                        variants={{ hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0 } }}
+                        className="p-2.5 border-t border-slate-100/80 bg-slate-50/30"
+                      >
                         <button
                           onClick={handleLogout}
-                          className="group flex items-center gap-3 w-full text-left px-3.5 py-2.5 rounded-xl text-red-600 hover:bg-red-50 transition-all duration-200 text-[14px] font-semibold border-none bg-transparent cursor-pointer"
+                          className="group flex items-center gap-3 w-full text-left px-3.5 py-2.5 rounded-xl text-red-600 hover:bg-red-50 transition-all duration-200 text-[14px] font-semibold border-none bg-transparent cursor-pointer hover-lift"
                         >
                           <LogOut className="w-[18px] h-[18px] text-red-500 group-hover:text-red-600 transition-colors" />
                           Đăng xuất
                         </button>
-                      </div>
+                      </motion.div>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -197,14 +224,14 @@ function HomeNavbar() {
               <button
                 type="button"
                 onClick={() => navigate("/login")}
-                className="inline-flex min-h-[46px] min-w-[132px] items-center justify-center rounded-2xl border border-white/25 bg-transparent px-8 text-[15px] font-medium text-white transition-colors hover:bg-white/10 cursor-pointer"
+                className="inline-flex min-h-[46px] min-w-[132px] items-center justify-center rounded-2xl border border-white/25 bg-transparent px-8 text-[15px] font-medium text-white transition-colors hover:bg-white/10 cursor-pointer hover-lift"
               >
                 Đăng nhập
               </button>
               <button
                 type="button"
                 onClick={() => navigate("/register")}
-                className="inline-flex min-h-[46px] min-w-[132px] items-center justify-center rounded-2xl border-none bg-white px-9 text-[15px] font-semibold text-brand shadow-sm transition-colors hover:bg-white/90 cursor-pointer"
+                className="inline-flex min-h-[46px] min-w-[132px] items-center justify-center rounded-2xl border-none bg-white px-9 text-[15px] font-semibold text-brand shadow-sm transition-colors hover:bg-white/90 cursor-pointer hover-lift ripple-button"
               >
                 Đăng ký
               </button>

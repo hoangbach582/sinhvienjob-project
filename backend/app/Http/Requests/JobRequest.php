@@ -30,6 +30,8 @@ class JobRequest extends FormRequest
             'salary_min' => 'nullable|numeric|min:0|max:10000000',
             'salary_max' => 'nullable|numeric|min:0|max:10000000|gte:salary_min',
             'location' => 'nullable|string|max:255',
+            'specific_address' => 'nullable|string|max:255',
+            'working_hours' => 'nullable|string|max:255',
             'experience' => 'nullable|string|max:255',
             'deadline' => 'nullable|date|after_or_equal:today',
             'description' => 'required|string',

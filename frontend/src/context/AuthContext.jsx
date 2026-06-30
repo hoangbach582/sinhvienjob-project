@@ -33,8 +33,8 @@ export const AuthProvider = ({ children }) => {
     const rawAvatar = localStorage.getItem('avatar');
     const avatar = (rawAvatar && rawAvatar !== 'null' && rawAvatar !== 'undefined') ? rawAvatar : (userData ? userData.avatar : '');
 
-    // Cần có đủ token, role và name thì mới coi là đăng nhập hợp lệ
-    if (token && role && name) {
+    // Cần có đủ token và role thì mới coi là đăng nhập hợp lệ
+    if (token && role) {
       setIsLoggedIn(true);
       setUser(userData || null);
       setUserName(name || '');

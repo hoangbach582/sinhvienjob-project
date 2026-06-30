@@ -112,6 +112,7 @@ function AdminJobs() {
         </div>
         <button
           className="flex items-center gap-2 px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl font-semibold text-sm transition-colors"
+          style={{ cursor: 'pointer' }}
           onClick={() => fetchJobs(pagination.current_page || 1)}
         >
           <RefreshCw size={16} className={loading ? 'animate-spin' : ''} /> Làm mới
@@ -164,7 +165,7 @@ function AdminJobs() {
                       </div>
                     </td>
                     <td className="py-4 px-5 text-center">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold border ${job.type === 'internship' ? 'bg-orange-50 text-orange-700 border-orange-200' : 'bg-blue-50 text-blue-700 border-blue-200'}`}>
+                      <span className={`inline-flex items-center rounded-md text-[11px] font-bold border ${job.type === 'internship' ? 'bg-orange-50 text-orange-700 border-orange-200' : 'bg-blue-50 text-blue-700 border-blue-200'}`} style={{ padding: '0.4rem' }}>
                         {job.type}
                       </span>
                     </td>
@@ -172,7 +173,7 @@ function AdminJobs() {
                       {new Date(job.created_at).toLocaleDateString('vi-VN')}
                     </td>
                     <td className="py-4 px-5">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold border ${getBadgeClass(job.status)}`}>
+                      <span className={`inline-flex items-center rounded-md text-xs font-bold border ${getBadgeClass(job.status)}`} style={{ padding: '0.4rem' }}>
                         {getStatusText(job.status)}
                       </span>
                     </td>
@@ -183,14 +184,16 @@ function AdminJobs() {
                             <button 
                               onClick={() => handleApprove(job.id)}
                               disabled={actionLoadingId !== null}
-                              className="px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-bold transition-colors disabled:opacity-50"
+                              className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-bold transition-colors disabled:opacity-50"
+                              style={{ padding: '0.4rem', cursor: 'pointer' }}
                             >
                               {actionLoadingId === job.id ? 'Đang duyệt...' : 'Duyệt'}
                             </button>
                             <button 
                               onClick={() => openRejectModal(job.id)}
                               disabled={actionLoadingId !== null}
-                              className="px-3 py-1.5 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-xs font-bold transition-colors disabled:opacity-50"
+                              className="bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-xs font-bold transition-colors disabled:opacity-50"
+                              style={{ padding: '0.4rem', cursor: 'pointer' }}
                             >
                               Từ chối
                             </button>
@@ -271,7 +274,8 @@ function AdminJobs() {
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="bg-white rounded-2xl w-full max-w-md p-6 relative z-10 shadow-2xl"
+              className="bg-white rounded-2xl w-full max-w-md relative z-10 shadow-2xl"
+              style={{ padding: '1rem' }}
             >
               <h3 className="text-xl font-bold text-slate-800 mb-2">Từ chối tin tuyển dụng</h3>
               <p className="text-slate-500 text-sm mb-6">Vui lòng nhập lý do từ chối để thông báo cho nhà tuyển dụng khắc phục.</p>
@@ -285,14 +289,16 @@ function AdminJobs() {
               
               <div className="flex justify-end gap-3">
                 <button 
-                  className="px-4 py-2.5 rounded-xl font-semibold text-sm text-slate-600 hover:bg-slate-100 transition-colors"
+                  className="rounded-xl font-semibold text-sm text-slate-600 hover:bg-slate-100 transition-colors"
+                  style={{ padding: '0.4rem 1rem 16px', cursor: 'pointer', backgroundColor: '#f0f0f0' }}
                   onClick={() => setShowRejectModal(false)} 
                   disabled={submitting}
                 >
                   Hủy bỏ
                 </button>
                 <button 
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white bg-rose-600 hover:bg-rose-700 shadow-md shadow-rose-600/20 transition-colors"
+                  className="flex items-center gap-2 rounded-xl font-semibold text-sm text-white bg-rose-600 hover:bg-rose-700 shadow-md shadow-rose-600/20 transition-colors"
+                  style={{ padding: '0.4rem 1rem', cursor: 'pointer' }}
                   onClick={handleReject}
                   disabled={submitting}
                 >
@@ -314,6 +320,7 @@ const TabButton = ({ active, onClick, icon, label }) => (
     className={`flex items-center gap-2 px-6 py-4 text-sm font-semibold transition-all relative ${
       active ? 'text-indigo-600' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100/50'
     }`}
+    style={{ cursor: 'pointer' }}
   >
     {icon} {label}
     {active && (

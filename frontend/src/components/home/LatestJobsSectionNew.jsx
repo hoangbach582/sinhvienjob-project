@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { ArrowRight, Briefcase, Heart, MapPin, Sparkles, Users } from 'lucide-react';
+// eslint-disable-next-line no-unused-vars
+import { motion, useInView } from 'framer-motion';
 import SaveButton from '../SaveButton';
 
 const tabs = [
@@ -19,9 +21,22 @@ function JobCard({ job, navigate, formatSalary, translateType }) {
   const companyName = job.employer?.company_name || 'Đang cập nhật';
 
   return (
-    <article
-      className="home-job-card group flex cursor-pointer flex-col rounded-2xl border border-border bg-card transition-transform hover:-translate-y-1 hover:border-brand/40 hover:shadow-xl hover:shadow-brand/10"
+    <motion.article
+      variants={{
+        hidden: { opacity: 0, y: 30 },
+        visible: { opacity: 1, y: 0 }
+      }}
+      className="home-job-card group flex cursor-pointer flex-col rounded-2xl border border-border bg-card transition-transform hover-lift hover-border-glow magnetic-card"
       onClick={() => navigate(`/job/${job.id}`)}
+      onMouseMove={(e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        e.currentTarget.style.transform = `perspective(1000px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg) translateY(-6px)`;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) translateY(0px)';
+      }}
     >
       <div className="mb-4 flex items-start justify-between">
         <span className="home-job-logo flex items-center justify-center rounded-xl bg-brand/10 text-sm font-bold text-brand">
@@ -69,7 +84,7 @@ function JobCard({ job, navigate, formatSalary, translateType }) {
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
         </button>
       </div>
-    </article>
+    </motion.article>
   );
 }
 
@@ -95,9 +110,27 @@ function JobSkeleton() {
 }
 
 function LatestJobsSectionNew({ loading, filteredJobs, activeTab, setActiveTab, navigate, formatSalary, translateType }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
   return (
-    <section id="tim-viec" className="home-jobs mx-auto">
-      <div className="mx-auto mb-6 max-w-2xl text-center">
+    <section id="tim-viec" className="home-jobs mx-auto" ref={ref}>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={{ duration: 0.6 }}
+        className="mx-auto mb-6 max-w-2xl text-center"
+      >
         <span className="inline-flex items-center gap-1.5 rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-brand">
           <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
           Khám phá
@@ -108,9 +141,14 @@ function LatestJobsSectionNew({ loading, filteredJobs, activeTab, setActiveTab, 
         <p className="mt-3 text-pretty text-muted-foreground">
           Chọn nhóm ngành bạn mong muốn để tiếp cận hàng trăm việc làm đang chờ đón.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="home-job-tabs mb-8 flex flex-wrap justify-center gap-2 lg:justify-end">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+        className="home-job-tabs mb-8 flex flex-wrap justify-center gap-2 lg:justify-end"
+      >
         {tabs.map((tab) => (
           <button
             key={tab.key}
@@ -125,7 +163,7 @@ function LatestJobsSectionNew({ loading, filteredJobs, activeTab, setActiveTab, 
             {tab.label}
           </button>
         ))}
-      </div>
+      </motion.div>
 
       {loading ? (
         <div className="home-job-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
@@ -138,7 +176,12 @@ function LatestJobsSectionNew({ loading, filteredJobs, activeTab, setActiveTab, 
           <p className="text-sm text-muted-foreground">Hiện tại chưa có công việc mới nào thuộc hình thức này.</p>
         </div>
       ) : (
-        <div className="home-job-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          className="home-job-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+        >
           {filteredJobs.slice(0, 6).map((job) => (
             <JobCard
               key={job.id}
@@ -148,19 +191,24 @@ function LatestJobsSectionNew({ loading, filteredJobs, activeTab, setActiveTab, 
               translateType={translateType}
             />
           ))}
-        </div>
+        </motion.div>
       )}
 
-      <div className="home-jobs-cta mt-10 flex justify-center">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+        className="home-jobs-cta mt-10 flex justify-center"
+      >
         <button
           type="button"
           onClick={() => navigate('/jobs')}
-          className="flex items-center gap-2 rounded-xl border-none bg-gradient-to-r from-brand to-brand-light px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-opacity hover:opacity-90 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+          className="flex items-center gap-2 rounded-xl border-none bg-gradient-to-r from-brand to-brand-light px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand/30 transition-opacity hover:opacity-90 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ripple-button breathingGlow hover-scale"
         >
           Khám phá tất cả công việc
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </button>
-      </div>
+      </motion.div>
     </section>
   );
 }

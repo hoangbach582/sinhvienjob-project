@@ -231,7 +231,8 @@ const getPageNumbers = (current, last) => {
 
 const ActionBtn = ({ icon, title, onClick, cls }) => (
   <button title={title} onClick={onClick}
-    className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${cls}`}>
+    className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${cls}`}
+    style={{ cursor: 'pointer' }}>
     {icon}
   </button>
 );

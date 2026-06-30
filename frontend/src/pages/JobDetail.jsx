@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import HomeNavbar from "../components/home/HomeNavbar";
 import FooterNew from "../components/FooterNew";
@@ -13,6 +14,7 @@ import { toast } from "react-hot-toast";
 function JobDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { isLoggedIn, userRole } = useAuth();
 
   const [job, setJob] = useState(null);
@@ -133,6 +135,18 @@ function JobDetail() {
       toast.error("Lỗi kết nối!");
     }
   };
+
+  // Auto-open apply modal if ?apply=true
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get("apply") === "true" && job && !loading) {
+      // Small timeout to allow UI to settle
+      setTimeout(() => {
+        handleOpenApply();
+      }, 500);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search, job, loading]);
 
   const handleShare = async () => {
     const url = window.location.href;
@@ -351,8 +365,12 @@ function JobDetail() {
       <HomeNavbar />
 
       {/* --- LOGIN PROMPT MODAL --- */}
+      <AnimatePresence>
       {loginPromptParams.show && (
-        <div
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           style={{
             position: "fixed",
             top: 0,
@@ -367,13 +385,16 @@ function JobDetail() {
             backdropFilter: "blur(8px)",
           }}
         >
-          <div
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 20 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
             className="rounded-2xl overflow-hidden w-full max-w-[400px] mx-5 text-center shadow-2xl"
             style={{
               padding: "2rem",
               background: "rgba(18,14,45,0.98)",
-              border: "1px solid rgba(255,255,255,0.1)",
-              animation: "slideUp 0.3s ease-out"
+              border: "1px solid rgba(255,255,255,0.1)"
             }}
           >
             <div className="w-16 h-16 rounded-full bg-brand/20 flex items-center justify-center mx-auto mb-4" style={{ background: "rgba(130,63,235,0.15)", border: "1px solid rgba(130,63,235,0.3)" }}>
@@ -391,7 +412,7 @@ function JobDetail() {
             <div className="flex gap-3">
               <button
                 onClick={() => setLoginPromptParams({ show: false, message: "" })}
-                className="flex-1 py-2.5 rounded-xl text-white/70 font-semibold text-sm border cursor-pointer hover:bg-white/5 transition-colors"
+                className="flex-1 py-2.5 rounded-xl text-white/70 font-semibold text-sm border cursor-pointer hover:bg-white/5 transition-colors hover-lift ripple-button"
                 style={{
                   background: "transparent",
                   borderColor: "rgba(255,255,255,0.1)",
@@ -404,7 +425,7 @@ function JobDetail() {
                   setLoginPromptParams({ show: false, message: "" });
                   navigate("/login");
                 }}
-                className="flex-1 py-2.5 rounded-xl text-white font-semibold text-sm border-none cursor-pointer hover:opacity-90 transition-opacity"
+                className="flex-1 py-2.5 rounded-xl text-white font-semibold text-sm border-none cursor-pointer hover:opacity-90 transition-opacity hover-lift ripple-button"
                 style={{
                   background: "linear-gradient(135deg, #823feb, #6366f1)",
                 }}
@@ -412,13 +433,18 @@ function JobDetail() {
                 Đăng nhập
               </button>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+      </AnimatePresence>
 
       {/* --- APPLY MODAL (Dark themed) --- */}
+      <AnimatePresence>
       {showApplyModal && (
-        <div
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           style={{
             position: "fixed",
             top: 0,
@@ -433,7 +459,11 @@ function JobDetail() {
             backdropFilter: "blur(8px)",
           }}
         >
-          <div
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 20 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
             className="rounded-2xl overflow-hidden w-full max-w-[550px] mx-5"
             style={{
               padding: "1rem",
@@ -645,7 +675,7 @@ function JobDetail() {
                 <button
                   type="submit"
                   disabled={isApplying || applyMessage.type === "success"}
-                  className="w-full py-3.5 rounded-xl text-white font-bold text-base border-none cursor-pointer transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-3.5 rounded-xl text-white font-bold text-base border-none cursor-pointer transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed hover-lift ripple-button"
                   style={{
                     padding: "1rem",
                     background: "linear-gradient(135deg, #823feb, #6366f1)",
@@ -655,9 +685,10 @@ function JobDetail() {
                 </button>
               </form>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+      </AnimatePresence>
       {/* --- KẾT THÚC KHỐI MODAL --- */}
 
       <JobDetailHero

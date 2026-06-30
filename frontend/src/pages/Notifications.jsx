@@ -88,6 +88,7 @@ const Notifications = () => {
             </div>
             <button
               onClick={markAllAsRead}
+              className="hover-lift ripple-button"
               style={{
                 padding: "8px 16px",
                 backgroundColor: "white",
@@ -305,6 +306,7 @@ const Notifications = () => {
                       {!notification.read_at && (
                         <button
                           onClick={() => markAsRead(notification.id)}
+                          className="hover-lift"
                           style={{
                             fontSize: "14px",
                             color: "#2563EB",
@@ -319,6 +321,7 @@ const Notifications = () => {
                       )}
                       <button
                         onClick={() => deleteNotification(notification.id)}
+                        className="hover-lift"
                         style={{
                           fontSize: "14px",
                           color: "#EF4444",
@@ -340,6 +343,7 @@ const Notifications = () => {
                   <button
                     onClick={loadMore}
                     disabled={loading}
+                    className="hover-lift ripple-button"
                     style={{
                       padding: "8px 24px",
                       border: "1px solid #2563EB",
@@ -406,6 +410,7 @@ const Notifications = () => {
               </p>
               <Link
                 to="/jobs"
+                className="hover-lift ripple-button"
                 style={{
                   marginTop: "32px",
                   display: "inline-block",

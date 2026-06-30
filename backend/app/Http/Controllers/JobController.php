@@ -12,6 +12,7 @@ use App\Http\Requests\JobRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\AdminJobNotification;
+use Illuminate\Support\Facades\Auth;
 
 class JobController extends Controller
 {
@@ -114,7 +115,7 @@ class JobController extends Controller
         }
         
         // Trả về danh sách, sắp xếp việc mới nhất lên đầu
-        $jobs = $query->orderBy('created_at', 'desc')->paginate(12);
+        $jobs = $query->orderBy('created_at', 'desc')->paginate(6);
 
         // Kiểm tra xem student đã lưu job nào chưa và tính điểm gợi ý
         $user = auth('sanctum')->user();
@@ -159,6 +160,87 @@ class JobController extends Controller
         }
 
         return response()->json($jobs);
+    }
+
+    /**
+     * GET /api/jobs/recommendations
+     * Trả về tối đa 10 việc làm gợi ý cho sinh viên đang đăng nhập.
+     * Ưu tiên 1: Dựa trên kỹ năng sinh viên đã thêm vào hồ sơ.
+     * Ưu tiên 2 (fallback): Dựa trên lịch sử tìm kiếm được gửi lên từ frontend.
+     */
+    public function getRecommendations(Request $request)
+    {
+        $user = auth('sanctum')->user();
+
+        if (!$user || $user->role !== 'student') {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $studentProfile = StudentProfile::with('skills')->where('user_id', $user->id)->first();
+        $studentSkills = [];
+        $useSearchHistory = false;
+
+        if ($studentProfile) {
+            $studentSkills = $studentProfile->skills->pluck('name')->map(function ($s) {
+                return strtolower(trim($s));
+            })->toArray();
+        }
+
+        // Nếu chưa có kỹ năng, dùng lịch sử tìm kiếm làm fallback
+        $searchHistoryKeywords = [];
+        if (empty($studentSkills)) {
+            $historyRaw = $request->query('search_history', '');
+            if (!empty($historyRaw)) {
+                $searchHistoryKeywords = array_filter(
+                    array_map('trim', explode(',', $historyRaw))
+                );
+                $useSearchHistory = !empty($searchHistoryKeywords);
+            }
+        }
+
+        // Nếu không có cả hai -> trả về jobs mới nhất
+        if (empty($studentSkills) && empty($searchHistoryKeywords)) {
+            $jobs = Job::with('employer')
+                ->where('status', 'approved')
+                ->orderBy('created_at', 'desc')
+                ->take(10)
+                ->get()
+                ->map(function ($job) {
+                    $job->match_score = 0;
+                    $job->match_reason = 'latest';
+                    return $job;
+                });
+            return response()->json(['data' => $jobs, 'mode' => 'latest']);
+        }
+
+        // Lấy tất cả jobs đang hoạt động
+        $allJobs = Job::with('employer')->where('status', 'approved')->get();
+
+        $keywords = !empty($studentSkills) ? $studentSkills : array_map('strtolower', $searchHistoryKeywords);
+
+        $scored = $allJobs->map(function ($job) use ($keywords) {
+            $score = 0;
+            $jobTitle = strtolower($job->title ?? '');
+            $jobDesc  = strtolower($job->description ?? '');
+            $jobReq   = strtolower($job->requirements ?? '');
+
+            foreach ($keywords as $kw) {
+                if (empty($kw)) continue;
+                if (strpos($jobTitle, $kw) !== false) $score += 3;
+                if (strpos($jobReq,   $kw) !== false) $score += 2;
+                if (strpos($jobDesc,  $kw) !== false) $score += 1;
+            }
+            $job->match_score = $score;
+            return $job;
+        })->filter(fn($j) => $j->match_score > 0)
+          ->sortByDesc('match_score')
+          ->take(10)
+          ->values();
+
+        return response()->json([
+            'data' => $scored,
+            'mode' => $useSearchHistory ? 'search_history' : 'skills',
+        ]);
     }
 
     // ==========================================

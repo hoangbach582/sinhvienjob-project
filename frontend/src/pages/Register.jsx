@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import {
   Mail,
@@ -238,7 +239,13 @@ function Register() {
 
         {/* Step 1: Role Selection */}
         {step === 1 && (
-          <div className="w-full max-w-4xl mx-auto flex flex-col items-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4 }}
+            className="w-full max-w-4xl mx-auto flex flex-col items-center"
+          >
             <div className="grid md:grid-cols-2 gap-6 w-full mb-10">
               {/* Student Card */}
               <div
@@ -356,17 +363,23 @@ function Register() {
 
               <button
                 onClick={handleNextStep}
-                className={`w-full max-w-md py-4 px-6 rounded-xl font-medium flex items-center justify-center gap-2 transition-all shadow-lg ${role === "student" ? "bg-linear-to-r from-[#a45bff] to-[#7b3fff] hover:opacity-90 shadow-[#823feb]/20" : "bg-linear-to-r from-[#059669] to-[#10b981] hover:opacity-90 shadow-[#10b981]/20"}`}
+                className={`w-full max-w-md py-4 px-6 rounded-xl font-medium flex items-center justify-center gap-2 transition-all shadow-lg hover-lift ripple-button ${role === "student" ? "bg-linear-to-r from-[#a45bff] to-[#7b3fff] hover:opacity-90 shadow-[#823feb]/20" : "bg-linear-to-r from-[#059669] to-[#10b981] hover:opacity-90 shadow-[#10b981]/20"}`}
               >
                 Tiếp tục <ChevronRight className="w-5 h-5" />
               </button>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Step 2: Form Input */}
         {step === 2 && (
-          <div className="w-full max-w-md mx-auto">
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.4 }}
+            className="w-full max-w-md mx-auto"
+          >
             <div className="bg-[#120e2d]/80 backdrop-blur-xl p-8 rounded-3xl border border-white/10 shadow-2xl">
               <div className="text-center mb-6">
                 <div
@@ -463,26 +476,31 @@ function Register() {
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="w-1/3 py-3.5 px-4 bg-white/5 hover:bg-white/10 text-white font-medium rounded-xl transition-all border border-white/10"
+                    className="w-1/3 py-3.5 px-4 bg-white/5 hover:bg-white/10 text-white font-medium rounded-xl transition-all border border-white/10 hover-lift ripple-button"
                   >
                     Quay lại
                   </button>
                   <button
                     type="submit"
                     disabled={loading}
-                    className={`w-2/3 py-3.5 px-4 flex items-center justify-center gap-2 hover:opacity-90 text-white font-medium rounded-xl transition-all shadow-lg ${role === "student" ? "bg-linear-to-r from-[#a45bff] to-[#7b3fff] shadow-[#823feb]/20" : "bg-linear-to-r from-[#059669] to-[#10b981] shadow-[#10b981]/20"}`}
+                    className={`w-2/3 py-3.5 px-4 flex items-center justify-center gap-2 hover:opacity-90 text-white font-medium rounded-xl transition-all shadow-lg hover-lift ripple-button ${role === "student" ? "bg-linear-to-r from-[#a45bff] to-[#7b3fff] shadow-[#823feb]/20" : "bg-linear-to-r from-[#059669] to-[#10b981] shadow-[#10b981]/20"}`}
                   >
                     {loading ? "Đang xử lý..." : "Đăng ký ngay"}
                   </button>
                 </div>
               </form>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Step 3: Success */}
         {step === 3 && (
-          <div className="w-full max-w-md mx-auto text-center">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4 }}
+            className="w-full max-w-md mx-auto text-center"
+          >
             <div
               className={`w-24 h-24 rounded-full mx-auto flex items-center justify-center mb-6 shadow-2xl ${role === "student" ? "bg-[#823feb]/20 shadow-[#823feb]/20 text-brand-light" : "bg-[#10b981]/20 shadow-[#10b981]/20 text-[#34d399]"}`}
             >
@@ -495,7 +513,7 @@ function Register() {
               Đang chuyển hướng bạn đến{" "}
               {role === "student" ? "trang chủ" : "bảng điều khiển"}...
             </p>
-          </div>
+          </motion.div>
         )}
 
         <div className="mt-12 text-center text-sm text-gray-400">

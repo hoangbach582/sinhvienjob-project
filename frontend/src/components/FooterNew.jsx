@@ -123,7 +123,7 @@ function FooterNew() {
                     key={label}
                     href="#"
                     aria-label={label}
-                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-white/80 transition-colors hover:bg-brand hover:text-white"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10 text-white/80 transition-colors hover:bg-brand hover:text-white hover-lift"
                   >
                     {icon}
                   </a>
@@ -140,7 +140,7 @@ function FooterNew() {
                 <li>
                   <Link
                     to="/jobs"
-                    className="text-sm text-white/60 transition-colors hover:text-white text-decoration-none"
+                    className="relative py-1 text-sm text-white/60 transition-colors hover:text-white text-decoration-none smooth-underline inline-block"
                   >
                     Tìm việc làm
                   </Link>
@@ -148,7 +148,7 @@ function FooterNew() {
                 <li>
                   <Link
                     to="/companies"
-                    className="text-sm text-white/60 transition-colors hover:text-white text-decoration-none"
+                    className="relative py-1 text-sm text-white/60 transition-colors hover:text-white text-decoration-none smooth-underline inline-block"
                   >
                     Danh sách công ty
                   </Link>
@@ -156,7 +156,7 @@ function FooterNew() {
                 <li>
                   <Link
                     to="/build-cv"
-                    className="text-sm text-white/60 transition-colors hover:text-white text-decoration-none"
+                    className="relative py-1 text-sm text-white/60 transition-colors hover:text-white text-decoration-none smooth-underline inline-block"
                   >
                     Tạo CV trực tuyến
                   </Link>
@@ -173,7 +173,7 @@ function FooterNew() {
                 <li>
                   <Link
                     to="/employer/login"
-                    className="text-sm text-white/60 transition-colors hover:text-white text-decoration-none"
+                    className="relative py-1 text-sm text-white/60 transition-colors hover:text-white text-decoration-none smooth-underline inline-block"
                   >
                     Đăng nhập tuyển dụng
                   </Link>
@@ -181,7 +181,7 @@ function FooterNew() {
                 <li>
                   <Link
                     to="/employer/register"
-                    className="text-sm text-white/60 transition-colors hover:text-white text-decoration-none"
+                    className="relative py-1 text-sm text-white/60 transition-colors hover:text-white text-decoration-none smooth-underline inline-block"
                   >
                     Đăng ký tuyển dụng
                   </Link>
@@ -214,13 +214,13 @@ function FooterNew() {
           <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-sm text-white/50 sm:flex-row">
             <p>© 2024 SinhVienJob. Mọi quyền được bảo lưu.</p>
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-              <a href="#" className="transition-colors hover:text-white">
+              <a href="#" className="relative py-1 transition-colors hover:text-white text-decoration-none smooth-underline">
                 Điều khoản sử dụng
               </a>
-              <a href="#" className="transition-colors hover:text-white">
+              <a href="#" className="relative py-1 transition-colors hover:text-white text-decoration-none smooth-underline">
                 Chính sách bảo mật
               </a>
-              <a href="#" className="transition-colors hover:text-white">
+              <a href="#" className="relative py-1 transition-colors hover:text-white text-decoration-none smooth-underline">
                 Quy chế hoạt động
               </a>
             </div>
@@ -232,7 +232,8 @@ function FooterNew() {
         type="button"
         aria-label="Lên đầu trang"
         onClick={scrollToTop}
-        className="fixed bottom-6 right-6 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-linear-to-br from-brand to-brand-light text-white shadow-lg shadow-brand/30 transition-opacity hover:opacity-90 border-none cursor-pointer"
+        className="fixed z-50 flex h-10 w-10 items-center justify-center rounded-full bg-linear-to-br from-brand to-brand-light text-white shadow-lg shadow-brand/30 transition-opacity hover:opacity-90 border-none cursor-pointer hover-lift ripple-button"
+        style={{ position: 'fixed', right: '1.5rem', bottom: '1.5rem' }}
       >
         <ArrowUp className="h-4 w-4" />
       </button>

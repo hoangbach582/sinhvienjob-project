@@ -181,7 +181,7 @@ const AdminDashboard = () => {
           </select>
           <button
             onClick={() => handleExport("excel")}
-            className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2 px-3.5 rounded-xl shadow-sm shadow-indigo-600/20 transition-all whitespace-nowrap"
+            className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2 px-3.5 rounded-xl shadow-sm shadow-indigo-600/20 transition-all whitespace-nowrap cursor-pointer"
           >
             <Download size={14} /> Xuất Excel
           </button>
@@ -200,7 +200,7 @@ const AdminDashboard = () => {
               stiffness: 300,
               damping: 25,
             }}
-            className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition-shadow"
+            className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
           >
             <div className="flex items-start justify-between mb-3">
               <div
@@ -284,7 +284,7 @@ const AdminDashboard = () => {
             {top_companies?.map((co, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-3 px-5 py-3.5 hover:bg-slate-50/60 transition-colors"
+                className="flex items-center gap-3 px-5 py-3.5 hover:bg-slate-50/60 transition-colors cursor-pointer"
               >
                 <div className="text-[11px] font-bold text-slate-300 w-4 text-center shrink-0">
                   {idx + 1}
@@ -324,7 +324,7 @@ const AdminDashboard = () => {
             {top_students?.slice(0, 5).map((stu, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-3 px-5 py-3.5 hover:bg-slate-50/60 transition-colors"
+                className="flex items-center gap-3 px-5 py-3.5 hover:bg-slate-50/60 transition-colors cursor-pointer"
               >
                 <div className="text-[11px] font-bold text-slate-300 w-4 text-center shrink-0">
                   {idx + 1}
@@ -370,7 +370,7 @@ const ChartCard = ({ title, icon, children }) => (
         {icon}
         <h3 className="text-[13.5px] font-bold text-slate-800">{title}</h3>
       </div>
-      <button className="w-7 h-7 rounded-lg hover:bg-slate-50 flex items-center justify-center text-slate-400 transition-colors">
+      <button className="w-7 h-7 rounded-lg hover:bg-slate-50 flex items-center justify-center text-slate-400 transition-colors cursor-pointer">
         <MoreVertical size={14} />
       </button>
     </div>

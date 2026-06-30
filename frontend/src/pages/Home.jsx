@@ -3,7 +3,7 @@ import MainLayout from '../layouts/MainLayout';
 import { useNavigate } from 'react-router-dom';
 import HomeNavbar from '../components/home/HomeNavbar';
 import HeroSectionNew from '../components/home/HeroSectionNew';
-import StatsSection from '../components/home/StatsSection';
+import StatsSectionNew from '../components/home/StatsSectionNew';
 import LatestJobsSectionNew from '../components/home/LatestJobsSectionNew';
 import BenefitsSectionNew from '../components/home/BenefitsSectionNew';
 import CompaniesSectionNew from '../components/home/CompaniesSectionNew';
@@ -106,7 +106,7 @@ function Home() {
           handleSearch={handleSearch}
         />
 
-        <StatsSection />
+        <StatsSectionNew />
 
         <div className="relative z-10 -mt-4 rounded-t-[2.5rem] bg-background pt-10">
           <LatestJobsSectionNew

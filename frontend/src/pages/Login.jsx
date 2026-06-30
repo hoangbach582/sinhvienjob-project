@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import {
   Mail,
@@ -203,7 +204,12 @@ function Login() {
       <main className="flex-1 flex items-center justify-center px-6 relative z-10 py-12">
         <div className="max-w-6xl w-full grid md:grid-cols-2 gap-12 items-center">
           {/* Left Column: Text & Illustration */}
-          <div className="hidden md:flex flex-col items-start">
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="hidden md:flex flex-col items-start"
+          >
             <h1 className="text-5xl font-bold leading-tight mb-4">
               Chào mừng trở lại <br />
               <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-light to-[#823feb]">
@@ -234,10 +240,15 @@ function Login() {
                 <div className="absolute bottom-20 left-4 w-12 h-12 bg-blue-500/40 rounded-full backdrop-blur-md border border-white/20 animate-bounce delay-150"></div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Column: Login Form */}
-          <div className="w-full max-w-md mx-auto">
+          <motion.div 
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+            className="w-full max-w-md mx-auto"
+          >
             <div className="bg-[#120e2d]/80 backdrop-blur-xl p-8 rounded-3xl border border-white/10 shadow-2xl">
               <div className="text-center mb-8">
                 <h2 className="text-2xl font-bold text-white mb-2">
@@ -309,7 +320,7 @@ function Login() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 px-4 bg-linear-to-r from-[#a45bff] via-[#8f4bff] to-[#7b3fff] hover:opacity-90 text-white font-medium rounded-xl transition-all btn-glow shadow-lg shadow-[#823feb]/20 flex justify-center items-center"
+                  className="w-full py-3.5 px-4 bg-linear-to-r from-[#a45bff] via-[#8f4bff] to-[#7b3fff] hover:opacity-90 text-white font-medium rounded-xl transition-all btn-glow shadow-lg shadow-[#823feb]/20 flex justify-center items-center hover-lift ripple-button"
                 >
                   {loading ? "Đang xử lý..." : "Đăng nhập"}
                 </button>
@@ -327,7 +338,7 @@ function Login() {
                 <button
                   onClick={handleGoogleLogin}
                   type="button"
-                  className="flex items-center justify-center gap-2 py-3 px-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors"
+                  className="flex items-center justify-center gap-2 py-3 px-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors hover-lift ripple-button"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path
@@ -361,7 +372,7 @@ function Login() {
                 </Link>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </main>
     </div>

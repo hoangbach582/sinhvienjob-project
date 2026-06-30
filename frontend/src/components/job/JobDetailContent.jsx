@@ -26,29 +26,15 @@ function JobDetailContent({ job }) {
   const stats = [
     {
       icon: <Users className="w-5 h-5" />,
-      value: job.applications_count || 128,
-      label: "Ứng viên đã ứng tuyển",
+      value: job.applications_count || 0,
+      label: "Đã ứng tuyển",
       color: "#6366f1",
       bg: "rgba(99,102,241,0.12)",
     },
     {
-      icon: <Eye className="w-5 h-5" />,
-      value: 24,
-      label: "Nhà tuyển dụng xem",
-      color: "#3b82f6",
-      bg: "rgba(59,130,246,0.12)",
-    },
-    {
-      icon: <UserCheck className="w-5 h-5" />,
-      value: 15,
-      label: "Ứng viên phù hợp",
-      color: "#f59e0b",
-      bg: "rgba(245,158,11,0.12)",
-    },
-    {
       icon: <Clock className="w-5 h-5" />,
-      value: "5 ngày",
-      label: "Còn lại để ứng tuyển",
+      value: job.deadline ? new Date(job.deadline).toLocaleDateString("vi-VN") : "Không thời hạn",
+      label: "Hạn nộp",
       color: "#10b981",
       bg: "rgba(16,185,129,0.12)",
     },
@@ -186,7 +172,7 @@ function JobDetailContent({ job }) {
               </div>
               <Link
                 to={job.employer?.id ? `/companies/${job.employer.id}` : "#"}
-                className="no-underline"
+                className="no-underline hover-lift"
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -235,16 +221,26 @@ function JobDetailContent({ job }) {
                     icon: <Clock className="w-4 h-4" />,
                   },
                   {
-                    label: "Học vấn",
-                    value: "Đại học",
-                    icon: <Award className="w-4 h-4" />,
-                  },
-                  {
                     label: "Số lượng tuyển",
                     value: job.vacancies
                       ? `${job.vacancies} người`
                       : "Không giới hạn",
                     icon: <Users className="w-4 h-4" />,
+                  },
+                  {
+                    label: "Địa điểm làm việc",
+                    value: job.location || "Chưa cập nhật",
+                    icon: <Building2 className="w-4 h-4" />,
+                  },
+                  {
+                    label: "Địa chỉ cụ thể",
+                    value: job.specific_address || "Chưa cập nhật",
+                    icon: <UserCheck className="w-4 h-4" />,
+                  },
+                  {
+                    label: "Thời gian làm việc",
+                    value: job.working_hours || "Chưa cập nhật",
+                    icon: <Calendar className="w-4 h-4" />,
                   },
                 ].map((item, i) => (
                   <div
@@ -527,40 +523,35 @@ function JobDetailContent({ job }) {
           </div>
         </div>
 
-        {/* === FULL-WIDTH STATS ROW === */}
+        {/* === QUICK STATS BAR (Replaces old Thống kê công việc) === */}
         <div style={{ ...cardStyleLg, marginTop: "2rem" }}>
-          <h3
-            className="text-white font-semibold text-base flex items-center gap-2"
-            style={{ marginBottom: "1.5rem" }}
-          >
-            <Users className="w-4 h-4 text-brand-light" /> Thống kê công việc
-          </h3>
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
-              gap: "1rem",
+              display: "flex",
+              justifyContent: "center",
+              gap: "2rem",
             }}
-            className="grid-cols-2 lg:grid-cols-4"
+            className="flex-wrap"
           >
             {stats.map((s, i) => (
               <div
                 key={i}
+                className="transition-all duration-300 hover:-translate-y-1"
                 style={{
                   borderRadius: "0.75rem",
-                  padding: "1.25rem",
+                  padding: "1.25rem 2rem",
                   display: "flex",
                   alignItems: "center",
                   gap: "1rem",
                   background: s.bg,
                   border: `1px solid ${s.color}22`,
-                  transition: "all 0.3s",
+                  minWidth: "250px",
                 }}
               >
                 <div
                   style={{
-                    width: "2.5rem",
-                    height: "2.5rem",
+                    width: "3rem",
+                    height: "3rem",
                     borderRadius: "0.75rem",
                     display: "flex",
                     alignItems: "center",
@@ -575,14 +566,14 @@ function JobDetailContent({ job }) {
                 <div>
                   <div
                     className="text-white font-bold"
-                    style={{ fontSize: "1.5rem" }}
+                    style={{ fontSize: "1.25rem" }}
                   >
                     {s.value}
                   </div>
                   <div
                     style={{
                       color: "rgba(255,255,255,0.5)",
-                      fontSize: "0.75rem",
+                      fontSize: "0.875rem",
                       marginTop: "0.125rem",
                     }}
                   >
