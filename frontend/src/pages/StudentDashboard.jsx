@@ -39,11 +39,17 @@ function StudentDashboard() {
   if (loading) {
     return (
       <MainLayout>
-        <div
-          style={{ textAlign: "center", padding: "100px", color: "#94a3b8" }}
-        >
-          Đang tải dữ liệu...
-        </div>
+      <div
+        className="w-full h-full min-h-screen"
+        style={{
+          background: "linear-gradient(135deg, #09144B 0%, #0B1656 45%, #1a0a3e 100%)",
+          textAlign: "center",
+          padding: "100px",
+          color: "#94a3b8",
+        }}
+      >
+        Đang tải dữ liệu...
+      </div>
       </MainLayout>
     );
   }
@@ -51,8 +57,14 @@ function StudentDashboard() {
   return (
     <MainLayout>
       <div
-        style={{ maxWidth: "1200px", margin: "0 auto", padding: "40px 20px" }}
+        className="w-full h-full min-h-screen"
+        style={{
+          background: "linear-gradient(135deg, #09144B 0%, #0B1656 45%, #1a0a3e 100%)",
+        }}
       >
+        <div
+          style={{ maxWidth: "1200px", margin: "0 auto", padding: "40px 20px" }}
+        >
         <h1
           style={{
             fontSize: "28px",
@@ -439,6 +451,7 @@ function StudentDashboard() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </MainLayout>
   );

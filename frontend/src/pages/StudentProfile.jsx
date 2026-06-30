@@ -58,7 +58,7 @@ function StudentProfile() {
               ? data.projects.join("\n")
               : "",
             skills: Array.isArray(data.skills)
-              ? data.skills.map((s) => (s.id ? s.id : s)).join("\n")
+              ? data.skills.map((s) => (s.name ? s.name : s)).join("\n")
               : "",
           });
         }

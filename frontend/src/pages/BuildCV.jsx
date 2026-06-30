@@ -689,6 +689,7 @@ function BuildCV() {
             style={{
               background: "rgba(124,58,237,.2)",
               backdropFilter: "blur(16px)",
+              cursor: "pointer",
             }}
           >
             <Save className="w-4 h-4 text-purple-300" />
@@ -701,6 +702,7 @@ function BuildCV() {
             style={{
               background: "rgba(124,58,237,.2)",
               backdropFilter: "blur(16px)",
+              cursor: "pointer",
             }}
           >
             <Download className="w-4 h-4 text-purple-300" />
@@ -717,24 +719,28 @@ function BuildCV() {
             <button
               onClick={() => setPreviewMode("template")}
               className={`p-2 rounded-lg transition-colors ${previewMode === "template" ? "bg-purple-500 text-white shadow-[0_0_10px_#8b5cf6]" : "text-slate-400 hover:text-white"}`}
+              style={{ cursor: "pointer" }}
             >
               <LayoutTemplate className="w-4 h-4" />
             </button>
             <button
               onClick={() => setPreviewMode("monitor")}
               className={`p-2 rounded-lg transition-colors ${previewMode === "monitor" ? "bg-purple-500 text-white shadow-[0_0_10px_#8b5cf6]" : "text-slate-400 hover:text-white"}`}
+              style={{ cursor: "pointer" }}
             >
               <Monitor className="w-4 h-4" />
             </button>
             <button
               onClick={() => setPreviewMode("tablet")}
               className={`p-2 rounded-lg transition-colors ${previewMode === "tablet" ? "bg-purple-500 text-white shadow-[0_0_10px_#8b5cf6]" : "text-slate-400 hover:text-white"}`}
+              style={{ cursor: "pointer" }}
             >
               <Tablet className="w-4 h-4" />
             </button>
             <button
               onClick={() => setPreviewMode("smartphone")}
               className={`p-2 rounded-lg transition-colors ${previewMode === "smartphone" ? "bg-purple-500 text-white shadow-[0_0_10px_#8b5cf6]" : "text-slate-400 hover:text-white"}`}
+              style={{ cursor: "pointer" }}
             >
               <Smartphone className="w-4 h-4" />
             </button>
@@ -742,6 +748,7 @@ function BuildCV() {
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
               className="p-2 rounded-lg text-purple-400 hover:text-purple-300 transition-colors"
+              style={{ cursor: "pointer" }}
             >
               {isDarkMode ? (
                 <Moon className="w-4 h-4" />
@@ -1140,6 +1147,7 @@ function BuildCV() {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
               className="bg-[#0f172a] border border-purple-500/30 p-8 rounded-2xl w-[90%] max-w-[360px] text-center shadow-[0_0_40px_rgba(139,92,246,0.15)]"
+              style={{ padding: "1rem" }}
             >
               <div className="w-16 h-16 bg-purple-500/10 rounded-2xl flex items-center justify-center mx-auto mb-5 border border-purple-500/20 shadow-[0_0_15px_rgba(139,92,246,0.2)]">
                 <span className="text-3xl">🚀</span>
@@ -1153,6 +1161,7 @@ function BuildCV() {
               <button
                 onClick={() => setShowSaveModal(false)}
                 className="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-semibold transition-colors shadow-lg shadow-purple-500/20"
+                style={{ padding: "0.4rem", cursor: "pointer" }}
               >
                 Tiếp tục chỉnh sửa
               </button>

@@ -924,22 +924,22 @@ function Jobs() {
                               </Link>
                               <span
                                 className={`px-2 py-0.5 rounded text-[10px] font-bold shrink-0 ${
-                                  getTimeLabel(job.created_at) === "Mới"
+                                  getTimeLabel(job.reviewed_at || job.created_at) === "Mới"
                                     ? "text-emerald-300"
                                     : "text-white/60"
                                 }`}
                                 style={{
                                   background:
-                                    getTimeLabel(job.created_at) === "Mới"
+                                    getTimeLabel(job.reviewed_at || job.created_at) === "Mới"
                                       ? "rgba(16,185,129,0.15)"
                                       : "rgba(255,255,255,0.1)",
                                   border:
-                                    getTimeLabel(job.created_at) === "Mới"
+                                    getTimeLabel(job.reviewed_at || job.created_at) === "Mới"
                                       ? "1px solid rgba(16,185,129,0.25)"
                                       : "1px solid rgba(255,255,255,0.15)",
                                 }}
                               >
-                                {getTimeLabel(job.created_at)}
+                                {getTimeLabel(job.reviewed_at || job.created_at)}
                               </span>
                               {job.is_recommended && (
                                 <span

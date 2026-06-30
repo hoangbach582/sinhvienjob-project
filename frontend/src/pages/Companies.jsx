@@ -19,7 +19,7 @@ import HomeNavbar from "../components/home/HomeNavbar";
 import FooterNew from "../components/FooterNew";
 import SEOHead from "../components/SEOHead";
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 6;
 
 function Companies() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -33,7 +33,6 @@ function Companies() {
   const [type, setType] = useState(initialType);
   const [salary, setSalary] = useState(initialSalary);
 
-  const [heroSearch, setHeroSearch] = useState(initialKeyword);
 
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -99,7 +98,6 @@ function Companies() {
     setLocation("");
     setType("");
     setSalary("");
-    setHeroSearch("");
     setSearchParams({});
     setCurrentPage(1);
   };
@@ -248,44 +246,7 @@ function Companies() {
             </p>
           </div>
 
-          {/* Search Bar */}
-          <div className="w-full max-w-2xl relative">
-            <svg
-              style={{
-                position: "absolute",
-                top: "1rem",
-                left: "1rem",
-                color: "#757c9f",
-                zIndex: "1",
-              }}
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <input
-              type="text"
-              placeholder="Nhập tên công ty bạn muốn tìm..."
-              value={heroSearch}
-              onChange={(e) => {
-                setHeroSearch(e.target.value);
-                setKeyword(e.target.value);
-                const params = new URLSearchParams();
-                if (e.target.value) params.append("keyword", e.target.value);
-                setSearchParams(params);
-              }}
-              className="w-full pl-14 pr-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-white placeholder-white/40 outline-none transition-all focus:border-brand-light/50 focus:bg-white/10"
-              style={{ backdropFilter: "blur(12px)", padding: "1rem 2.8rem" }}
-            />
-          </div>
+          {/* Search Bar (Removed) */}
         </div>
       </section>
 
@@ -331,15 +292,15 @@ function Companies() {
               </div>
 
               <form onSubmit={handleFilter} className="flex flex-col gap-5">
-                {/* Từ khóa */}
+                {/* Tên công ty */}
                 <div>
                   <label className="block text-sm text-white/60 mb-2 font-medium">
-                    Từ khóa
+                    Tên công ty
                   </label>
                   <div className="relative">
                     <input
                       type="text"
-                      placeholder="Tên việc, công ty, kỹ năng..."
+                      placeholder="Nhập tên công ty muốn tìm"
                       value={keyword}
                       onChange={(e) => setKeyword(e.target.value)}
                       className="w-full pl-9 pr-3 py-2.5 rounded-xl text-sm text-white placeholder-white/30 outline-none border box-border"
@@ -438,38 +399,7 @@ function Companies() {
                   </div>
                 </div>
 
-                {/* Trạng thái tuyển dụng */}
-                <div>
-                  <label className="block text-sm text-white/60 mb-2 font-medium">
-                    Quy mô tuyển dụng
-                  </label>
-                  <div className="relative">
-                    <select
-                      value={salary}
-                      onChange={(e) => setSalary(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2.5 rounded-xl text-sm text-white outline-none border cursor-pointer appearance-none box-border"
-                      style={{
-                        background: "rgba(255,255,255,0.06)",
-                        borderColor: "rgba(255,255,255,0.1)",
-                        WebkitAppearance: "none",
-                      }}
-                    >
-                      <option value="" style={{ background: "#1a1145" }}>
-                        Tất cả quy mô tuyển
-                      </option>
-                      <option
-                        value="has_jobs"
-                        style={{ background: "#1a1145" }}
-                      >
-                        Đang tuyển dụng (&gt; 0)
-                      </option>
-                      <option value="no_jobs" style={{ background: "#1a1145" }}>
-                        Chưa có tin tuyển dụng
-                      </option>
-                    </select>
-                    <ChevronDown className="w-4 h-4 text-white/40 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  </div>
-                </div>
+
 
                 <button
                   type="submit"
@@ -560,6 +490,34 @@ function Companies() {
                 </span>
               </h2>
               <div className="flex items-center gap-3">
+                {/* Quick Filter: Đang tuyển dụng */}
+                <button
+                  onClick={() => {
+                    const params = new URLSearchParams(searchParams);
+                    const isCurrentlyHiring = params.get("salary") === "has_jobs";
+                    if (isCurrentlyHiring) {
+                      params.delete("salary");
+                      setSalary("");
+                    } else {
+                      params.set("salary", "has_jobs");
+                      setSalary("has_jobs");
+                    }
+                    setSearchParams(params);
+                    setCurrentPage(1);
+                  }}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border cursor-pointer ${
+                    searchParams.get("salary") === "has_jobs"
+                      ? "text-brand-light"
+                      : "text-white/50 hover:text-white hover:border-white/20"
+                  }`}
+                  style={{
+                    background: searchParams.get("salary") === "has_jobs" ? "rgba(130, 63, 235, 0.15)" : "transparent",
+                    borderColor: searchParams.get("salary") === "has_jobs" ? "rgba(130, 63, 235, 0.3)" : "rgba(255, 255, 255, 0.1)",
+                  }}
+                >
+                  <Briefcase className="w-4 h-4" />
+                  Đang tuyển dụng
+                </button>
                 <div
                   className="flex items-center gap-2"
                   style={{
@@ -734,7 +692,10 @@ function Companies() {
                       }}
                       className="group rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-[0_8px_32px_rgba(130,63,235,0.15)] bg-white/5 border border-white/10 backdrop-blur-md hover-card"
                     >
-                      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                      <div 
+                        className="flex flex-col sm:flex-row gap-4 items-start sm:items-center"
+                        style={{ padding: "1rem" }}
+                      >
                         {/* Company Avatar */}
                         <div
                           className="w-16 h-16 rounded-xl flex items-center justify-center text-xl font-bold shrink-0 overflow-hidden"
