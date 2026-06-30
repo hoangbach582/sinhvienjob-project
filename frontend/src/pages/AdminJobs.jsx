@@ -3,7 +3,7 @@ import adminJobService from '../services/adminJobService';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Briefcase, CheckCircle, XCircle, Eye, RefreshCw, X, 
-  ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, FileText
+  ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, FileText, CheckSquare
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
@@ -17,6 +17,11 @@ function AdminJobs() {
   const [rejectReason, setRejectReason] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [actionLoadingId, setActionLoadingId] = useState(null);
+  
+  // Bulk actions state
+  const [selectedJobs, setSelectedJobs] = useState([]);
+  const [bulkActionLoading, setBulkActionLoading] = useState(false);
+  const [isBulkReject, setIsBulkReject] = useState(false);
 
   const fetchJobs = async (page = 1) => {
     setLoading(true);
@@ -42,6 +47,7 @@ function AdminJobs() {
   };
 
   useEffect(() => {
+    setSelectedJobs([]);
     fetchJobs();
     // eslint-disable-next-line
   }, [activeTab]);
@@ -60,6 +66,7 @@ function AdminJobs() {
   };
 
   const openRejectModal = (id) => {
+    setIsBulkReject(false);
     setRejectingJobId(id);
     setRejectReason('');
     setShowRejectModal(true);
@@ -72,14 +79,60 @@ function AdminJobs() {
     }
     setSubmitting(true);
     try {
-      await adminJobService.rejectJob(rejectingJobId, rejectReason);
-      toast.success('Đã từ chối tin tuyển dụng.');
+      if (isBulkReject) {
+        await adminJobService.bulkRejectJobs(selectedJobs, rejectReason);
+        toast.success(`Đã từ chối ${selectedJobs.length} tin tuyển dụng.`);
+      } else {
+        await adminJobService.rejectJob(rejectingJobId, rejectReason);
+        toast.success('Đã từ chối tin tuyển dụng.');
+      }
       setShowRejectModal(false);
+      setSelectedJobs([]);
       fetchJobs();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Không thể từ chối tin.');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleBulkApprove = async () => {
+    if (selectedJobs.length === 0) return;
+    setBulkActionLoading(true);
+    try {
+      await adminJobService.bulkApproveJobs(selectedJobs);
+      toast.success(`Đã duyệt thành công ${selectedJobs.length} tin tuyển dụng.`);
+      setSelectedJobs([]);
+      fetchJobs();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Không thể duyệt tin hàng loạt.');
+    } finally {
+      setBulkActionLoading(false);
+    }
+  };
+
+  const openBulkRejectModal = () => {
+    if (selectedJobs.length === 0) return;
+    setIsBulkReject(true);
+    setRejectingJobId(null);
+    setRejectReason('');
+    setShowRejectModal(true);
+  };
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      const pendingJobIds = jobs.filter(j => j.status === 'pending').map(j => j.id);
+      setSelectedJobs(pendingJobIds);
+    } else {
+      setSelectedJobs([]);
+    }
+  };
+
+  const handleSelectJob = (e, id) => {
+    if (e.target.checked) {
+      setSelectedJobs(prev => [...prev, id]);
+    } else {
+      setSelectedJobs(prev => prev.filter(jobId => jobId !== id));
     }
   };
 
@@ -128,6 +181,32 @@ function AdminJobs() {
           <TabButton active={activeTab === 'all'} onClick={() => setActiveTab('all')} label="Tất cả" icon={<Briefcase size={16} />} />
         </div>
 
+        {/* BULK ACTIONS BAR */}
+        {selectedJobs.length > 0 && (
+          <div className="bg-indigo-50 border-b border-indigo-100 px-5 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm font-semibold text-indigo-800">
+              <CheckSquare size={18} className="text-indigo-600" />
+              Đã chọn {selectedJobs.length} tin tuyển dụng
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleBulkApprove}
+                disabled={bulkActionLoading}
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-lg transition-colors shadow-sm disabled:opacity-50"
+              >
+                {bulkActionLoading ? 'Đang duyệt...' : 'Duyệt tất cả'}
+              </button>
+              <button
+                onClick={openBulkRejectModal}
+                disabled={bulkActionLoading}
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold rounded-lg transition-colors shadow-sm disabled:opacity-50"
+              >
+                Từ chối tất cả
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* TABLE */}
         <div className="overflow-x-auto min-h-[400px]">
           {loading ? (
@@ -139,6 +218,19 @@ function AdminJobs() {
             <table className="w-full text-left border-collapse min-w-[900px]">
               <thead>
                 <tr className="border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50/80">
+                  {activeTab === 'pending' && (
+                    <th className="py-4 px-5 w-[50px] text-center">
+                      <input 
+                        type="checkbox"
+                        className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20 cursor-pointer"
+                        onChange={handleSelectAll}
+                        checked={
+                          jobs.filter(j => j.status === 'pending').length > 0 &&
+                          selectedJobs.length === jobs.filter(j => j.status === 'pending').length
+                        }
+                      />
+                    </th>
+                  )}
                   <th className="py-4 px-5">Tin tuyển dụng</th>
                   <th className="py-4 px-5">Công ty</th>
                   <th className="py-4 px-5 text-center">Hình thức</th>
@@ -150,6 +242,16 @@ function AdminJobs() {
               <tbody className="divide-y divide-slate-100">
                 {jobs.length > 0 ? jobs.map(job => (
                   <tr key={job.id} className="hover:bg-slate-50 transition-colors group">
+                    {activeTab === 'pending' && (
+                      <td className="py-4 px-5 text-center">
+                        <input
+                          type="checkbox"
+                          className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20 cursor-pointer"
+                          checked={selectedJobs.includes(job.id)}
+                          onChange={(e) => handleSelectJob(e, job.id)}
+                        />
+                      </td>
+                    )}
                     <td className="py-4 px-5">
                       <div className="font-semibold text-slate-800 text-[15px] max-w-sm truncate">{job.title}</div>
                       <div className="text-xs text-slate-500 mt-1 max-w-sm truncate">{job.location}</div>
@@ -218,7 +320,7 @@ function AdminJobs() {
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan="6" className="py-16 text-center">
+                    <td colSpan={activeTab === 'pending' ? "7" : "6"} className="py-16 text-center">
                       <div className="flex flex-col items-center">
                         <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mb-4">
                           <FileText size={24} className="text-slate-400" />

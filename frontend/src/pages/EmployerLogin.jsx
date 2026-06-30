@@ -95,7 +95,7 @@ function EmployerLogin() {
   };
 
   return (
-    <div className="home-page min-h-screen bg-[#061e16] flex flex-col font-sans text-white relative overflow-hidden">
+    <div className="home-page h-screen w-full bg-[#061e16] flex flex-col font-sans text-white relative overflow-hidden">
       {/* Background Gradients & Glows (Green theme) */}
       <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#059669] rounded-full blur-[150px] opacity-20 pointer-events-none"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#10b981] rounded-full blur-[120px] opacity-20 pointer-events-none"></div>

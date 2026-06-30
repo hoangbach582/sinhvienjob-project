@@ -122,6 +122,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     // 7. Quản lý Admin
     Route::middleware(['admin'])->prefix('admin')->group(function () {
         Route::get('/jobs/pending', [AdminJobController::class, 'pending']);
+        Route::post('/jobs/bulk-approve', [AdminJobController::class, 'bulkApprove']);
+        Route::post('/jobs/bulk-reject', [AdminJobController::class, 'bulkReject']);
         Route::get('/jobs', [AdminJobController::class, 'index']);
         Route::post('/jobs/{id}/approve', [AdminJobController::class, 'approve']);
         Route::post('/jobs/{id}/reject', [AdminJobController::class, 'reject']);
@@ -145,6 +147,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::patch('/accounts/{id}/approve', [AdminAccountController::class, 'approve']);
         Route::patch('/accounts/{id}/status', [AdminAccountController::class, 'updateStatus']);
         Route::delete('/accounts/{id}', [AdminAccountController::class, 'destroy']);
+
+        // Quản lý Phản hồi
+        Route::get('/feedbacks', [\App\Http\Controllers\Admin\AdminFeedbackController::class, 'index']);
+        Route::post('/feedbacks/{id}/resolve', [\App\Http\Controllers\Admin\AdminFeedbackController::class, 'resolve']);
     });
 
     // 8. Thông báo
@@ -153,4 +159,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
     Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
+
+    // User Feedback
+    Route::post('/feedback', [\App\Http\Controllers\FeedbackController::class, 'store']);
 });

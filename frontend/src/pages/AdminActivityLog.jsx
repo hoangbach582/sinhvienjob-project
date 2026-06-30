@@ -18,7 +18,7 @@ function AdminActivityLog() {
       setLoading(true);
       const res = await fetch(`http://localhost:8000/api/admin/activity-logs?page=${currentPage}`, {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${localStorage.getItem('token') || localStorage.getItem('access_token')}`
         }
       });
       if (!res.ok) throw new Error("Không thể tải nhật ký hoạt động");

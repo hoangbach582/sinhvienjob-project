@@ -16,6 +16,7 @@ import {
   ChevronDown,
   ListTree,
   Activity,
+  MessageSquare
 } from "lucide-react";
 import NotificationBell from "../components/notifications/NotificationBell";
 
@@ -62,6 +63,7 @@ function AdminLayout() {
     { to: "/admin/accounts", icon: Users, label: "Tài khoản" },
     { to: "/admin/jobs", icon: Briefcase, label: "Tin tuyển dụng" },
     { to: "/admin/industries", icon: ListTree, label: "Ngành nghề" },
+    { to: "/admin/feedbacks", icon: MessageSquare, label: "Phản hồi & Báo cáo" },
     { to: "/admin/activity-logs", icon: Activity, label: "Nhật ký hệ thống" },
   ];
 

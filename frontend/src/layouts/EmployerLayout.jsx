@@ -9,9 +9,11 @@ import {
   Building2,
   Settings,
   Bell,
+  MessageSquarePlus,
 } from "lucide-react";
 import NotificationBell from "../components/notifications/NotificationBell";
 import { useNotifications } from "../context/NotificationContext";
+import FeedbackModal from "../components/FeedbackModal";
 
 function EmployerLayout() {
   const { userName, userAvatar, logout } = useAuth(); // Lấy Tên, Avatar và hàm Đăng xuất
@@ -40,8 +42,8 @@ function EmployerLayout() {
     borderLeft: isActive(path) ? "3px solid #10B981" : "3px solid transparent",
   });
 
-  // State & Ref cho dropdown avatar
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   // Đóng dropdown khi click ra ngoài
@@ -342,6 +344,30 @@ function EmployerLayout() {
             <Settings size={17} />
             Cài đặt
           </Link>
+
+          <button
+            onClick={() => setIsFeedbackOpen(true)}
+            style={{
+              ...sidebarItemStyle("/employer/feedback"),
+              width: "100%",
+              background: "transparent",
+              color: "#475569",
+              borderLeft: "3px solid transparent",
+              cursor: "pointer",
+              textAlign: "left"
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "#F8FAFC";
+              e.currentTarget.style.color = "#10B981";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "transparent";
+              e.currentTarget.style.color = "#475569";
+            }}
+          >
+            <MessageSquarePlus size={17} />
+            Gửi phản hồi
+          </button>
         </div>
 
         {/* Nút Đăng xuất ở cuối Sidebar */}
@@ -580,6 +606,8 @@ function EmployerLayout() {
           <Outlet />
         </div>
       </div>
+
+      <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
     </div>
   );
 }

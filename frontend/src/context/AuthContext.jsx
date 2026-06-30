@@ -8,11 +8,12 @@ export const AuthProvider = ({ children }) => {
   const [userName, setUserName] = useState('');
   const [userRole, setUserRole] = useState('');
   const [userAvatar, setUserAvatar] = useState('');
+  const [token, setToken] = useState(null);
 
   // 1. KHÔI PHỤC TRẠNG THÁI (Đọc được cả chuẩn cũ lẫn chuẩn mới)
   useEffect(() => {
     const rawToken = localStorage.getItem('access_token') || localStorage.getItem('token');
-    const token = (rawToken && rawToken !== 'null' && rawToken !== 'undefined') ? rawToken : null;
+    const localToken = (rawToken && rawToken !== 'null' && rawToken !== 'undefined') ? rawToken : null;
     
     // Thử lấy object user (Cách mới)
     let userData = null;
@@ -34,12 +35,13 @@ export const AuthProvider = ({ children }) => {
     const avatar = (rawAvatar && rawAvatar !== 'null' && rawAvatar !== 'undefined') ? rawAvatar : (userData ? userData.avatar : '');
 
     // Cần có đủ token và role thì mới coi là đăng nhập hợp lệ
-    if (token && role) {
+    if (localToken && role) {
       setIsLoggedIn(true);
       setUser(userData || null);
       setUserName(name || '');
       setUserRole(role || '');
       setUserAvatar(avatar || '');
+      setToken(localToken);
     } else {
       // Dọn dẹp local storage nếu trạng thái không hợp lệ (corrupted data)
       localStorage.removeItem('access_token');
@@ -54,6 +56,7 @@ export const AuthProvider = ({ children }) => {
       setUserName('');
       setUserRole('');
       setUserAvatar('');
+      setToken(null);
     }
   }, []);
 
@@ -91,6 +94,7 @@ export const AuthProvider = ({ children }) => {
     setUserRole(role);
     setUserName(name);
     setUserAvatar(avatar);
+    setToken(token);
   };
 
   // 3. ĐĂNG XUẤT (Dọn sạch sẽ mọi loại key)
@@ -107,6 +111,7 @@ export const AuthProvider = ({ children }) => {
     setUserName('');
     setUserRole('');
     setUserAvatar('');
+    setToken(null);
   };
 
   // 4. CẬP NHẬT TOPBAR (VÀ LOCALSTORAGE) TỨC THÌ TỪ TRANG PROFILE
@@ -133,7 +138,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, userName, userRole, userAvatar, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, userName, userRole, userAvatar, token, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

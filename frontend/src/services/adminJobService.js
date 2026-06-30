@@ -29,6 +29,20 @@ const adminJobService = {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
     });
     return response.data;
+  },
+
+  bulkApproveJobs: async (jobIds) => {
+    const response = await axios.post(`${API_URL}/admin/jobs/bulk-approve`, { job_ids: jobIds }, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    });
+    return response.data;
+  },
+
+  bulkRejectJobs: async (jobIds, reason) => {
+    const response = await axios.post(`${API_URL}/admin/jobs/bulk-reject`, { job_ids: jobIds, reason }, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    });
+    return response.data;
   }
 };
 

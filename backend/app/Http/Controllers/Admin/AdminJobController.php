@@ -103,4 +103,76 @@ class AdminJobController extends Controller
             'job' => $job
         ]);
     }
+    /**
+     * Duyệt nhiều job cùng lúc
+     */
+    public function bulkApprove(Request $request)
+    {
+        $request->validate([
+            'job_ids' => 'required|array',
+            'job_ids.*' => 'exists:jobs,id'
+        ]);
+
+        $jobs = Job::whereIn('id', $request->job_ids)->where('status', 'pending')->get();
+        $approvedCount = 0;
+
+        foreach ($jobs as $job) {
+            Gate::authorize('approve', $job);
+            
+            $job->update([
+                'status' => 'approved',
+                'reviewed_at' => now(),
+                'reviewed_by' => $request->user()->id,
+                'rejected_reason' => null
+            ]);
+
+            Log::info("Admin {$request->user()->email} đã duyệt job hàng loạt: {$job->title} (ID: {$job->id})");
+
+            $employerUser = $job->employer->user;
+            $employerUser->notify(new \App\Notifications\JobApprovedNotification($job, 'approved'));
+            $approvedCount++;
+        }
+
+        return response()->json([
+            'message' => "Đã duyệt thành công {$approvedCount} tin tuyển dụng.",
+            'approved_count' => $approvedCount
+        ]);
+    }
+
+    /**
+     * Từ chối nhiều job cùng lúc
+     */
+    public function bulkReject(Request $request)
+    {
+        $request->validate([
+            'job_ids' => 'required|array',
+            'job_ids.*' => 'exists:jobs,id',
+            'reason' => 'required|string|max:1000'
+        ]);
+
+        $jobs = Job::whereIn('id', $request->job_ids)->where('status', 'pending')->get();
+        $rejectedCount = 0;
+
+        foreach ($jobs as $job) {
+            Gate::authorize('reject', $job);
+
+            $job->update([
+                'status' => 'rejected',
+                'rejected_reason' => $request->reason,
+                'reviewed_at' => now(),
+                'reviewed_by' => $request->user()->id
+            ]);
+
+            Log::info("Admin {$request->user()->email} đã từ chối job hàng loạt: {$job->title} (ID: {$job->id}). Lý do: {$request->reason}");
+
+            $employerUser = $job->employer->user;
+            $employerUser->notify(new \App\Notifications\JobApprovedNotification($job, 'rejected'));
+            $rejectedCount++;
+        }
+
+        return response()->json([
+            'message' => "Đã từ chối {$rejectedCount} tin tuyển dụng.",
+            'rejected_count' => $rejectedCount
+        ]);
+    }
 }
