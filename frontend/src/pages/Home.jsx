@@ -35,7 +35,7 @@ function Home() {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/jobs/latest');
+        const response = await fetch((${API_BASE}) + '/jobs/latest');
         if (response.ok) {
           const data = await response.json();
           setJobs(data);

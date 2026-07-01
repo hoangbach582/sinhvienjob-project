@@ -27,7 +27,7 @@ function EmployerRegister() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/register', {
+      const response = await fetch((${API_BASE}) + '/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({

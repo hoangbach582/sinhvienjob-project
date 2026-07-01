@@ -55,7 +55,7 @@ function StudentSettings() {
   useEffect(() => {
     const fetchAccount = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/api/user", {
+        const res = await fetch((${API_BASE}) + "/user", {
           headers: {
             Authorization: `Bearer ${getToken()}`,
             Accept: "application/json",
@@ -101,7 +101,7 @@ function StudentSettings() {
     setPasswordSaving(true);
     try {
       const res = await fetch(
-        "http://127.0.0.1:8000/api/account/change-password",
+        (${API_BASE}) + "/account/change-password",
         {
           method: "PUT",
           headers: {
@@ -138,7 +138,7 @@ function StudentSettings() {
     if (deleteConfirm !== "XOA TAI KHOAN") return;
     setDeleting(true);
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/account", {
+      const res = await fetch((${API_BASE}) + "/account", {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${getToken()}`,

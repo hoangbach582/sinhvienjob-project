@@ -10,7 +10,7 @@ function JobDetailSimilar({ currentJobId, formatSalary, translateType }) {
   useEffect(() => {
     const fetchSimilar = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/jobs/latest");
+        const response = await fetch((${API_BASE}) + "/jobs/latest");
         if (response.ok) {
           const data = await response.json();
           setSimilarJobs(data.filter((j) => j.id !== currentJobId).slice(0, 4));

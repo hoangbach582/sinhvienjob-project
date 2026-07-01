@@ -22,7 +22,7 @@ function AppliedJobs() {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/applications/me?page=${page}`,
+        `${${API_BASE}}/applications/me?page=${page}`,
         {
           method: "GET",
           headers: {

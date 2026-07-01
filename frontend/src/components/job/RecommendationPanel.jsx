@@ -35,7 +35,7 @@ function RecommendationPanel({ isOpen, onClose, searchHistory = [] }) {
     try {
       const token = localStorage.getItem("token");
       const historyParam = searchHistory.slice(0, 5).join(",");
-      const url = `http://127.0.0.1:8000/api/jobs/recommendations${historyParam ? `?search_history=${encodeURIComponent(historyParam)}` : ""}`;
+      const url = `${${API_BASE}}/jobs/recommendations${historyParam ? `?search_history=${encodeURIComponent(historyParam)}` : ""}`;
 
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },

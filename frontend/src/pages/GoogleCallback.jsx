@@ -26,7 +26,7 @@ function GoogleCallback() {
 
   const handleGoogleCallback = async (code) => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/auth/google/callback', {
+      const response = await fetch((${API_BASE}) + '/auth/google/callback', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

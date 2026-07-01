@@ -32,7 +32,7 @@ function StudentProfile() {
       try {
         const token =
           localStorage.getItem("access_token") || localStorage.getItem("token");
-        const response = await fetch("http://127.0.0.1:8000/api/profile", {
+        const response = await fetch((${API_BASE}) + "/profile", {
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: "application/json",
@@ -135,7 +135,7 @@ function StudentProfile() {
     try {
       const token =
         localStorage.getItem("access_token") || localStorage.getItem("token");
-      const response = await fetch("http://127.0.0.1:8000/api/profile", {
+      const response = await fetch((${API_BASE}) + "/profile", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

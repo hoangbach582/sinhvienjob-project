@@ -39,7 +39,7 @@ function EmployerLogin() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/login", {
+      const response = await fetch((${API_BASE}) + "/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -75,7 +75,7 @@ function EmployerLogin() {
   const handleGoogleLogin = async () => {
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/api/auth/google/url",
+        (${API_BASE}) + "/auth/google/url",
         {
           headers: { Accept: "application/json" },
         },

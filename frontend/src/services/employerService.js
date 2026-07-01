@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Sử dụng đúng baseURL của Laravel Backend
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api',
+  baseURL: (${API_BASE}) + '',
   headers: {
     'Accept': 'application/json',
   }

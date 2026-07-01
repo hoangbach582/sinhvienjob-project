@@ -96,7 +96,7 @@ function Jobs() {
     const fetchIndustries = async () => {
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/categories/industries",
+          (${API_BASE}) + "/categories/industries",
         );
         if (response.ok) {
           const data = await response.json();
@@ -125,7 +125,7 @@ function Jobs() {
       const token = localStorage.getItem("token");
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-      const response = await fetch(`http://127.0.0.1:8000/api/jobs?${params.toString()}`, { headers });
+      const response = await fetch(`${${API_BASE}}/jobs?${params.toString()}`, { headers });
       if (response.ok) {
         const result = await response.json();
         setJobs(result.data);

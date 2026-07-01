@@ -25,7 +25,7 @@ function EmailVerificationNotice() {
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/api/email/verification/resend",
+        (${API_BASE}) + "/email/verification/resend",
         {
           method: "POST",
           headers: {

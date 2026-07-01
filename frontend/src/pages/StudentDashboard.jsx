@@ -15,7 +15,7 @@ function StudentDashboard() {
         const token =
           localStorage.getItem("access_token") || localStorage.getItem("token");
         const response = await fetch(
-          "http://127.0.0.1:8000/api/dashboard/student/stats",
+          (${API_BASE}) + "/dashboard/student/stats",
           {
             headers: {
               Authorization: `Bearer ${token}`,
