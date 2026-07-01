@@ -43,8 +43,8 @@ const STATUS_FILTERS = [
 const StatusSelect = ({ currentStatus, onChange, isLoading }) => {
   const currentOption = STATUS_OPTIONS.find(opt => opt.value === currentStatus) || STATUS_OPTIONS[0];
 
-  // Tối ưu: Nếu đã được nhận thì hiển thị một badge cố định, không cho sửa nữa
-  if (currentStatus === 'accepted') {
+  // Tối ưu: Nếu đã được nhận hoặc bị từ chối thì hiển thị một badge cố định, không cho sửa nữa
+  if (currentStatus === 'accepted' || currentStatus === 'rejected') {
     return (
       <div 
         className={`inline-flex w-[150px] items-center justify-center border rounded-lg py-2 px-3 text-sm font-medium ${currentOption.color} cursor-not-allowed`} 
@@ -55,6 +55,14 @@ const StatusSelect = ({ currentStatus, onChange, isLoading }) => {
     );
   }
 
+  // Lọc danh sách tuỳ chọn theo trạng thái hiện tại (chặn chuyển lùi)
+  const allowedOptions = STATUS_OPTIONS.filter(opt => {
+    if (currentStatus === 'pending') return true; // pending có thể chuyển sang bất kỳ cái nào
+    if (currentStatus === 'reviewing') return ['reviewing', 'interview', 'rejected', 'accepted'].includes(opt.value);
+    if (currentStatus === 'interview') return ['interview', 'rejected', 'accepted'].includes(opt.value);
+    return false;
+  });
+
   return (
     <div className="relative inline-block w-[150px]">
       <select
@@ -62,8 +70,9 @@ const StatusSelect = ({ currentStatus, onChange, isLoading }) => {
         onChange={(e) => onChange(e.target.value)}
         disabled={isLoading}
         className={`w-full appearance-none cursor-pointer border rounded-lg py-2 pl-3 pr-8 text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-60 disabled:cursor-wait ${currentOption.color}`}
+        style={{ padding: '0.4rem' }}
       >
-        {STATUS_OPTIONS.map(opt => (
+        {allowedOptions.map(opt => (
           <option key={opt.value} value={opt.value} className="text-gray-900 bg-white font-normal">
             {opt.label}
           </option>
@@ -88,15 +97,15 @@ const RejectModal = ({ isOpen, onClose, onSubmit, isSubmitting }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200" style={{ padding: '1rem' }}>
         <div className="flex justify-between items-center p-4 border-b">
           <h3 className="font-semibold text-lg text-gray-900">Lý do từ chối</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors" style={{ cursor: 'pointer' }}>
             <X size={20} />
           </button>
         </div>
         <div className="p-4">
-          <p className="text-sm text-gray-600 mb-3">Vui lòng nhập lý do từ chối ứng viên (nếu có). Lý do này có thể được gửi cho ứng viên.</p>
+          <p className="text-sm text-gray-600 mb-3" style={{ margin: '1rem 0' }}>Vui lòng nhập lý do từ chối ứng viên (nếu có). Lý do này có thể được gửi cho ứng viên.</p>
           <textarea
             className="w-full form-input border-gray-300 rounded-lg p-3 text-sm focus:ring-[#00b14f] focus:border-[#00b14f]"
             rows="4"
@@ -105,10 +114,11 @@ const RejectModal = ({ isOpen, onClose, onSubmit, isSubmitting }) => {
             onChange={(e) => setReason(e.target.value)}
           />
         </div>
-        <div className="p-4 border-t bg-gray-50 flex justify-end gap-3">
+        <div className="p-4 border-t bg-gray-50 flex justify-end gap-3" style={{ marginTop: '1rem', borderTopWidth: 0 }}>
           <button
             onClick={onClose}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            style={{ padding: '0.4rem 1rem', cursor: 'pointer' }}
             disabled={isSubmitting}
           >
             Hủy
@@ -116,6 +126,7 @@ const RejectModal = ({ isOpen, onClose, onSubmit, isSubmitting }) => {
           <button
             onClick={() => onSubmit(reason)}
             className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
+            style={{ padding: '0.4rem 1rem', cursor: 'pointer' }}
             disabled={isSubmitting}
           >
             {isSubmitting ? (
@@ -145,15 +156,15 @@ const NoteModal = ({ isOpen, onClose, initialNote, onSubmit, isSubmitting }) => 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200" style={{ padding: '1rem' }}>
         <div className="flex justify-between items-center p-4 border-b">
           <h3 className="font-semibold text-lg text-gray-900">Ghi chú nội bộ</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors" style={{ cursor: 'pointer' }}>
             <X size={20} />
           </button>
         </div>
         <div className="p-4">
-          <p className="text-sm text-gray-600 mb-3">Ghi chú này chỉ hiển thị với nhà tuyển dụng, ứng viên sẽ không thấy.</p>
+          <p className="text-sm text-gray-600 mb-3" style={{ margin: '1rem 0' }}>Ghi chú này chỉ hiển thị với nhà tuyển dụng, ứng viên sẽ không thấy.</p>
           <textarea
             className="w-full form-input border-gray-300 rounded-lg p-3 text-sm focus:ring-[#00b14f] focus:border-[#00b14f]"
             rows="4"
@@ -162,10 +173,11 @@ const NoteModal = ({ isOpen, onClose, initialNote, onSubmit, isSubmitting }) => 
             onChange={(e) => setNote(e.target.value)}
           />
         </div>
-        <div className="p-4 border-t bg-gray-50 flex justify-end gap-3">
+        <div className="p-4 border-t bg-gray-50 flex justify-end gap-3" style={{ marginTop: '1rem', borderTopWidth: 0 }}>
           <button
             onClick={onClose}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            style={{ padding: '0.4rem 1rem', cursor: 'pointer' }}
             disabled={isSubmitting}
           >
             Hủy
@@ -173,6 +185,7 @@ const NoteModal = ({ isOpen, onClose, initialNote, onSubmit, isSubmitting }) => 
           <button
             onClick={() => onSubmit(note)}
             className="px-4 py-2 text-sm font-medium text-white bg-[#00b14f] rounded-lg hover:bg-[#009944] transition-colors flex items-center gap-2"
+            style={{ padding: '0.4rem 1rem', cursor: 'pointer' }}
             disabled={isSubmitting}
           >
             {isSubmitting ? (
@@ -358,6 +371,7 @@ const ApplicantRow = ({ app, jobs, onStatusChange, isUpdatingStatus, onOpenRejec
           target="_blank" 
           rel="noreferrer" 
           className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100 hover:shadow-sm transition-all border border-blue-100"
+          style={{ padding: '0.4rem' }}
         >
           <FileText size={14} />
           Xem CV
@@ -379,6 +393,7 @@ const ApplicantRow = ({ app, jobs, onStatusChange, isUpdatingStatus, onOpenRejec
                 ? 'bg-green-50 text-green-600 hover:bg-green-100' 
                 : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'
             }`}
+            style={{ cursor: 'pointer' }}
             title="Ghi chú nội bộ"
           >
             <MessageSquare size={18} />
@@ -393,7 +408,7 @@ const ApplicantRow = ({ app, jobs, onStatusChange, isUpdatingStatus, onOpenRejec
 const ApplicantFilters = ({ jobs, selectedJobId, setSelectedJobId, searchTerm, setSearchTerm, statusFilter, setStatusFilter, onClearFilters, hasActiveFilters }) => (
   <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
     <div className="relative w-full sm:w-[240px]">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} style={{ display: 'none' }} />
       <input 
         type="text"
         className="form-input text-sm w-full pl-9 rounded-lg border-gray-300 focus:ring-[#00b14f] focus:border-[#00b14f]" 
@@ -405,6 +420,7 @@ const ApplicantFilters = ({ jobs, selectedJobId, setSelectedJobId, searchTerm, s
 
     <select 
       className="form-input text-sm w-full sm:w-[220px] rounded-lg border-gray-300 focus:ring-[#00b14f] focus:border-[#00b14f]" 
+      style={{ cursor: 'pointer' }}
       value={selectedJobId}
       onChange={(e) => setSelectedJobId(e.target.value)}
     >
@@ -416,6 +432,7 @@ const ApplicantFilters = ({ jobs, selectedJobId, setSelectedJobId, searchTerm, s
     
     <select 
       className="form-input text-sm w-full sm:w-[180px] rounded-lg border-gray-300 focus:ring-[#00b14f] focus:border-[#00b14f]" 
+      style={{ cursor: 'pointer' }}
       value={statusFilter}
       onChange={(e) => setStatusFilter(e.target.value)}
     >
@@ -553,7 +570,7 @@ export default function EmployerApplicants() {
   return (
     <div className="w-full max-w-none space-y-6">
       {/* Header section */}
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6">
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6" style={{ padding: '1rem', marginBottom: '1rem' }}>
         <div>
           <h1 className="text-2xl font-bold text-gray-900 mb-1">Hồ sơ ứng viên</h1>
           <p className="text-sm text-gray-500">

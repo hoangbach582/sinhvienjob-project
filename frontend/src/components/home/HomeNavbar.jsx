@@ -10,6 +10,7 @@ import {
   Settings,
   Briefcase,
   Heart,
+  LayoutDashboard,
 } from "lucide-react";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
@@ -97,6 +98,7 @@ function HomeNavbar() {
                 <button
                   onClick={() => setShowDropdown(!showDropdown)}
                   className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-white/10 transition-colors focus:outline-none border-none bg-transparent cursor-pointer"
+                  style={{ cursor: "pointer" }}
                 >
                   <div className="w-9 h-9 rounded-full bg-white/20 text-white font-bold flex items-center justify-center border border-white/30 overflow-hidden shadow-inner">
                     {userAvatar ? (
@@ -168,6 +170,16 @@ function HomeNavbar() {
                         </motion.div>
                         {userRole === "student" && (
                           <>
+                            <motion.div variants={{ hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0 } }}>
+                              <Link
+                                to="/dashboard"
+                                onClick={() => setShowDropdown(false)}
+                                className="group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:bg-blue-50/50 hover:text-brand-blue transition-all duration-200 text-[14px] font-semibold no-underline hover-lift"
+                              >
+                                <LayoutDashboard className="w-[18px] h-[18px] text-slate-400 group-hover:text-brand-blue transition-colors" />
+                                Tổng quan
+                              </Link>
+                            </motion.div>
                             <motion.div variants={{ hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0 } }}>
                               <Link
                                 to="/applied-jobs"

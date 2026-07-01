@@ -215,7 +215,7 @@ function AdminJobs() {
               <p className="text-slate-500 font-medium">Đang tải danh sách...</p>
             </div>
           ) : (
-            <table className="w-full text-left border-collapse min-w-[900px]">
+            <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase tracking-wider bg-slate-50/80">
                   {activeTab === 'pending' && (
@@ -252,16 +252,16 @@ function AdminJobs() {
                         />
                       </td>
                     )}
-                    <td className="py-4 px-5">
-                      <div className="font-semibold text-slate-800 text-[15px] max-w-sm truncate">{job.title}</div>
-                      <div className="text-xs text-slate-500 mt-1 max-w-sm truncate">{job.location}</div>
+                    <td className="py-4 px-4">
+                      <div className="font-semibold text-slate-800 text-[14px] max-w-[220px] 2xl:max-w-sm truncate" title={job.title}>{job.title}</div>
+                      <div className="text-xs text-slate-500 mt-1 max-w-[220px] 2xl:max-w-sm truncate" title={job.location}>{job.location}</div>
                     </td>
-                    <td className="py-4 px-5">
+                    <td className="py-4 px-4">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold text-xs shrink-0">
                           {(job.employer?.company_name?.[0] || 'C').toUpperCase()}
                         </div>
-                        <span className="font-semibold text-slate-700 text-sm truncate max-w-[150px]">
+                        <span className="font-semibold text-slate-700 text-[13px] truncate max-w-[130px] 2xl:max-w-[200px]" title={job.employer?.company_name}>
                           {job.employer?.company_name || 'N/A'}
                         </span>
                       </div>
@@ -279,15 +279,15 @@ function AdminJobs() {
                         {getStatusText(job.status)}
                       </span>
                     </td>
-                    <td className="py-4 px-5 text-right">
-                      <div className="flex justify-end gap-2">
+                    <td className="py-4 px-5 text-right whitespace-nowrap">
+                      <div className="flex justify-end gap-2 flex-nowrap">
                         {job.status === 'pending' && (
                           <>
                             <button 
                               onClick={() => handleApprove(job.id)}
                               disabled={actionLoadingId !== null}
                               className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-bold transition-colors disabled:opacity-50"
-                              style={{ padding: '0.4rem', cursor: 'pointer' }}
+                              style={{ padding: '0.6rem', cursor: 'pointer' }}
                             >
                               {actionLoadingId === job.id ? 'Đang duyệt...' : 'Duyệt'}
                             </button>
@@ -295,7 +295,7 @@ function AdminJobs() {
                               onClick={() => openRejectModal(job.id)}
                               disabled={actionLoadingId !== null}
                               className="bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-xs font-bold transition-colors disabled:opacity-50"
-                              style={{ padding: '0.4rem', cursor: 'pointer' }}
+                              style={{ padding: '0.6rem', cursor: 'pointer' }}
                             >
                               Từ chối
                             </button>

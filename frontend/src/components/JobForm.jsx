@@ -44,6 +44,7 @@ function JobForm({ defaultValues, onSubmit, isSubmitting }) {
         working_hours: "",
         industry: "IT & Phần mềm",
         experience: "Không yêu cầu",
+        education_level: "Không yêu cầu",
         salary_min: "",
         salary_max: "",
         deadline: "",
@@ -65,6 +66,7 @@ function JobForm({ defaultValues, onSubmit, isSubmitting }) {
       working_hours: defaultValues.working_hours || "",
       industry: defaultValues.industry || "IT & Phần mềm",
       experience: defaultValues.experience || "Không yêu cầu",
+      education_level: defaultValues.education_level || "Không yêu cầu",
       salary_min:
         defaultValues.salary_min !== null &&
         defaultValues.salary_min !== undefined
@@ -164,9 +166,10 @@ function JobForm({ defaultValues, onSubmit, isSubmitting }) {
             className="form-input"
             {...register("type", { required: true })}
           >
-            <option value="part_time">Part-time</option>
-            <option value="internship">Internship</option>
-            <option value="full_time">Full-time</option>
+            <option value="part_time">Bán thời gian (Part-time)</option>
+            <option value="internship">Thực tập sinh (Internship)</option>
+            <option value="full_time">Toàn thời gian (Full-time)</option>
+            <option value="collaborator">Cộng tác viên (CTV)</option>
           </select>
         </div>
 
@@ -278,6 +281,25 @@ function JobForm({ defaultValues, onSubmit, isSubmitting }) {
             <option value="Dưới 1 năm">Dưới 1 năm</option>
             <option value="1-2 năm">1-2 năm</option>
             <option value="Trên 2 năm">Trên 2 năm</option>
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Trình độ học vấn</label>
+          <select className="form-input" {...register("education_level")}>
+            <option value="Không yêu cầu">Không yêu cầu</option>
+            <option value="Trung cấp">Trung cấp</option>
+            <option value="Cao đẳng">Cao đẳng</option>
+            <option value="Đại học">Đại học</option>
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Yêu cầu giới tính</label>
+          <select className="form-input" {...register("gender")}>
+            <option value="any">Không yêu cầu</option>
+            <option value="male">Nam</option>
+            <option value="female">Nữ</option>
           </select>
         </div>
 

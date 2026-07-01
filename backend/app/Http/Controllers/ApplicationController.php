@@ -127,9 +127,22 @@ class ApplicationController extends Controller
             return response()->json(['message' => 'Bạn không có quyền cập nhật hồ sơ này!'], 403);
         }
 
-        // Tối ưu: Nếu hồ sơ đã ở trạng thái "Được nhận", không cho phép sửa trạng thái nữa
-        if ($application->status === 'accepted' && $request->has('status') && $request->status !== 'accepted') {
-            return response()->json(['message' => 'Hồ sơ này đã được chốt (Được nhận), không thể thay đổi trạng thái khác!'], 400);
+        // Tối ưu: Nếu hồ sơ đã ở trạng thái "Được nhận" hoặc "Từ chối", không cho phép sửa trạng thái nữa
+        if (in_array($application->status, ['accepted', 'rejected']) && $request->has('status') && $request->status !== $application->status) {
+            return response()->json(['message' => 'Hồ sơ này đã được chốt (Được nhận/Từ chối), không thể thay đổi trạng thái khác!'], 400);
+        }
+
+        // Kiểm tra luồng chuyển đổi trạng thái hợp lệ (chặn chuyển lùi)
+        if ($request->has('status')) {
+            $newStatus = $request->status;
+            $oldStatus = $application->status;
+            
+            if ($oldStatus === 'reviewing' && $newStatus === 'pending') {
+                return response()->json(['message' => 'Không thể lùi trạng thái từ Đang xem xét về Chờ xét duyệt!'], 400);
+            }
+            if ($oldStatus === 'interview' && in_array($newStatus, ['pending', 'reviewing'])) {
+                return response()->json(['message' => 'Không thể lùi trạng thái từ Mời phỏng vấn về trước đó!'], 400);
+            }
         }
 
         $request->validate([
@@ -215,7 +228,7 @@ class ApplicationController extends Controller
 
         // Định dạng lại dữ liệu trả về cho frontend
         $applications->getCollection()->transform(function($app) {
-            $app->student_name = $app->student->user->name ?? 'Ứng viên';
+            $app->student_name = $app->student->full_name ?? $app->student->user->name ?? 'Ứng viên';
             $app->student_email = $app->student->user->email ?? 'Email';
             $app->student_avatar = $app->student->avatar ?? null;
             $app->student_phone = $app->student->phone ?? 'Chưa cập nhật';

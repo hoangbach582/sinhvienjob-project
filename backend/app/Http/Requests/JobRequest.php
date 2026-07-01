@@ -24,7 +24,7 @@ class JobRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            'type' => 'required|in:internship,part_time,full_time,remote',
+            'type' => 'required|in:internship,part_time,full_time,remote,collaborator',
             'vacancies' => 'nullable|integer|min:1',
             'industry' => 'nullable|string|max:255',
             'salary_min' => 'nullable|numeric|min:0|max:10000000',
@@ -33,6 +33,8 @@ class JobRequest extends FormRequest
             'specific_address' => 'nullable|string|max:255',
             'working_hours' => 'nullable|string|max:255',
             'experience' => 'nullable|string|max:255',
+            'education_level' => 'nullable|string|max:255',
+            'gender' => 'nullable|in:any,male,female',
             'deadline' => 'nullable|date|after_or_equal:today',
             'description' => 'required|string',
             'requirements' => 'nullable|string',

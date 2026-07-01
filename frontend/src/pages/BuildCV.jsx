@@ -666,7 +666,7 @@ function BuildCV() {
       `}</style>
 
       {/* Topbar Layer */}
-      <div className="no-print h-[76px] relative z-50">
+      <div className="no-print h-[76px] relative z-50" style={{ margin: '20px 48px 0' }}>
         <HomeNavbar />
       </div>
 
@@ -674,7 +674,7 @@ function BuildCV() {
       <div
         className="no-print border-b border-white/10 px-6 py-4 flex justify-between items-center z-40"
         style={{
-          marginBottom: "1rem",
+          margin: "20px 48px 0",
           background: "rgba(5, 8, 22, 0.4)",
           backdropFilter: "blur(12px)",
         }}

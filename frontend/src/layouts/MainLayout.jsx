@@ -36,7 +36,7 @@ function MainLayout({
       {/* Nút Góp ý Nổi */}
       <button
         onClick={() => setIsFeedbackOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-lg shadow-indigo-600/30 hover:bg-indigo-700 hover:scale-105 transition-all z-40 cursor-pointer"
+        className="fixed bottom-20 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-lg shadow-indigo-600/30 hover:bg-indigo-700 hover:scale-105 transition-all z-40 cursor-pointer"
         title="Gửi phản hồi / báo lỗi"
       >
         <MessageSquarePlus size={24} />

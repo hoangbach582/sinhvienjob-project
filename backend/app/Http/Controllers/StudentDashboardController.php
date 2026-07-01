@@ -13,20 +13,33 @@ class StudentDashboardController extends Controller
     {
         $user = $request->user();
 
+        // Lấy profile của sinh viên
+        $studentProfile = \App\Models\StudentProfile::where('user_id', $user->id)->first();
+
+        if (!$studentProfile) {
+            return response()->json([
+                'total_applications' => 0,
+                'accepted_applications' => 0,
+                'acceptance_rate' => 0,
+                'saved_jobs_count' => 0,
+                'recent_applications' => [],
+            ]);
+        }
+
         // Lấy danh sách ứng tuyển
-        $applications = Application::where('student_id', $user->id)->get();
+        $applications = Application::where('student_id', $studentProfile->id)->get();
         $totalApplications = $applications->count();
         $acceptedApplications = $applications->where('status', 'accepted')->count();
 
         // Lấy số lượng việc làm đã lưu
-        $savedJobsCount = SavedJob::where('student_id', $user->id)->count();
+        $savedJobsCount = SavedJob::where('student_id', $studentProfile->id)->count();
 
         // Tính tỷ lệ chấp nhận
         $acceptanceRate = $totalApplications > 0 ? round(($acceptedApplications / $totalApplications) * 100) : 0;
 
         // Lấy 5 ứng tuyển gần nhất
-        $recentApplications = Application::with('job.employer.company')
-            ->where('student_id', $user->id)
+        $recentApplications = Application::with('job.employer')
+            ->where('student_id', $studentProfile->id)
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();

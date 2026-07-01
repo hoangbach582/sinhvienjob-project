@@ -296,6 +296,8 @@ function JobDetail() {
       full_time: "Toàn thời gian",
       part_time: "Bán thời gian",
       internship: "Thực tập sinh",
+      remote: "Làm việc từ xa",
+      collaborator: "Cộng tác viên",
     };
     return types[type] || type;
   };
@@ -592,12 +594,13 @@ function JobDetail() {
                       onDrop={handleDrop}
                       className="p-8 rounded-xl text-center transition-all"
                       style={{
+                        margin: '1rem 0 0',
                         border: isDragging
                           ? "2px dashed rgba(130,63,235,0.6)"
-                          : "2px dashed rgba(255,255,255,0.15)",
+                          : "2px dashed rgba(255,255,255,0.2)",
                         background: isDragging
-                          ? "rgba(130,63,235,0.1)"
-                          : "rgba(255,255,255,0.03)",
+                          ? "rgba(130,63,235,0.05)"
+                          : "rgba(255,255,255,0.02)",
                       }}
                     >
                       {customCvFile ? (
@@ -632,6 +635,7 @@ function JobDetail() {
                           <label
                             className="cursor-pointer inline-block px-4 py-2 rounded-lg text-sm font-semibold text-brand-light"
                             style={{
+                              padding: '0.6rem', margin: '1rem',
                               background: "rgba(130,63,235,0.15)",
                               border: "1px solid rgba(130,63,235,0.3)",
                             }}

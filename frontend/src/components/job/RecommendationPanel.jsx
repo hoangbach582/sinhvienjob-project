@@ -132,12 +132,13 @@ function RecommendationPanel({ isOpen, onClose, searchHistory = [] }) {
               background: "linear-gradient(180deg, #0f1535 0%, #0d1230 100%)",
               borderLeft: "1px solid rgba(255,255,255,0.08)",
               boxShadow: "-20px 0 60px rgba(0,0,0,0.6)",
+              padding: "1rem",
             }}
           >
             {/* Header */}
             <div
               className="flex items-center justify-between px-5 py-4 border-b shrink-0"
-              style={{ borderColor: "rgba(255,255,255,0.08)" }}
+              style={{ borderColor: "rgba(255,255,255,0.08)", marginBottom: "0.8rem" }}
             >
               <div className="flex items-center gap-2.5">
                 <div
@@ -163,8 +164,8 @@ function RecommendationPanel({ isOpen, onClose, searchHistory = [] }) {
 
             {/* Mode Badge */}
             {mode && !loading && (
-              <div className="px-5 pt-4 shrink-0">
-                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium ${modeInfo.bg} ${modeInfo.color}`}>
+              <div className="px-5 pt-4 shrink-0" style={{ marginBottom: '0.8rem' }}>
+                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium ${modeInfo.bg} ${modeInfo.color}`} style={{ padding: '0.8rem' }}>
                   {modeInfo.icon}
                   {modeInfo.label}
                 </div>
@@ -231,6 +232,7 @@ function RecommendationPanel({ isOpen, onClose, searchHistory = [] }) {
                       style={{
                         background: "rgba(255,255,255,0.04)",
                         borderColor: "rgba(255,255,255,0.08)",
+                        padding: "0.8rem",
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.background = "rgba(130,63,235,0.1)";
@@ -242,7 +244,7 @@ function RecommendationPanel({ isOpen, onClose, searchHistory = [] }) {
                       }}
                     >
                       {/* Company logo + name */}
-                      <div className="flex items-start gap-3 mb-3">
+                      <div className="flex items-start gap-3 mb-3" style={{ marginBottom: '1rem' }}>
                         <div
                           className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 overflow-hidden"
                           style={{ background: "rgba(255,255,255,0.06)" }}
@@ -277,6 +279,7 @@ function RecommendationPanel({ isOpen, onClose, searchHistory = [] }) {
                       <div className="flex flex-wrap gap-2 mb-2">
                         <span
                           className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border ${getTypeBg(job.type)}`}
+                          style={{ padding: '0.4rem' }}
                         >
                           {getTypeLabel(job.type)}
                         </span>
@@ -309,7 +312,7 @@ function RecommendationPanel({ isOpen, onClose, searchHistory = [] }) {
                   to="/jobs?recommended=true"
                   onClick={onClose}
                   className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-white text-sm font-semibold no-underline transition-all hover:opacity-90"
-                  style={{ background: "linear-gradient(135deg, #823feb, #6366f1)" }}
+                  style={{ background: "linear-gradient(135deg, #823feb, #6366f1)", padding: "0.6rem" }}
                 >
                   <TrendingUp className="w-4 h-4" />
                   Xem tất cả việc làm phù hợp

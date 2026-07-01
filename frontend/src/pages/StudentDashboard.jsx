@@ -327,7 +327,7 @@ function StudentDashboard() {
                         }}
                       >
                         <span>
-                          {app.job?.employer?.company?.company_name ||
+                          {app.job?.employer?.company_name ||
                             "Công ty ẩn danh"}
                         </span>
                         <span style={{ fontSize: "10px" }}>•</span>

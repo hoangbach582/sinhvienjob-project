@@ -70,7 +70,7 @@ function JobCard({ job, navigate, formatSalary, translateType, getTypeBadgeStyle
               width: '48px',
               height: '48px',
               borderRadius: '14px',
-              background: '#f8fafc',
+              background: job.employer?.logo_url ? '#ffffff' : '#f8fafc',
               border: '1.5px solid #e2e8f0',
               display: 'flex',
               alignItems: 'center',
@@ -79,8 +79,25 @@ function JobCard({ job, navigate, formatSalary, translateType, getTypeBadgeStyle
               fontSize: '14px',
               color: '#475569',
               flexShrink: 0,
+              overflow: 'hidden'
             }}>
-            {job.employer?.company_name?.substring(0, 2).toUpperCase() || 'CT'}
+            {job.employer?.logo_url ? (
+              <img
+                src={
+                  job.employer.logo_url.startsWith("http")
+                    ? job.employer.logo_url
+                    : `http://127.0.0.1:8000${job.employer.logo_url}`
+                }
+                alt={job.employer?.company_name || 'Logo'}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(job.employer?.company_name || 'CT')}&background=random&color=fff&size=150`;
+                }}
+              />
+            ) : (
+              job.employer?.company_name?.substring(0, 2).toUpperCase() || 'CT'
+            )}
           </div>
           <div onClick={(e) => e.stopPropagation()}>
             <SaveButton jobId={job.id} size={18} />

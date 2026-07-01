@@ -115,7 +115,8 @@ class JobController extends Controller
         }
         
         // Trả về danh sách, sắp xếp việc mới nhất lên đầu
-        $jobs = $query->orderBy('created_at', 'desc')->paginate(6);
+        $perPage = $request->input('per_page', 4);
+        $jobs = $query->orderBy('created_at', 'desc')->paginate($perPage);
 
         // Kiểm tra xem student đã lưu job nào chưa và tính điểm gợi ý
         $user = auth('sanctum')->user();
@@ -349,7 +350,7 @@ class JobController extends Controller
             ->get()->map(function($app) {
                 $studentProfile = StudentProfile::find($app->student_id);
                 $user = \App\Models\User::find($studentProfile->user_id);
-                $app->student_name = $user->name;
+                $app->student_name = $studentProfile->full_name ?? $user->name;
                 $app->student_email = $user->email;
                 return $app;
             });
@@ -362,7 +363,8 @@ class JobController extends Controller
         return response()->json([
             'internship' => 'Thực tập sinh (Internship)',
             'part_time' => 'Bán thời gian (Part-time)',
-            'full_time' => 'Toàn thời gian (Full-time)'
+            'full_time' => 'Toàn thời gian (Full-time)',
+            'collaborator' => 'Cộng tác viên (CTV)'
         ]);
     }
 

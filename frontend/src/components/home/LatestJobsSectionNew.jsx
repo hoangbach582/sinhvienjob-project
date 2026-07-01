@@ -39,9 +39,27 @@ function JobCard({ job, navigate, formatSalary, translateType }) {
       }}
     >
       <div className="mb-4 flex items-start justify-between">
-        <span className="home-job-logo flex items-center justify-center rounded-xl bg-brand/10 text-sm font-bold text-brand">
-          {companyName.slice(0, 2).toUpperCase()}
-        </span>
+        <div 
+          className={`home-job-logo flex items-center justify-center rounded-xl overflow-hidden shrink-0 ${job.employer?.logo_url ? 'bg-white' : 'bg-brand/10 text-brand'}`}
+        >
+          {job.employer?.logo_url ? (
+            <img
+              src={
+                job.employer.logo_url.startsWith("http")
+                  ? job.employer.logo_url
+                  : `http://127.0.0.1:8000${job.employer.logo_url}`
+              }
+              alt={companyName}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(companyName || "CT")}&background=random&color=fff&size=150`;
+              }}
+            />
+          ) : (
+            <span className="text-sm font-bold">{companyName.slice(0, 2).toUpperCase()}</span>
+          )}
+        </div>
         <div onClick={(event) => event.stopPropagation()}>
           <SaveButton jobId={job.id} size={20} variant="minimal" />
         </div>

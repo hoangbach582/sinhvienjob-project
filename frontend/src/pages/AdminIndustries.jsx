@@ -47,7 +47,7 @@ const AdminIndustries = () => {
   const fetchIndustries = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/admin/industries`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:8000/api"}/admin/industries`, {
         params: {
           search,
           status: statusFilter,
@@ -104,14 +104,14 @@ const AdminIndustries = () => {
     try {
       if (modalMode === 'add') {
         await axios.post(
-          `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/admin/industries`,
+          `${import.meta.env.VITE_API_URL || "http://localhost:8000/api"}/admin/industries`,
           formData,
           { headers: { Authorization: `Bearer ${localStorage.getItem('token') || localStorage.getItem('access_token')}` } }
         );
         toast.success('Thêm ngành nghề thành công');
       } else {
         await axios.put(
-          `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/admin/industries/${selectedIndustry.id}`,
+          `${import.meta.env.VITE_API_URL || "http://localhost:8000/api"}/admin/industries/${selectedIndustry.id}`,
           formData,
           { headers: { Authorization: `Bearer ${localStorage.getItem('token') || localStorage.getItem('access_token')}` } }
         );
@@ -129,7 +129,7 @@ const AdminIndustries = () => {
   const toggleStatus = async (id) => {
     try {
       await axios.patch(
-        `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/admin/industries/${id}/toggle`,
+        `${import.meta.env.VITE_API_URL || "http://localhost:8000/api"}/admin/industries/${id}/toggle`,
         {},
         { headers: { Authorization: `Bearer ${localStorage.getItem('token') || localStorage.getItem('access_token')}` } }
       );
@@ -148,7 +148,7 @@ const AdminIndustries = () => {
   const handleDelete = async () => {
     try {
       await axios.delete(
-        `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/admin/industries/${industryToDelete.id}`,
+        `${import.meta.env.VITE_API_URL || "http://localhost:8000/api"}/admin/industries/${industryToDelete.id}`,
         { headers: { Authorization: `Bearer ${localStorage.getItem('token') || localStorage.getItem('access_token')}` } }
       );
       toast.success('Đã xóa ngành nghề');

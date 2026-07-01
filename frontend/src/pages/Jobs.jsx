@@ -76,7 +76,7 @@ function Jobs() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [sortBy, setSortBy] = useState("newest");
-  const [viewMode, setViewMode] = useState("list");
+  const [viewMode, setViewMode] = useState("grid");
 
   // Hover preview state
   const [hoveredJob, setHoveredJob] = useState(null);
@@ -121,6 +121,7 @@ function Jobs() {
       if (searchParams.get("experience")) params.append("experience", searchParams.get("experience"));
       if (searchParams.get("recommended") === "true") params.append("recommended", "true");
       params.append("page", currentPage);
+      params.append("per_page", 4);
 
       const token = localStorage.getItem("token");
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
@@ -228,6 +229,8 @@ function Jobs() {
       full_time: "Toàn thời gian",
       part_time: "Bán thời gian",
       internship: "Thực tập sinh",
+      remote: "Làm việc từ xa",
+      collaborator: "Cộng tác viên",
     };
     return types[jobType] || jobType;
   };
@@ -681,6 +684,7 @@ function Jobs() {
                   <button
                     onClick={() => setShowRecommendations(true)}
                     className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm border cursor-pointer transition-all bg-transparent text-white/60 border-white/10 hover:text-violet-300 hover:bg-violet-500/10 hover:border-violet-500/30"
+                    style={{ padding: '0.7rem' }}
                     title="Xem việc làm được gợi ý riêng cho bạn"
                   >
                     <Sparkles className="w-4 h-4" />
@@ -875,16 +879,31 @@ function Jobs() {
                         className={`flex justify-between items-start ${viewMode === "grid" ? "w-full mb-4" : "shrink-0"}`}
                       >
                         <div
-                          className="w-14 h-14 rounded-xl flex items-center justify-center text-base font-bold shrink-0"
+                          className="w-14 h-14 rounded-xl flex items-center justify-center text-base font-bold shrink-0 overflow-hidden"
                           style={{
-                            background:
-                              "linear-gradient(135deg, #823feb, #6366f1)",
+                            background: job.employer?.logo_url ? "white" : "linear-gradient(135deg, #823feb, #6366f1)",
                             color: "white",
                           }}
                         >
-                          {job.employer?.company_name
-                            ?.substring(0, 2)
-                            .toUpperCase() || "CT"}
+                          {job.employer?.logo_url ? (
+                            <img
+                              src={
+                                job.employer.logo_url.startsWith("http")
+                                  ? job.employer.logo_url
+                                  : `http://127.0.0.1:8000${job.employer.logo_url}`
+                              }
+                              alt={job.employer?.company_name || "Logo"}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(job.employer?.company_name || "CT")}&background=random&color=fff&size=150`;
+                              }}
+                            />
+                          ) : (
+                            job.employer?.company_name
+                              ?.substring(0, 2)
+                              .toUpperCase() || "CT"
+                          )}
                         </div>
                         {viewMode === "grid" && (
                           <div className="flex items-center gap-2">

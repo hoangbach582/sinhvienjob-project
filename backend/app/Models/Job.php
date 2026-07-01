@@ -30,6 +30,7 @@ class Job extends Model
         'specific_address',
         'working_hours',
         'experience',
+        'education_level',
         'salary_min',
         'salary_max',
         'description',
@@ -39,7 +40,8 @@ class Job extends Model
         'status',
         'rejected_reason',
         'reviewed_at',
-        'reviewed_by'
+        'reviewed_by',
+        'gender'
     ];
 
     // Rất quan trọng: Báo cho Laravel biết Job này thuộc về Employer nào

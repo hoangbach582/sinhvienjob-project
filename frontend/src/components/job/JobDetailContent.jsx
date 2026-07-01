@@ -13,6 +13,7 @@ import {
   Eye,
   UserCheck,
   Briefcase,
+  BookOpen,
 } from "lucide-react";
 
 function JobDetailContent({ job }) {
@@ -219,6 +220,16 @@ function JobDetailContent({ job }) {
                     label: "Kinh nghiệm",
                     value: job.experience || "Không yêu cầu",
                     icon: <Clock className="w-4 h-4" />,
+                  },
+                  {
+                    label: "Trình độ học vấn",
+                    value: job.education_level || "Không yêu cầu",
+                    icon: <BookOpen className="w-4 h-4" />,
+                  },
+                  {
+                    label: "Yêu cầu giới tính",
+                    value: job.gender === 'male' ? 'Nam' : (job.gender === 'female' ? 'Nữ' : 'Không yêu cầu'),
+                    icon: <Users className="w-4 h-4" />,
                   },
                   {
                     label: "Số lượng tuyển",

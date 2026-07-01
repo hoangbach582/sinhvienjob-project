@@ -85,7 +85,7 @@ function Home() {
   };
 
   const translateType = (type) => {
-    const types = { 'full_time': 'Toàn thời gian', 'part_time': 'Bán thời gian', 'internship': 'Thực tập sinh' };
+    const types = { 'full_time': 'Toàn thời gian', 'part_time': 'Bán thời gian', 'internship': 'Thực tập sinh', 'remote': 'Làm việc từ xa', 'collaborator': 'Cộng tác viên' };
     return types[type] || type;
   };
 
