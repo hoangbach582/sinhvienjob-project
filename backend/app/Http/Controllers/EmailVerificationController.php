@@ -57,7 +57,12 @@ class EmailVerificationController extends Controller
         ]);
 
         // Send email
-        Mail::to($user->email)->send(new EmailVerificationMail($token, $user->email));
+        try {
+            Mail::to($user->email)->send(new EmailVerificationMail($token, $user->email));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Lỗi gửi email xác minh: ' . $e->getMessage());
+            return response()->json(['message' => 'Lỗi kết nối email. Vui lòng cấu hình SMTP trên Render.'], 500);
+        }
 
         return response()->json(['message' => 'Email xác minh đã được gửi. Vui lòng kiểm tra hộp thư của bạn.']);
     }
