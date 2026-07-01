@@ -55,7 +55,7 @@ function StudentSettings() {
   useEffect(() => {
     const fetchAccount = async () => {
       try {
-        const res = await fetch((${API_BASE}) + "/user", {
+        const res = await fetch((import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api') + "/user", {
           headers: {
             Authorization: `Bearer ${getToken()}`,
             Accept: "application/json",
@@ -101,7 +101,7 @@ function StudentSettings() {
     setPasswordSaving(true);
     try {
       const res = await fetch(
-        (${API_BASE}) + "/account/change-password",
+        (import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api') + "/account/change-password",
         {
           method: "PUT",
           headers: {
@@ -138,7 +138,7 @@ function StudentSettings() {
     if (deleteConfirm !== "XOA TAI KHOAN") return;
     setDeleting(true);
     try {
-      const res = await fetch((${API_BASE}) + "/account", {
+      const res = await fetch((import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api') + "/account", {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${getToken()}`,

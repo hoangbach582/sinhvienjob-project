@@ -47,7 +47,7 @@ function JobDetail() {
 
         if (token) headers["Authorization"] = `Bearer ${token}`;
 
-        const response = await fetch(`${${API_BASE}}/jobs/${id}`, {
+        const response = await fetch(`${(import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api')}/jobs/${id}`, {
           method: "GET",
           headers: headers,
         });
@@ -115,7 +115,7 @@ function JobDetail() {
 
     try {
       const response = await fetch(
-        `${${API_BASE}}/jobs/${id}/save`,
+        `${(import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api')}/jobs/${id}/save`,
         {
           method: "POST",
           headers: {
@@ -245,7 +245,7 @@ function JobDetail() {
       const token =
         localStorage.getItem("access_token") || localStorage.getItem("token");
       const response = await fetch(
-        `${${API_BASE}}/jobs/${id}/apply`,
+        `${(import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api')}/jobs/${id}/apply`,
         {
           method: "POST",
           headers: {

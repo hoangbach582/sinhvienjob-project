@@ -39,7 +39,7 @@ function Login() {
     setLoading(true);
 
     try {
-      const response = await fetch((${API_BASE}) + "/login", {
+      const response = await fetch((import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api') + "/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -55,7 +55,7 @@ function Login() {
         if (data.user.role === "student") {
           try {
             const profileRes = await fetch(
-              (${API_BASE}) + "/profile",
+              (import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api') + "/profile",
               {
                 headers: {
                   Authorization: `Bearer ${data.access_token}`,
@@ -103,7 +103,7 @@ function Login() {
   const handleGoogleLogin = async () => {
     try {
       const response = await fetch(
-        (${API_BASE}) + "/auth/google/url",
+        (import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api') + "/auth/google/url",
         {
           headers: { Accept: "application/json" },
         },

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Cấu hình axios (thường đã có file riêng như src/utils/axios.js, nếu chưa thì tạo ở đây tạm)
 const api = axios.create({
-  baseURL: (${API_BASE}) + '',
+  baseURL: (import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api') + '',
   headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'

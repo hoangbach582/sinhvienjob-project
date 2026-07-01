@@ -24,7 +24,7 @@ function VerifyEmail() {
 
     const verify = async () => {
       try {
-        const response = await fetch((${API_BASE}) + '/email/verification/verify', {
+        const response = await fetch((import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api') + '/email/verification/verify', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -39,7 +39,7 @@ function EmployerLogin() {
     setLoading(true);
 
     try {
-      const response = await fetch((${API_BASE}) + "/login", {
+      const response = await fetch((import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api') + "/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -75,7 +75,7 @@ function EmployerLogin() {
   const handleGoogleLogin = async () => {
     try {
       const response = await fetch(
-        (${API_BASE}) + "/auth/google/url",
+        (import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api') + "/auth/google/url",
         {
           headers: { Accept: "application/json" },
         },

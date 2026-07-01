@@ -25,7 +25,7 @@ function EmailVerificationNotice() {
 
     try {
       const response = await fetch(
-        (${API_BASE}) + "/email/verification/resend",
+        (import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api') + "/email/verification/resend",
         {
           method: "POST",
           headers: {

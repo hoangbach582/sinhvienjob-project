@@ -26,7 +26,7 @@ function GoogleCallback() {
 
   const handleGoogleCallback = async (code) => {
     try {
-      const response = await fetch((${API_BASE}) + '/auth/google/callback', {
+      const response = await fetch((import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api') + '/auth/google/callback', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

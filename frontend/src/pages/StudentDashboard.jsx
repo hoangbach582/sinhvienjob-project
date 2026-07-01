@@ -15,7 +15,7 @@ function StudentDashboard() {
         const token =
           localStorage.getItem("access_token") || localStorage.getItem("token");
         const response = await fetch(
-          (${API_BASE}) + "/dashboard/student/stats",
+          (import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api') + "/dashboard/student/stats",
           {
             headers: {
               Authorization: `Bearer ${token}`,

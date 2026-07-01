@@ -51,7 +51,7 @@ function Companies() {
     const fetchCompanies = async () => {
       setLoading(true);
       try {
-        const response = await fetch((${API_BASE}) + "/employers", {
+        const response = await fetch((import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api') + "/employers", {
           headers: { Accept: "application/json" },
         });
 

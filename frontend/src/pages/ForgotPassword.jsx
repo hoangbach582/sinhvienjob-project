@@ -24,7 +24,7 @@ function ForgotPassword() {
 
     try {
       const response = await fetch(
-        (${API_BASE}) + "/forgot-password",
+        (import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api') + "/forgot-password",
         {
           method: "POST",
           headers: {

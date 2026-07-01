@@ -90,7 +90,7 @@ function CompanyDetail() {
       setLoading(true);
       try {
         const response = await fetch(
-          `${${API_BASE}}/employers/${id}`,
+          `${(import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api')}/employers/${id}`,
           {
             headers: { Accept: "application/json" },
           },
@@ -101,7 +101,7 @@ function CompanyDetail() {
           // Fetch reviews
           try {
             const reviewsRes = await fetch(
-              `${${API_BASE}}/employers/${id}/reviews`,
+              `${(import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api')}/employers/${id}/reviews`,
               {
                 headers: { Accept: "application/json" },
               },
@@ -122,7 +122,7 @@ function CompanyDetail() {
             if (similar.length < 8) {
               try {
                 const allRes = await fetch(
-                  `${${API_BASE}}/employers`,
+                  `${(import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api')}/employers`,
                   {
                     headers: { Accept: "application/json" },
                   },
@@ -301,7 +301,7 @@ function CompanyDetail() {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `${${API_BASE}}/employers/${id}/reviews`,
+        `${(import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api')}/employers/${id}/reviews`,
         {
           method: "POST",
           headers: {
@@ -320,7 +320,7 @@ function CompanyDetail() {
         setReviewForm({ rating: 5, review: "" });
         // Refresh reviews
         const reviewsRes = await fetch(
-          `${${API_BASE}}/employers/${id}/reviews`,
+          `${(import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api')}/employers/${id}/reviews`,
           {
             headers: { Accept: "application/json" },
           },

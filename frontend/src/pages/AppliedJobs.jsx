@@ -22,7 +22,7 @@ function AppliedJobs() {
 
     try {
       const response = await fetch(
-        `${${API_BASE}}/applications/me?page=${page}`,
+        `${(import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api')}/applications/me?page=${page}`,
         {
           method: "GET",
           headers: {

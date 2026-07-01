@@ -32,7 +32,7 @@ function StudentProfile() {
       try {
         const token =
           localStorage.getItem("access_token") || localStorage.getItem("token");
-        const response = await fetch((${API_BASE}) + "/profile", {
+        const response = await fetch((import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api') + "/profile", {
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: "application/json",
@@ -135,7 +135,7 @@ function StudentProfile() {
     try {
       const token =
         localStorage.getItem("access_token") || localStorage.getItem("token");
-      const response = await fetch((${API_BASE}) + "/profile", {
+      const response = await fetch((import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api') + "/profile", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

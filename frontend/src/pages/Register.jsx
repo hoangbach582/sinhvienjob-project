@@ -47,7 +47,7 @@ function Register() {
     if (role === "employer") payload.company_name = companyName;
 
     try {
-      const response = await fetch((${API_BASE}) + "/register", {
+      const response = await fetch((import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api') + "/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

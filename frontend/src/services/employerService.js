@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Sử dụng đúng baseURL của Laravel Backend
 const api = axios.create({
-  baseURL: (${API_BASE}) + '',
+  baseURL: (import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api') + '',
   headers: {
     'Accept': 'application/json',
   }
