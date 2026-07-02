@@ -1,6 +1,11 @@
 import React from 'react';
+// import các component từ thư viện react-router-dom dùng để tạo Routing (Định tuyến)
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast'; // Import Toaster
+import { Toaster } from 'react-hot-toast'; // Thư viện hiển thị thông báo (toast popup) góc màn hình
+
+// =====================================
+// IMPORT CÁC TRANG (PAGES) CỦA SINH VIÊN
+// =====================================
 import Home from './pages/Home';
 import Login from './pages/Login'; 
 import Register from './pages/Register'; 
@@ -19,23 +24,28 @@ import StudentSettings from './pages/StudentSettings';
 import GoogleCallback from './pages/GoogleCallback'; 
 import Notifications from './pages/Notifications';
 import StudentDashboard from './pages/StudentDashboard';
+import Companies from './pages/Companies';
+import CompanyDetail from './pages/CompanyDetail';
 
-
+// =====================================
+// IMPORT CÁC TRANG CỦA NHÀ TUYỂN DỤNG
+// =====================================
 import EmployerRegister from './pages/EmployerRegister'; 
 import EmployerLogin from './pages/EmployerLogin'; 
 import EmployerApplicants from './pages/EmployerApplicants'; 
 import EmployerProfile from './pages/EmployerProfile'; 
 import EmployerSettings from './pages/EmployerSettings'; 
 import EmployerNotifications from './pages/EmployerNotifications';
-import Companies from './pages/Companies';
-import CompanyDetail from './pages/CompanyDetail';
-
-import EmployerLayout from './layouts/EmployerLayout';
+import EmployerLayout from './layouts/EmployerLayout'; // Layout riêng cho Nhà tuyển dụng
 import EmployerDashboard from './pages/EmployerDashboard'; 
 import PostJob from './pages/PostJob'; 
 import PostedJobs from './pages/PostedJobs'; 
 import EditJob from './pages/EditJob'; 
-import AdminLayout from './layouts/AdminLayout';
+
+// =====================================
+// IMPORT CÁC TRANG CỦA ADMIN
+// =====================================
+import AdminLayout from './layouts/AdminLayout'; // Layout riêng cho Admin
 import AdminDashboard from './pages/AdminDashboard'; 
 import AdminAccounts from './pages/AdminAccounts'; 
 import AdminJobs from './pages/AdminJobs'; 
@@ -44,19 +54,29 @@ import AdminFeedbacks from './pages/AdminFeedbacks';
 import AdminActivityLog from './pages/AdminActivityLog';
 import AdminLogin from './pages/AdminLogin'; 
 
+// =====================================
+// IMPORT CÁC CONTEXT PROVIDER
+// =====================================
+// Đây là nơi quản lý state toàn cục (Global State) thay vì dùng Redux
 import { AuthProvider } from './context/AuthContext'; 
 import { SavedJobsProvider } from './context/SavedJobsContext';
 import { NotificationProvider } from './context/NotificationContext';
 
 function App() {
   return (
-    <AuthProvider>  
-      <NotificationProvider>
-        <SavedJobsProvider>
-          <BrowserRouter>
-          <Toaster position="top-center" reverseOrder={false} /> {/* Thêm Toaster ở đây */}
+    // Bọc toàn bộ App bằng các Provider để các trang bên trong đều có thể xài được state của chúng
+    <AuthProvider>  {/* Quản lý đăng nhập/đăng xuất */}
+      <NotificationProvider> {/* Quản lý thông báo real-time */}
+        <SavedJobsProvider> {/* Quản lý danh sách việc làm đã lưu */}
+          <BrowserRouter> {/* Bọc hệ thống Router */}
+          {/* Component cấu hình cho các thông báo Toast */}
+          <Toaster position="top-center" reverseOrder={false} /> 
+          
+          {/* Chứa danh sách các Route (đường dẫn) */}
           <Routes>
-            {/* Phân hệ Ứng viên */}
+            {/* ============================================================== */}
+            {/* PHÂN HỆ SINH VIÊN (Dùng chung Layout mặc định của từng trang)  */}
+            {/* ============================================================== */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -64,9 +84,9 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/verify-email-notice" element={<EmailVerificationNotice />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
-            <Route path="/auth/google/callback" element={<GoogleCallback />} />
+            <Route path="/auth/google/callback" element={<GoogleCallback />} /> {/* Route nhận callback từ Google */}
             <Route path="/jobs" element={<Jobs />} />
-            <Route path="/job/:id" element={<JobDetail />} />
+            <Route path="/job/:id" element={<JobDetail />} /> {/* :id là tham số động */}
             <Route path="/profile" element={<StudentProfile />} />
             <Route path="/job/:id/apply" element={<ApplyJob />} />
             <Route path="/applied-jobs" element={<AppliedJobs />} />
@@ -78,9 +98,14 @@ function App() {
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/dashboard" element={<StudentDashboard />} />
 
-            {/* Phân hệ Nhà tuyển dụng */}
+            {/* ============================================================== */}
+            {/* PHÂN HỆ NHÀ TUYỂN DỤNG (Có Layout bọc ngoài)                   */}
+            {/* ============================================================== */}
+            {/* 2 trang này không cần thanh điều hướng của Employer nên để ở ngoài */}
             <Route path="/employer/register" element={<EmployerRegister />} />
             <Route path="/employer/login" element={<EmployerLogin />} />
+            
+            {/* Các trang bắt đầu bằng /employer sẽ dùng EmployerLayout (chứa Sidebar + Topbar riêng) */}
             <Route path="/employer" element={<EmployerLayout />}>
               <Route path="dashboard" element={<EmployerDashboard />} /> 
               <Route path="post-job" element={<PostJob />} />
@@ -92,9 +117,12 @@ function App() {
               <Route path="settings" element={<EmployerSettings />} />
             </Route>
 
-            {/* Phân hệ Admin */}
+            {/* ============================================================== */}
+            {/* PHÂN HỆ QUẢN TRỊ VIÊN - ADMIN (Có Layout bọc ngoài)            */}
+            {/* ============================================================== */}
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminLayout />}>
+              {/* index route: Tự động chuyển hướng từ /admin sang /admin/dashboard */}
               <Route index element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="dashboard" element={<AdminDashboard />} /> 
               <Route path="accounts" element={<AdminAccounts />} />

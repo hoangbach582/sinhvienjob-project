@@ -1,21 +1,27 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
+// Tạo Context để quản lý trạng thái Đăng nhập (Auth) trên toàn bộ ứng dụng React
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  // Các state lưu trữ thông tin người dùng đang đăng nhập
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null);
-  const [userName, setUserName] = useState('');
-  const [userRole, setUserRole] = useState('');
-  const [userAvatar, setUserAvatar] = useState('');
-  const [token, setToken] = useState(null);
+  const [user, setUser] = useState(null); // Lưu toàn bộ object user
+  const [userName, setUserName] = useState(''); // Tên hiển thị trên Topbar
+  const [userRole, setUserRole] = useState(''); // Quyền (student/employer/admin)
+  const [userAvatar, setUserAvatar] = useState(''); // Ảnh đại diện
+  const [token, setToken] = useState(null); // Token dùng để gọi API Backend
 
-  // 1. KHÔI PHỤC TRẠNG THÁI (Đọc được cả chuẩn cũ lẫn chuẩn mới)
+  /**
+   * 1. KHÔI PHỤC TRẠNG THÁI KHI REFRESH TRANG (useEffect chạy 1 lần khi app load)
+   * Mục đích: Lấy lại thông tin đăng nhập từ Local Storage để người dùng không bị văng ra khi f5 (refresh) trình duyệt.
+   */
   useEffect(() => {
+    // Đọc token từ Local Storage
     const rawToken = localStorage.getItem('access_token') || localStorage.getItem('token');
     const localToken = (rawToken && rawToken !== 'null' && rawToken !== 'undefined') ? rawToken : null;
     
-    // Thử lấy object user (Cách mới)
+    // Đọc Object User từ Local Storage (Chuẩn mới)
     let userData = null;
     try {
         const userStr = localStorage.getItem('user');
@@ -24,7 +30,7 @@ export const AuthProvider = ({ children }) => {
         }
     } catch (e) {}
 
-    // Lấy thông tin (Ưu tiên các biến rời rạc của cách cũ, nếu không có thì lấy từ object)
+    // Đọc các biến rời rạc từ Local Storage (Chuẩn cũ dự phòng)
     const rawRole = localStorage.getItem('role');
     const role = (rawRole && rawRole !== 'null' && rawRole !== 'undefined') ? rawRole : (userData ? userData.role : '');
     
@@ -34,7 +40,7 @@ export const AuthProvider = ({ children }) => {
     const rawAvatar = localStorage.getItem('avatar');
     const avatar = (rawAvatar && rawAvatar !== 'null' && rawAvatar !== 'undefined') ? rawAvatar : (userData ? userData.avatar : '');
 
-    // Cần có đủ token và role thì mới coi là đăng nhập hợp lệ
+    // Kiểm tra tính hợp lệ: Phải có CẢ Token VÀ Role thì mới coi là đã đăng nhập
     if (localToken && role) {
       setIsLoggedIn(true);
       setUser(userData || null);
@@ -43,7 +49,7 @@ export const AuthProvider = ({ children }) => {
       setUserAvatar(avatar || '');
       setToken(localToken);
     } else {
-      // Dọn dẹp local storage nếu trạng thái không hợp lệ (corrupted data)
+      // Nếu dữ liệu bị lỗi hoặc thiếu (Corrupted data), dọn dẹp sạch sẽ để tránh lỗi UI
       localStorage.removeItem('access_token');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
@@ -60,22 +66,27 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // 2. HÀM LOGIN THÔNG MINH (Tự động thích nghi với Login.jsx của bạn)
+  /**
+   * 2. HÀM ĐĂNG NHẬP (Lưu dữ liệu vào Context & Local Storage)
+   * Mục đích: Được gọi từ trang Login.jsx sau khi nhận phản hồi thành công từ Backend.
+   * Hỗ trợ 2 kiểu tham số để tương thích với các đoạn code cũ và mới.
+   */
   const login = (token, param2, param3, param4) => {
+    // Lưu Token vào Local Storage
     localStorage.setItem('access_token', token);
-    localStorage.setItem('token', token); // Lưu cả 2 phòng hờ
+    localStorage.setItem('token', token); // Lưu trùng 2 tên phòng trường hợp file cũ gọi tên khác
     
     let role = '', name = '', avatar = '';
     let userObj = {};
 
-    // Nếu truyền vào một Object (token, user)
+    // Xử lý tham số: Nếu param2 là một Object (Kiểu mới)
     if (typeof param2 === 'object' && param2 !== null) {
         userObj = param2;
         role = userObj.role || '';
         name = userObj.name || userObj.full_name || '';
         avatar = userObj.avatar || '';
     } 
-    // Nếu truyền vào các biến rời rạc (token, role, name, avatar)
+    // Xử lý tham số: Nếu param2, param3 là các chuỗi rời rạc (Kiểu cũ)
     else {
         role = param2 || '';
         name = param3 || '';
@@ -83,12 +94,13 @@ export const AuthProvider = ({ children }) => {
         userObj = { role, name, avatar };
     }
 
-    // LƯU ĐỒNG THỜI CẢ 2 KIỂU VÀO TRÌNH DUYỆT
+    // Lưu dữ liệu vào Local Storage để giữ trạng thái sau khi refresh
     localStorage.setItem('user', JSON.stringify(userObj));
     localStorage.setItem('role', role);
     localStorage.setItem('name', name);
     if (avatar) localStorage.setItem('avatar', avatar);
 
+    // Cập nhật State trong Context để UI render lại (ví dụ đổi nút Đăng nhập thành Avatar)
     setIsLoggedIn(true);
     setUser(userObj);
     setUserRole(role);
@@ -97,7 +109,10 @@ export const AuthProvider = ({ children }) => {
     setToken(token);
   };
 
-  // 3. ĐĂNG XUẤT (Dọn sạch sẽ mọi loại key)
+  /**
+   * 3. HÀM ĐĂNG XUẤT (Xóa dữ liệu)
+   * Mục đích: Xóa mọi thông tin liên quan đến user trong hệ thống và đưa về trạng thái Guest.
+   */
   const logout = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('token');
@@ -106,6 +121,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('name');
     localStorage.removeItem('avatar');
     
+    // Cập nhật lại State về rỗng
     setIsLoggedIn(false);
     setUser(null);
     setUserName('');
@@ -114,29 +130,35 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
   };
 
-  // 4. CẬP NHẬT TOPBAR (VÀ LOCALSTORAGE) TỨC THÌ TỪ TRANG PROFILE
+  /**
+   * 4. HÀM CẬP NHẬT THÔNG TIN NGƯỜI DÙNG (Real-time update)
+   * Mục đích: Khi người dùng đổi Tên hoặc Avatar ở trang Profile, 
+   * Topbar phải lập tức thay đổi mà không cần tải lại trang.
+   */
   const updateUser = (updatedInfo) => {
-    // Cập nhật key rời rạc
+    // Cập nhật các biến rời rạc
     if (updatedInfo.name || updatedInfo.full_name) {
         const newName = updatedInfo.name || updatedInfo.full_name;
-        localStorage.setItem('name', newName);
-        setUserName(newName);
+        localStorage.setItem('name', newName); // Lưu xuống trình duyệt
+        setUserName(newName); // Render lại UI ngay lập tức
     }
     if (updatedInfo.avatar !== undefined) {
         localStorage.setItem('avatar', updatedInfo.avatar);
         setUserAvatar(updatedInfo.avatar);
     }
 
-    // Cập nhật key object
+    // Cập nhật Object JSON
     let currentUser = {};
     try {
         currentUser = JSON.parse(localStorage.getItem('user')) || {};
     } catch (e) {}
     
+    // Gộp dữ liệu cũ và mới
     const newUser = { ...currentUser, ...updatedInfo };
     localStorage.setItem('user', JSON.stringify(newUser));
   };
 
+  // Trả về Provider bọc các component con, cung cấp cho chúng các State và Function
   return (
     <AuthContext.Provider value={{ isLoggedIn, user, userName, userRole, userAvatar, token, login, logout, updateUser }}>
       {children}
@@ -144,4 +166,5 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
+// Custom Hook: Giúp các component khác gọi context này ngắn gọn hơn bằng cách dùng `useAuth()`
 export const useAuth = () => useContext(AuthContext);

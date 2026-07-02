@@ -12,39 +12,45 @@ import { JobDetailSimilar } from "../components/job/JobDetailSections";
 import { toast } from "react-hot-toast";
 
 function JobDetail() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { isLoggedIn, userRole } = useAuth();
+  const { id } = useParams(); // Lấy ID công việc từ trên URL (VD: /job/123 -> id = 123)
+  const navigate = useNavigate(); // Hook chuyển trang
+  const location = useLocation(); // Lấy thông tin URL hiện tại (để đọc query params)
+  const { isLoggedIn, userRole } = useAuth(); // Lấy trạng thái đăng nhập từ Global Context
 
-  const [job, setJob] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [isApplying, setIsApplying] = useState(false);
-  const [hasApplied, setHasApplied] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  // --- STATE QUẢN LÝ THÔNG TIN CÔNG VIỆC ---
+  const [job, setJob] = useState(null); // Lưu trữ dữ liệu chi tiết công việc
+  const [loading, setLoading] = useState(true); // Trạng thái màn hình loading (Spinner)
+  const [isApplying, setIsApplying] = useState(false); // Trạng thái lúc đang bấm "Nộp CV" (ngăn double-click)
+  const [hasApplied, setHasApplied] = useState(false); // Xác định xem người dùng đã ứng tuyển job này chưa
+  const [isSaved, setIsSaved] = useState(false); // Xác định xem người dùng đã lưu job này chưa
 
-  // --- STATE DÀNH RIÊNG CHO MODAL ỨNG TUYỂN ---
-  const [showApplyModal, setShowApplyModal] = useState(false);
-  const [coverLetter, setCoverLetter] = useState("");
-  const [loginPromptParams, setLoginPromptParams] = useState({ show: false, message: "" });
+  // --- STATE DÀNH RIÊNG CHO MODAL (Popup) ỨNG TUYỂN VÀ YÊU CẦU ĐĂNG NHẬP ---
+  const [showApplyModal, setShowApplyModal] = useState(false); // Hiển thị / Ẩn modal nộp CV
+  const [coverLetter, setCoverLetter] = useState(""); // Nội dung thư ngỏ (Cover letter)
+  const [loginPromptParams, setLoginPromptParams] = useState({ show: false, message: "" }); // Modal báo cần đăng nhập
 
-  // Các state mới cho tính năng Upload nâng cao
-  const [cvOption, setCvOption] = useState("profile"); // 'profile' hoặc 'upload'
-  const [customCvFile, setCustomCvFile] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
+  // --- STATE CHO TÍNH NĂNG UPLOAD CV NÂNG CAO ---
+  const [cvOption, setCvOption] = useState("profile"); // Người dùng chọn dùng CV có sẵn ('profile') hay tải CV mới ('upload')
+  const [customCvFile, setCustomCvFile] = useState(null); // Chứa file CV mà người dùng vừa tải lên
+  const [isDragging, setIsDragging] = useState(false); // Trạng thái UX khi người dùng kéo thả file vào ô upload
 
-  const [applyMessage, setApplyMessage] = useState({ text: "", type: "" });
+  const [applyMessage, setApplyMessage] = useState({ text: "", type: "" }); // Thông báo kết quả sau khi ấn Nộp CV
 
+  /**
+   * USE-EFFECT: TẢI CHI TIẾT CÔNG VIỆC KHI MỞ TRANG
+   * Chạy tự động mỗi khi ID trên URL thay đổi.
+   */
   useEffect(() => {
     const fetchJobDetail = async () => {
       try {
-        const token =
-          localStorage.getItem("access_token") || localStorage.getItem("token");
+        const token = localStorage.getItem("access_token") || localStorage.getItem("token");
         const headers = {
           Accept: "application/json",
           "Content-Type": "application/json",
         };
 
+        // Nếu đã đăng nhập, đính kèm token để Backend biết user là ai
+        // Mục đích: Trả về trường `has_applied` và `is_saved` (biết user đã nộp hay lưu chưa)
         if (token) headers["Authorization"] = `Bearer ${token}`;
 
         const response = await fetch(`${(import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api')}/jobs/${id}`, {
@@ -54,7 +60,7 @@ function JobDetail() {
 
         if (response.ok) {
           const data = await response.json();
-          setJob(data);
+          setJob(data); // Cập nhật dữ liệu ra màn hình
           if (token) {
             setHasApplied(data.has_applied);
             setIsSaved(data.is_saved);
@@ -66,17 +72,21 @@ function JobDetail() {
       } catch (err) {
         console.error("Lỗi khi tải chi tiết việc làm:", err);
       } finally {
-        setLoading(false);
+        setLoading(false); // Dừng hiệu ứng loading
       }
     };
 
     fetchJobDetail();
   }, [id]);
 
+  /**
+   * HÀM MỞ MODAL ỨNG TUYỂN
+   * Mục đích: Kiểm tra các điều kiện nghiêm ngặt trước khi cho phép nộp CV
+   */
   const handleOpenApply = () => {
-    const token =
-      localStorage.getItem("access_token") || localStorage.getItem("token");
+    const token = localStorage.getItem("access_token") || localStorage.getItem("token");
 
+    // Lỗi 1: User đang là Guest (Chưa đăng nhập)
     if (!token || !isLoggedIn) {
       setLoginPromptParams({
         show: true,
@@ -85,14 +95,16 @@ function JobDetail() {
       return;
     }
 
+    // Lỗi 2: Đăng nhập bằng tài khoản Nhà tuyển dụng hoặc Admin (Không cho phép nộp CV)
     if (userRole !== "student") {
       alert("Chỉ tài khoản Sinh viên mới có quyền nộp CV ứng tuyển!");
       return;
     }
 
+    // Nếu qua hết chốt chặn, mở Modal và reset dữ liệu cũ trong form
     setShowApplyModal(true);
     setApplyMessage({ text: "", type: "" });
-    setCvOption("profile");
+    setCvOption("profile"); // Mặc định chọn cách lấy CV có sẵn
     setCustomCvFile(null);
   };
 
@@ -218,10 +230,14 @@ function JobDetail() {
     setApplyMessage({ text: "", type: "" }); // Xóa lỗi nếu chọn file đúng
   };
 
+  /**
+   * HÀM XỬ LÝ GỬI FORM ỨNG TUYỂN LÊN BACKEND
+   * Mục đích: Gọi API POST /jobs/{id}/apply, đính kèm file CV và Cover Letter
+   */
   const submitApplication = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Ngăn chặn việc reload trang khi submit form
 
-    // Nếu chọn Upload mà chưa có file thì chặn lại
+    // Kiểm tra: Nếu chọn Upload mà quên chọn file thì chặn lại
     if (cvOption === "upload" && !customCvFile) {
       setApplyMessage({
         text: "Vui lòng chọn hoặc kéo thả file CV của bạn!",
@@ -230,29 +246,30 @@ function JobDetail() {
       return;
     }
 
-    setIsApplying(true);
+    setIsApplying(true); // Hiển thị nút "Đang gửi hồ sơ..."
     setApplyMessage({ text: "", type: "" });
 
+    // Sử dụng FormData (thay vì JSON) để có thể upload file qua HTTP Request
     const formData = new FormData();
     if (coverLetter) formData.append("cover_letter", coverLetter);
 
-    // Chỉ đính kèm file nếu người dùng chọn tab Upload
+    // Chỉ đính kèm file thật lên FormData nếu người dùng chọn tab Upload
+    // Nếu chọn Profile, Backend sẽ tự động lấy file CV cũ trong Database dựa theo Token
     if (cvOption === "upload" && customCvFile) {
       formData.append("cv_file", customCvFile);
     }
 
     try {
-      const token =
-        localStorage.getItem("access_token") || localStorage.getItem("token");
+      const token = localStorage.getItem("access_token") || localStorage.getItem("token");
       const response = await fetch(
         `${(import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api')}/jobs/${id}/apply`,
         {
           method: "POST",
           headers: {
             Accept: "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`, // Bắt buộc phải có token
           },
-          body: formData,
+          body: formData, // Đẩy dữ liệu file + text lên
         },
       );
 
@@ -263,8 +280,8 @@ function JobDetail() {
           text: data.message || "Ứng tuyển thành công!",
           type: "success",
         });
-        setHasApplied(true);
-        setTimeout(() => setShowApplyModal(false), 2000);
+        setHasApplied(true); // Biến nút "Nộp CV" thành "Đã ứng tuyển"
+        setTimeout(() => setShowApplyModal(false), 2000); // Tự động đóng modal sau 2s
       } else {
         setApplyMessage({
           text: data.message || "Có lỗi xảy ra!",
@@ -277,7 +294,7 @@ function JobDetail() {
         type: "error",
       });
     } finally {
-      setIsApplying(false);
+      setIsApplying(false); // Tắt hiệu ứng loading trên nút
     }
   };
 
