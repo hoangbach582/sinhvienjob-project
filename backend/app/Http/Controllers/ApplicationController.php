@@ -28,17 +28,32 @@ class ApplicationController extends Controller
 
         $job = \App\Models\Job::findOrFail($jobId);
 
-        // 4. Kiểm tra xem sinh viên này đã nộp đơn vào công việc nào của công ty này chưa?
-        $appliedToSameEmployer = Application::whereHas('job', function($q) use ($job) {
+        // 4. Kiểm tra lịch sử nộp hồ sơ vào công ty này
+        $employerApplications = Application::whereHas('job', function($q) use ($job) {
             $q->where('employer_id', $job->employer_id);
-        })->where('student_id', $studentProfile->id)->first();
+        })->where('student_id', $studentProfile->id)->get();
 
-        if ($appliedToSameEmployer) {
-            if ($appliedToSameEmployer->job_id == $jobId) {
-                return response()->json(['message' => 'Bạn đã nộp CV cho công việc này rồi!'], 400);
-            } else {
-                return response()->json(['message' => 'Bạn đã nộp hồ sơ vào một vị trí khác của công ty này rồi! Mỗi ứng viên chỉ được ứng tuyển 1 vị trí tại cùng một công ty.'], 400);
+        $activeApplicationsCount = 0;
+        $thirtyDaysAgo = now()->subDays(30);
+
+        foreach ($employerApplications as $app) {
+            // Kiểm tra trùng công việc
+            if ($app->job_id == $jobId) {
+                if ($app->status === 'withdrawn' || ($app->status === 'rejected' && $app->updated_at < $thirtyDaysAgo)) {
+                    // Hợp lệ để nộp lại (hồ sơ đã rút hoặc từ chối quá 30 ngày)
+                } else {
+                    return response()->json(['message' => 'Bạn đã nộp CV cho công việc này rồi!'], 400);
+                }
             }
+
+            // Đếm số lượng ứng tuyển đang active (không tính rút hoặc từ chối)
+            if (in_array($app->status, ['pending', 'reviewing', 'interview', 'accepted'])) {
+                $activeApplicationsCount++;
+            }
+        }
+
+        if ($activeApplicationsCount >= 3) {
+            return response()->json(['message' => 'Bạn chỉ được ứng tuyển tối đa 3 vị trí cùng lúc tại một công ty để tránh spam.'], 400);
         }
 
         // 5. Validate dữ liệu gửi lên từ Modal (File CV và Thư ngỏ)
@@ -237,5 +252,72 @@ class ApplicationController extends Controller
         });
 
         return response()->json($applications);
+    }
+
+    // Sinh viên rút hồ sơ
+    public function withdraw(Request $request, $id)
+    {
+        $user = $request->user();
+
+        if ($user->role !== 'student') {
+            return response()->json(['message' => 'Chỉ sinh viên mới có quyền rút hồ sơ!'], 403);
+        }
+
+        $studentProfile = StudentProfile::where('user_id', $user->id)->first();
+        $application = Application::where('id', $id)->where('student_id', $studentProfile->id)->first();
+
+        if (!$application) {
+            return response()->json(['message' => 'Không tìm thấy hồ sơ ứng tuyển!'], 404);
+        }
+
+        if (!in_array($application->status, ['pending', 'reviewing'])) {
+            return response()->json(['message' => 'Chỉ có thể rút hồ sơ khi đang chờ duyệt hoặc đang xem xét!'], 400);
+        }
+
+        $application->update(['status' => 'withdrawn']);
+
+        return response()->json(['message' => 'Đã rút hồ sơ thành công!']);
+    }
+
+    // Sinh viên cập nhật CV
+    public function updateApplication(Request $request, $id)
+    {
+        $user = $request->user();
+
+        if ($user->role !== 'student') {
+            return response()->json(['message' => 'Chỉ sinh viên mới có quyền cập nhật hồ sơ!'], 403);
+        }
+
+        $studentProfile = StudentProfile::where('user_id', $user->id)->first();
+        $application = Application::where('id', $id)->where('student_id', $studentProfile->id)->first();
+
+        if (!$application) {
+            return response()->json(['message' => 'Không tìm thấy hồ sơ ứng tuyển!'], 404);
+        }
+
+        if ($application->status !== 'pending') {
+            return response()->json(['message' => 'Chỉ có thể cập nhật CV khi hồ sơ đang ở trạng thái chờ duyệt!'], 400);
+        }
+
+        $request->validate([
+            'cv_file' => 'required|mimes:pdf,doc,docx|max:5120',
+        ]);
+
+        if ($request->hasFile('cv_file')) {
+            $file = $request->file('cv_file');
+            $mimeType = $file->getMimeType();
+            if (!in_array($mimeType, ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])) {
+                return response()->json(['message' => 'File CV không hợp lệ. Vui lòng upload PDF hoặc Word.'], 422);
+            }
+
+            $path = $file->store('cvs', 'public');
+            $cvUrl = asset('storage/' . $path);
+            
+            $application->update(['cv_url' => $cvUrl]);
+
+            return response()->json(['message' => 'Cập nhật CV thành công!', 'cv_url' => $cvUrl]);
+        }
+
+        return response()->json(['message' => 'Vui lòng chọn file CV!'], 400);
     }
 }

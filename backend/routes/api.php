@@ -83,6 +83,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     
     // 3. Lịch sử ứng tuyển
     Route::get('/applications/me', [ApplicationController::class, 'getAppliedJobs']);
+    Route::put('/student/applications/{id}/withdraw', [ApplicationController::class, 'withdraw']);
+    Route::middleware('throttle:upload')->post('/student/applications/{id}/update', [ApplicationController::class, 'updateApplication']);
 
     // 4. Việc làm đã lưu
     Route::post('/jobs/{jobId}/save', [SavedJobController::class, 'toggle']);

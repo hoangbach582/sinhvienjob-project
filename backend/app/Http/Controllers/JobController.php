@@ -57,9 +57,17 @@ class JobController extends Controller
             $studentProfile = StudentProfile::where('user_id', $user->id)->first();
             
             if ($studentProfile) {
-                // Kiểm tra xem sinh viên này đã nộp đơn cho job này chưa
+                // Kiểm tra xem sinh viên này đã nộp đơn cho job này chưa (chỉ tính đơn active)
                 $hasApplied = Application::where('job_id', $id)
                                          ->where('student_id', $studentProfile->id)
+                                         ->where(function ($q) {
+                                             $thirtyDaysAgo = now()->subDays(30);
+                                             $q->whereNotIn('status', ['withdrawn', 'rejected'])
+                                               ->orWhere(function ($q2) use ($thirtyDaysAgo) {
+                                                   $q2->where('status', 'rejected')
+                                                      ->where('updated_at', '>=', $thirtyDaysAgo);
+                                               });
+                                         })
                                          ->exists();
                 
                 // Kiểm tra xem sinh viên này có lưu job này vào danh sách yêu thích chưa

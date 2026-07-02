@@ -8,6 +8,11 @@ function AppliedJobs() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [selectedAppId, setSelectedAppId] = useState(null);
+  const [cvFile, setCvFile] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [activeMenuId, setActiveMenuId] = useState(null);
   const navigate = useNavigate();
 
   const fetchMyApplications = useCallback(async (page) => {
@@ -65,6 +70,72 @@ function AppliedJobs() {
   const { lastElementRef, isFetching } = useInfiniteScroll(async () => {
     setCurrentPage(prev => prev + 1);
   }, hasMore);
+
+  const handleWithdraw = async (id) => {
+    if (!window.confirm("Bạn có chắc chắn muốn rút hồ sơ ứng tuyển này?")) return;
+    
+    try {
+      const token = localStorage.getItem("access_token");
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api'}/student/applications/${id}/withdraw`, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Accept": "application/json"
+        }
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert("Rút hồ sơ thành công!");
+        setApplications(apps => apps.map(app => app.id === id ? { ...app, status: 'withdrawn' } : app));
+      } else {
+        alert(data.message || "Lỗi khi rút hồ sơ");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Lỗi kết nối");
+    }
+  };
+
+  const handleUpdateSubmit = async (e) => {
+    e.preventDefault();
+    if (!cvFile) return alert("Vui lòng chọn file CV");
+
+    setIsUpdating(true);
+    try {
+      const token = localStorage.getItem("access_token");
+      const formData = new FormData();
+      formData.append("cv_file", cvFile);
+
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api'}/student/applications/${selectedAppId}/update`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Accept": "application/json"
+        },
+        body: formData
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert("Cập nhật CV thành công!");
+        setShowUpdateModal(false);
+        setCvFile(null);
+      } else {
+        alert(data.message || "Lỗi khi cập nhật CV");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Lỗi kết nối");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  // Close menu when click outside
+  useEffect(() => {
+    const handleClickOutside = () => setActiveMenuId(null);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
 
   const getStatusConfig = (status) => {
     const configs = {
@@ -180,6 +251,28 @@ function AppliedJobs() {
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="15" y1="9" x2="9" y2="15"></line>
             <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+        ),
+      },
+      withdrawn: {
+        text: "Đã rút",
+        color: "#94a3b8",
+        bg: "rgba(148, 163, 184, 0.1)",
+        border: "rgba(148, 163, 184, 0.2)",
+        glow: "rgba(148, 163, 184, 0.15)",
+        icon: (
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <line x1="9" y1="12" x2="15" y2="12"></line>
           </svg>
         ),
       },
@@ -660,6 +753,105 @@ function AppliedJobs() {
                           <polyline points="9 18 15 12 9 6"></polyline>
                         </svg>
                       </button>
+
+                      {/* Action Menu */}
+                      <div style={{ position: "relative" }}>
+                        <button
+                          style={{
+                            width: "40px",
+                            height: "40px",
+                            borderRadius: "50%",
+                            backgroundColor: "transparent",
+                            border: "none",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "#94a3b8",
+                            cursor: "pointer",
+                            transition: "all 0.2s",
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveMenuId(activeMenuId === app.id ? null : app.id);
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.color = "#fff"}
+                          onMouseLeave={(e) => e.currentTarget.style.color = "#94a3b8"}
+                        >
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="1"></circle>
+                            <circle cx="12" cy="5" r="1"></circle>
+                            <circle cx="12" cy="19" r="1"></circle>
+                          </svg>
+                        </button>
+
+                        {activeMenuId === app.id && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              right: 0,
+                              top: "100%",
+                              marginTop: "8px",
+                              backgroundColor: "#1e293b",
+                              borderRadius: "8px",
+                              border: "1px solid rgba(255,255,255,0.1)",
+                              boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
+                              minWidth: "160px",
+                              zIndex: 10,
+                              overflow: "hidden"
+                            }}
+                          >
+                            {app.status === 'pending' && (
+                              <button
+                                style={{
+                                  width: "100%",
+                                  padding: "12px 16px",
+                                  backgroundColor: "transparent",
+                                  border: "none",
+                                  color: "#f8fafc",
+                                  textAlign: "left",
+                                  cursor: "pointer",
+                                  fontSize: "14px",
+                                  transition: "background 0.2s",
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)"}
+                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedAppId(app.id);
+                                  setShowUpdateModal(true);
+                                  setActiveMenuId(null);
+                                }}
+                              >
+                                Cập nhật CV
+                              </button>
+                            )}
+                            {(!['accepted', 'rejected', 'withdrawn'].includes(app.status)) && (
+                              <button
+                                style={{
+                                  width: "100%",
+                                  padding: "12px 16px",
+                                  backgroundColor: "transparent",
+                                  border: "none",
+                                  color: "#f87171",
+                                  textAlign: "left",
+                                  cursor: "pointer",
+                                  fontSize: "14px",
+                                  transition: "background 0.2s",
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(239,68,68,0.1)"}
+                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleWithdraw(app.id);
+                                  setActiveMenuId(null);
+                                }}
+                              >
+                                Rút hồ sơ
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
@@ -676,6 +868,81 @@ function AppliedJobs() {
           )}
         </div>
       </div>
+
+      {/* Update CV Modal */}
+      {showUpdateModal && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)",
+          display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999
+        }}>
+          <div style={{
+            backgroundColor: "#1e293b",
+            padding: "32px",
+            borderRadius: "16px",
+            border: "1px solid rgba(255,255,255,0.1)",
+            width: "100%", maxWidth: "480px"
+          }}>
+            <h3 style={{ margin: "0 0 24px 0", color: "#f8fafc", fontSize: "20px" }}>Cập nhật File CV</h3>
+            <form onSubmit={handleUpdateSubmit}>
+              <div style={{ marginBottom: "24px" }}>
+                <label style={{ display: "block", marginBottom: "8px", color: "#94a3b8", fontSize: "14px" }}>
+                  Tải lên File CV mới (PDF/Doc)
+                </label>
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  onChange={(e) => setCvFile(e.target.files[0])}
+                  style={{
+                    width: "100%",
+                    padding: "12px",
+                    backgroundColor: "rgba(255,255,255,0.05)",
+                    border: "1px dashed rgba(255,255,255,0.2)",
+                    borderRadius: "8px",
+                    color: "#f8fafc"
+                  }}
+                  required
+                />
+              </div>
+              <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowUpdateModal(false);
+                    setCvFile(null);
+                  }}
+                  style={{
+                    padding: "10px 20px",
+                    backgroundColor: "transparent",
+                    color: "#94a3b8",
+                    border: "none",
+                    cursor: "pointer",
+                    borderRadius: "8px"
+                  }}
+                  disabled={isUpdating}
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  style={{
+                    padding: "10px 20px",
+                    backgroundColor: "#6366f1",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "8px",
+                    cursor: isUpdating ? "not-allowed" : "pointer",
+                    opacity: isUpdating ? 0.7 : 1
+                  }}
+                  disabled={isUpdating}
+                >
+                  {isUpdating ? "Đang cập nhật..." : "Cập nhật CV"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </MainLayout>
   );
 }

@@ -63,11 +63,34 @@ function JobHoverPreview({ job, anchorRef, visible, formatSalary, translateType,
 
   if (!job) return null;
 
-  const skills = job.required_skills
-    ? Array.isArray(job.required_skills)
-      ? job.required_skills
-      : job.required_skills.split(",").map((s) => s.trim())
-    : [];
+  const extractSkills = (text) => {
+    if (!text) return [];
+    const keywords = [
+      "ReactJS", "React", "Vue", "Angular", "Node.js", "NodeJS", "JavaScript", "TypeScript",
+      "HTML", "CSS", "PHP", "Laravel", "Java", "Python", "C++", "C#", ".NET",
+      "SQL", "MySQL", "MongoDB", "Git", "Docker", "AWS", "Figma",
+      "Tiếng Anh", "Giao tiếp", "Làm việc nhóm"
+    ];
+    let found = keywords.filter(k => text.toLowerCase().includes(k.toLowerCase()));
+    if (found.includes("ReactJS")) found = found.filter(k => k !== "React");
+    if (found.includes("Node.js") && found.includes("NodeJS")) found = found.filter(k => k !== "NodeJS");
+    if (found.includes("HTML") && found.includes("CSS")) {
+      found = found.filter(k => k !== "HTML" && k !== "CSS");
+      found.push("HTML/CSS");
+    }
+    return found;
+  };
+
+  let skills = [];
+  if (job.required_skills) {
+      skills = Array.isArray(job.required_skills) ? job.required_skills : job.required_skills.split(",").map(s => s.trim());
+  } else {
+      const combinedText = `${job.description || ''} ${job.requirements || ''}`;
+      skills = extractSkills(combinedText);
+      if (skills.length === 0) {
+          skills = ["Kỹ năng chuyên môn"];
+      }
+  }
 
   const descLines = job.description
     ? job.description.split("\n").filter((l) => l.trim()).slice(0, 3)
