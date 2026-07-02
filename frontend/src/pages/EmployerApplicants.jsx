@@ -28,6 +28,7 @@ const STATUS_OPTIONS = [
   { value: 'interview', label: 'Mời phỏng vấn', color: 'text-purple-700 bg-purple-50 border-purple-200 focus:ring-purple-500' },
   { value: 'rejected', label: 'Từ chối', color: 'text-red-700 bg-red-50 border-red-200 focus:ring-red-500' },
   { value: 'accepted', label: 'Được nhận', color: 'text-green-700 bg-green-50 border-green-200 focus:ring-green-500' },
+  { value: 'withdrawn', label: 'Đã rút hồ sơ', color: 'text-gray-500 bg-gray-100 border-gray-300' },
 ];
 
 const STATUS_FILTERS = [
@@ -44,7 +45,7 @@ const StatusSelect = ({ currentStatus, onChange, isLoading }) => {
   const currentOption = STATUS_OPTIONS.find(opt => opt.value === currentStatus) || STATUS_OPTIONS[0];
 
   // Tối ưu: Nếu đã được nhận hoặc bị từ chối thì hiển thị một badge cố định, không cho sửa nữa
-  if (currentStatus === 'accepted' || currentStatus === 'rejected') {
+  if (currentStatus === 'accepted' || currentStatus === 'rejected' || currentStatus === 'withdrawn') {
     return (
       <div 
         className={`inline-flex w-[150px] items-center justify-center border rounded-lg py-2 px-3 text-sm font-medium ${currentOption.color} cursor-not-allowed`} 
@@ -206,17 +207,17 @@ const ApplicantDetailModal = ({ isOpen, onClose, app }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] border border-gray-100">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh] border border-gray-100" style={{ padding: '1rem' }}>
         <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gray-50/50">
           <h3 className="font-bold text-xl text-gray-900">Chi tiết ứng viên</h3>
-          <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors">
+          <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors" style={{ cursor: 'pointer' }}>
             <X size={20} />
           </button>
         </div>
         
         <div className="p-6 overflow-y-auto flex-1 custom-scrollbar space-y-8">
           {/* Header Profile Section */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 p-5 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 rounded-xl border border-blue-100/50">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 p-5 bg-linear-to-br from-blue-50/50 to-indigo-50/50 rounded-xl border border-blue-100/50" style={{ marginBottom: '0.4rem' }}>
             {app.student_avatar ? (
               <img 
                 src={app.student_avatar} 
@@ -246,33 +247,33 @@ const ApplicantDetailModal = ({ isOpen, onClose, app }) => {
           <div className="space-y-6">
             {/* Bio Section */}
             <div>
-              <h4 className="font-semibold text-gray-900 flex items-center gap-2 mb-3">
+              <h4 className="font-semibold text-gray-900 flex items-center gap-2 mb-3" style={{ margin: '0.6rem 0 0' }}>
                 <User size={18} className="text-blue-600" />
                 Giới thiệu bản thân
               </h4>
-              <div className="bg-gray-50/80 p-5 rounded-xl text-sm text-gray-700 border border-gray-100 whitespace-pre-wrap leading-relaxed">
+              <div className="bg-gray-50/80 p-5 rounded-xl text-sm text-gray-700 border border-gray-100 whitespace-pre-wrap leading-relaxed" style={{ padding: '0.4rem' }}>
                 {app.student_bio || <span className="text-gray-400 italic">Chưa có thông tin giới thiệu.</span>}
               </div>
             </div>
 
             {/* Cover Letter Section */}
             <div>
-              <h4 className="font-semibold text-gray-900 flex items-center gap-2 mb-3">
+              <h4 className="font-semibold text-gray-900 flex items-center gap-2 mb-3" style={{ margin: '0.6rem 0 0' }}>
                 <MessageSquare size={18} className="text-green-600" />
                 Thư ngỏ (Cover Letter)
               </h4>
-              <div className="bg-green-50/50 p-5 rounded-xl text-sm text-gray-700 border border-green-100 whitespace-pre-wrap leading-relaxed">
+              <div className="bg-green-50/50 p-5 rounded-xl text-sm text-gray-700 border border-green-100 whitespace-pre-wrap leading-relaxed" style={{ padding: '0.4rem' }}>
                 {app.cover_letter || <span className="text-gray-400 italic">Ứng viên không đính kèm thư ngỏ.</span>}
               </div>
             </div>
 
             {/* CV Section */}
             <div>
-              <h4 className="font-semibold text-gray-900 flex items-center gap-2 mb-3">
+              <h4 className="font-semibold text-gray-900 flex items-center gap-2 mb-3" style={{ margin: '0.6rem 0 0' }}>
                 <FileText size={18} className="text-purple-600" />
                 Hồ sơ đính kèm (CV)
               </h4>
-              <div className="bg-purple-50/50 p-5 rounded-xl border border-purple-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="bg-purple-50/50 p-5 rounded-xl border border-purple-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ padding: '0.4rem' }}>
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-white rounded-lg shadow-sm border border-purple-100/50">
                     <FileText size={24} className="text-purple-600" />
@@ -288,6 +289,7 @@ const ApplicantDetailModal = ({ isOpen, onClose, app }) => {
                     target="_blank" 
                     rel="noreferrer" 
                     className="inline-flex items-center justify-center gap-2 px-5 py-2 bg-white text-purple-700 rounded-lg text-sm font-semibold hover:bg-purple-50 transition-all border border-purple-200 shadow-sm hover:shadow"
+                    style={{ padding: '0.4rem' }}
                   >
                     Xem / Tải xuống
                   </a>
@@ -303,6 +305,7 @@ const ApplicantDetailModal = ({ isOpen, onClose, app }) => {
           <button
             onClick={onClose}
             className="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors shadow-sm"
+            style={{ display: 'none' }}
           >
             Đóng cửa sổ
           </button>
@@ -325,11 +328,11 @@ const ApplicantRow = ({ app, jobs, onStatusChange, isUpdatingStatus, onOpenRejec
   };
 
   return (
-    <tr className="hover:bg-gray-50/70 transition-colors group">
+    <tr className={`hover:bg-gray-50/70 transition-colors group ${app.status === 'withdrawn' ? 'opacity-60 bg-gray-50/50' : ''}`}>
       <td 
-        className="py-4 px-4 min-w-[240px] cursor-pointer"
-        onClick={() => onOpenDetailModal(app)}
-        title="Nhấn để xem chi tiết ứng viên"
+        className={`py-4 px-4 min-w-[240px] ${app.status === 'withdrawn' ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+        onClick={() => app.status !== 'withdrawn' && onOpenDetailModal(app)}
+        title={app.status === 'withdrawn' ? 'Hồ sơ đã rút' : 'Nhấn để xem chi tiết ứng viên'}
       >
         <div className="flex items-center gap-3">
           {app.student_avatar ? (
@@ -366,16 +369,27 @@ const ApplicantRow = ({ app, jobs, onStatusChange, isUpdatingStatus, onOpenRejec
         </div>
       </td>
       <td className="py-4 px-4 text-center">
-        <a 
-          href={app.cv_url} 
-          target="_blank" 
-          rel="noreferrer" 
-          className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100 hover:shadow-sm transition-all border border-blue-100"
-          style={{ padding: '0.4rem' }}
-        >
-          <FileText size={14} />
-          Xem CV
-        </a>
+        {app.status === 'withdrawn' ? (
+          <span 
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-gray-50 text-gray-400 rounded-lg text-xs font-medium border border-gray-100 cursor-not-allowed"
+            style={{ padding: '0.4rem' }}
+            title="Không thể xem CV do hồ sơ đã rút"
+          >
+            <FileText size={14} />
+            Xem CV
+          </span>
+        ) : (
+          <a 
+            href={app.cv_url} 
+            target="_blank" 
+            rel="noreferrer" 
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100 hover:shadow-sm transition-all border border-blue-100"
+            style={{ padding: '0.4rem' }}
+          >
+            <FileText size={14} />
+            Xem CV
+          </a>
+        )}
       </td>
       <td className="py-4 px-4">
         <StatusSelect 

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
+import toast from "react-hot-toast";
 
 function AppliedJobs() {
   const [applications, setApplications] = useState([]);
@@ -13,12 +14,14 @@ function AppliedJobs() {
   const [cvFile, setCvFile] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [activeMenuId, setActiveMenuId] = useState(null);
+  const [withdrawAppId, setWithdrawAppId] = useState(null);
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
   const navigate = useNavigate();
 
   const fetchMyApplications = useCallback(async (page) => {
     const token = localStorage.getItem("access_token");
     if (!token) {
-      alert("Bạn cần đăng nhập để xem trang này!");
+      toast.error("Bạn cần đăng nhập để xem trang này!");
       navigate("/login");
       return;
     }
@@ -71,12 +74,13 @@ function AppliedJobs() {
     setCurrentPage(prev => prev + 1);
   }, hasMore);
 
-  const handleWithdraw = async (id) => {
-    if (!window.confirm("Bạn có chắc chắn muốn rút hồ sơ ứng tuyển này?")) return;
+  const executeWithdraw = async () => {
+    if (!withdrawAppId) return;
     
+    setIsWithdrawing(true);
     try {
       const token = localStorage.getItem("access_token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api'}/student/applications/${id}/withdraw`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api'}/student/applications/${withdrawAppId}/withdraw`, {
         method: "PUT",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -85,20 +89,28 @@ function AppliedJobs() {
       });
       const data = await res.json();
       if (res.ok) {
-        alert("Rút hồ sơ thành công!");
-        setApplications(apps => apps.map(app => app.id === id ? { ...app, status: 'withdrawn' } : app));
+        toast.success("Rút hồ sơ thành công!");
+        setApplications(apps => apps.map(app => app.id === withdrawAppId ? { ...app, status: 'withdrawn' } : app));
+        setWithdrawAppId(null);
       } else {
-        alert(data.message || "Lỗi khi rút hồ sơ");
+        toast.error(data.message || "Lỗi khi rút hồ sơ");
       }
     } catch (err) {
       console.error(err);
-      alert("Lỗi kết nối");
+      toast.error("Lỗi kết nối");
+    } finally {
+      setIsWithdrawing(false);
     }
+  };
+
+  const handleWithdrawClick = (id) => {
+    setWithdrawAppId(id);
+    setActiveMenuId(null);
   };
 
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
-    if (!cvFile) return alert("Vui lòng chọn file CV");
+    if (!cvFile) return toast.error("Vui lòng chọn file CV");
 
     setIsUpdating(true);
     try {
@@ -116,15 +128,15 @@ function AppliedJobs() {
       });
       const data = await res.json();
       if (res.ok) {
-        alert("Cập nhật CV thành công!");
+        toast.success("Cập nhật CV thành công!");
         setShowUpdateModal(false);
         setCvFile(null);
       } else {
-        alert(data.message || "Lỗi khi cập nhật CV");
+        toast.error(data.message || "Lỗi khi cập nhật CV");
       }
     } catch (err) {
       console.error(err);
-      alert("Lỗi kết nối");
+      toast.error("Lỗi kết nối");
     } finally {
       setIsUpdating(false);
     }
@@ -420,6 +432,7 @@ function AppliedJobs() {
                     key={app.id}
                     style={{
                       position: "relative",
+                      zIndex: activeMenuId === app.id ? 20 : 1,
                       background:
                         "linear-gradient(145deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.6) 100%)",
                       borderRadius: "16px",
@@ -431,7 +444,6 @@ function AppliedJobs() {
                       boxShadow: "0 10px 30px -10px rgba(0, 0, 0, 0.5)",
                       backdropFilter: "blur(10px)",
                       transition: "all 0.3s ease",
-                      overflow: "hidden",
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = "translateY(-2px)";
@@ -448,18 +460,19 @@ function AppliedJobs() {
                         "0 10px 30px -10px rgba(0, 0, 0, 0.5)";
                     }}
                   >
-                    {/* Glow effect */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        right: 0,
-                        width: "250px",
-                        height: "250px",
-                        background: `radial-gradient(circle at top right, ${config.glow}, transparent 70%)`,
-                        pointerEvents: "none",
-                      }}
-                    ></div>
+                    {/* Container for Glow effect with overflow hidden to clip to border radius */}
+                    <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, borderRadius: "16px", overflow: "hidden", pointerEvents: "none" }}>
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          right: 0,
+                          width: "250px",
+                          height: "250px",
+                          background: `radial-gradient(circle at top right, ${config.glow}, transparent 70%)`,
+                        }}
+                      ></div>
+                    </div>
 
                     {/* Left: Logo */}
                     <div
@@ -755,103 +768,104 @@ function AppliedJobs() {
                       </button>
 
                       {/* Action Menu */}
-                      <div style={{ position: "relative" }}>
-                        <button
-                          style={{
-                            width: "40px",
-                            height: "40px",
-                            borderRadius: "50%",
-                            backgroundColor: "transparent",
-                            border: "none",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            color: "#94a3b8",
-                            cursor: "pointer",
-                            transition: "all 0.2s",
-                          }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setActiveMenuId(activeMenuId === app.id ? null : app.id);
-                          }}
-                          onMouseEnter={(e) => e.currentTarget.style.color = "#fff"}
-                          onMouseLeave={(e) => e.currentTarget.style.color = "#94a3b8"}
-                        >
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="12" r="1"></circle>
-                            <circle cx="12" cy="5" r="1"></circle>
-                            <circle cx="12" cy="19" r="1"></circle>
-                          </svg>
-                        </button>
-
-                        {activeMenuId === app.id && (
-                          <div
+                      {!['accepted', 'rejected', 'withdrawn'].includes(app.status) && (
+                        <div style={{ position: "relative" }}>
+                          <button
                             style={{
-                              position: "absolute",
-                              right: 0,
-                              top: "100%",
-                              marginTop: "8px",
-                              backgroundColor: "#1e293b",
-                              borderRadius: "8px",
-                              border: "1px solid rgba(255,255,255,0.1)",
-                              boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
-                              minWidth: "160px",
-                              zIndex: 10,
-                              overflow: "hidden"
+                              width: "40px",
+                              height: "40px",
+                              borderRadius: "50%",
+                              backgroundColor: "transparent",
+                              border: "none",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              color: "#94a3b8",
+                              cursor: "pointer",
+                              transition: "all 0.2s",
                             }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveMenuId(activeMenuId === app.id ? null : app.id);
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.color = "#fff"}
+                            onMouseLeave={(e) => e.currentTarget.style.color = "#94a3b8"}
                           >
-                            {app.status === 'pending' && (
-                              <button
-                                style={{
-                                  width: "100%",
-                                  padding: "12px 16px",
-                                  backgroundColor: "transparent",
-                                  border: "none",
-                                  color: "#f8fafc",
-                                  textAlign: "left",
-                                  cursor: "pointer",
-                                  fontSize: "14px",
-                                  transition: "background 0.2s",
-                                }}
-                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)"}
-                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setSelectedAppId(app.id);
-                                  setShowUpdateModal(true);
-                                  setActiveMenuId(null);
-                                }}
-                              >
-                                Cập nhật CV
-                              </button>
-                            )}
-                            {(!['accepted', 'rejected', 'withdrawn'].includes(app.status)) && (
-                              <button
-                                style={{
-                                  width: "100%",
-                                  padding: "12px 16px",
-                                  backgroundColor: "transparent",
-                                  border: "none",
-                                  color: "#f87171",
-                                  textAlign: "left",
-                                  cursor: "pointer",
-                                  fontSize: "14px",
-                                  transition: "background 0.2s",
-                                }}
-                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(239,68,68,0.1)"}
-                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleWithdraw(app.id);
-                                  setActiveMenuId(null);
-                                }}
-                              >
-                                Rút hồ sơ
-                              </button>
-                            )}
-                          </div>
-                        )}
-                      </div>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <circle cx="12" cy="12" r="1"></circle>
+                              <circle cx="12" cy="5" r="1"></circle>
+                              <circle cx="12" cy="19" r="1"></circle>
+                            </svg>
+                          </button>
+
+                          {activeMenuId === app.id && (
+                            <div
+                              style={{
+                                position: "absolute",
+                                right: 0,
+                                top: "100%",
+                                marginTop: "8px",
+                                backgroundColor: "#1e293b",
+                                borderRadius: "8px",
+                                border: "1px solid rgba(255,255,255,0.1)",
+                                boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
+                                minWidth: "160px",
+                                zIndex: 10,
+                                overflow: "hidden"
+                              }}
+                            >
+                              {app.status === 'pending' && (
+                                <button
+                                  style={{
+                                    width: "100%",
+                                    padding: "12px 16px",
+                                    backgroundColor: "transparent",
+                                    border: "none",
+                                    color: "#f8fafc",
+                                    textAlign: "left",
+                                    cursor: "pointer",
+                                    fontSize: "14px",
+                                    transition: "background 0.2s",
+                                  }}
+                                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)"}
+                                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedAppId(app.id);
+                                    setShowUpdateModal(true);
+                                    setActiveMenuId(null);
+                                  }}
+                                >
+                                  Cập nhật CV
+                                </button>
+                              )}
+                              {(!['accepted', 'rejected', 'withdrawn'].includes(app.status)) && (
+                                <button
+                                  style={{
+                                    width: "100%",
+                                    padding: "12px 16px",
+                                    backgroundColor: "transparent",
+                                    border: "none",
+                                    color: "#f87171",
+                                    textAlign: "left",
+                                    cursor: "pointer",
+                                    fontSize: "14px",
+                                    transition: "background 0.2s",
+                                  }}
+                                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(239,68,68,0.1)"}
+                                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleWithdrawClick(app.id);
+                                  }}
+                                >
+                                  Rút hồ sơ
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
@@ -940,6 +954,62 @@ function AppliedJobs() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* Withdraw Modal */}
+      {withdrawAppId && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)",
+          display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999
+        }}>
+          <div style={{
+            backgroundColor: "#1e293b",
+            padding: "32px",
+            borderRadius: "16px",
+            border: "1px solid rgba(255,255,255,0.1)",
+            width: "100%", maxWidth: "480px"
+          }}>
+            <h3 style={{ margin: "0 0 16px 0", color: "#f8fafc", fontSize: "20px" }}>Xác nhận rút hồ sơ</h3>
+            <p style={{ margin: "0 0 24px 0", color: "#94a3b8", fontSize: "15px", lineHeight: "1.6" }}>
+              Bạn có chắc chắn muốn rút hồ sơ ứng tuyển này không? 
+              <br/>Thao tác này không thể hoàn tác, và nhà tuyển dụng sẽ không còn thấy hồ sơ của bạn trong danh sách chờ duyệt.
+            </p>
+            
+            <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
+              <button
+                type="button"
+                onClick={() => setWithdrawAppId(null)}
+                style={{
+                  padding: "10px 20px",
+                  backgroundColor: "transparent",
+                  color: "#94a3b8",
+                  border: "none",
+                  cursor: "pointer",
+                  borderRadius: "8px"
+                }}
+                disabled={isWithdrawing}
+              >
+                Hủy bỏ
+              </button>
+              <button
+                type="button"
+                onClick={executeWithdraw}
+                style={{
+                  padding: "10px 20px",
+                  backgroundColor: "#ef4444",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "8px",
+                  cursor: isWithdrawing ? "not-allowed" : "pointer",
+                  opacity: isWithdrawing ? 0.7 : 1
+                }}
+                disabled={isWithdrawing}
+              >
+                {isWithdrawing ? "Đang xử lý..." : "Xác nhận rút"}
+              </button>
+            </div>
           </div>
         </div>
       )}
