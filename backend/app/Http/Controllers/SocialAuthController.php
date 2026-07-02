@@ -90,6 +90,14 @@ class SocialAuthController extends Controller
             $profile = null;
             if ($user->role === 'student') {
                 $profile = StudentProfile::where('user_id', $user->id)->first();
+            } elseif ($user->role === 'employer') {
+                $employer = \App\Models\Employer::where('user_id', $user->id)->first();
+                if ($employer) {
+                    $profile = [
+                        'full_name' => $employer->company_name,
+                        'avatar' => $employer->logo_url
+                    ];
+                }
             }
 
             // 6. Trả về thông tin đăng nhập thành công

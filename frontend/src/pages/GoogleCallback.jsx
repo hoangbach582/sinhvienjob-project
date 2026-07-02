@@ -10,20 +10,6 @@ function GoogleCallback() {
   const location = useLocation();
   const { login } = useAuth();
 
-  useEffect(() => {
-    // Component mounts, fetch the code from the URL
-    const searchParams = new URLSearchParams(location.search);
-    const code = searchParams.get('code');
-
-    if (code) {
-      // We have a code, send it to the backend
-      handleGoogleCallback(code);
-    } else {
-      setError("Không tìm thấy mã xác thực từ Google.");
-      setLoading(false);
-    }
-  }, [location.search]);
-
   const handleGoogleCallback = async (code) => {
     try {
       const response = await fetch((import.meta.env.VITE_API_URL || 'https://sinhvienjob-project.onrender.com/api') + '/auth/google/callback', {
@@ -41,18 +27,23 @@ function GoogleCallback() {
         // Construct the user object for AuthContext
         let userWithInfo = { ...data.user };
         
-        if (data.user.role === 'student' && data.profile) {
+        if (data.profile) {
           userWithInfo.name = data.profile.full_name || data.user.email;
           userWithInfo.avatar = data.profile.avatar || '';
         } else {
           userWithInfo.name = data.user.email;
+          userWithInfo.avatar = '';
         }
 
         // Use the login function from AuthContext to save token and user state
         login(data.access_token, userWithInfo);
 
-        // Redirect to home page
-        navigate('/');
+        // Redirect based on role
+        if (data.user.role === 'employer' || data.user.role === 'admin') {
+          navigate('/employer/dashboard');
+        } else {
+          navigate('/');
+        }
       } else {
         setError(data.message || 'Đăng nhập bằng Google thất bại.');
       }
@@ -63,6 +54,21 @@ function GoogleCallback() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // Component mounts, fetch the code from the URL
+    const searchParams = new URLSearchParams(location.search);
+    const code = searchParams.get('code');
+
+    if (code) {
+      // We have a code, send it to the backend
+      handleGoogleCallback(code);
+    } else {
+      setError("Không tìm thấy mã xác thực từ Google.");
+      setLoading(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
 
   return (
     <MainLayout>

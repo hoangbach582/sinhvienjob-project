@@ -73,7 +73,8 @@ function Login() {
             userWithInfo.name = data.user.email;
           }
         } else {
-          userWithInfo.name = data.user.email;
+          userWithInfo.name = data.name || data.user.email;
+          userWithInfo.avatar = data.avatar || "";
         }
 
         login(data.access_token, userWithInfo);

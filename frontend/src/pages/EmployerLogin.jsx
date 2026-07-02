@@ -54,6 +54,7 @@ function EmployerLogin() {
         const userObj = {
           ...data.user,
           name: data.name || data.user.name || data.user.email,
+          avatar: data.avatar || "",
         };
         login(data.access_token, userObj);
 
