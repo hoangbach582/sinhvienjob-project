@@ -84,7 +84,7 @@ function CustomPieTooltip({ active, payload }) {
       <p
         style={{ color: "#fff", fontSize: "15px", fontWeight: 700, margin: 0 }}
       >
-        {payload[0].value} hồ sơ ({payload[0].payload.percent?.toFixed(1)}%)
+        {payload[0].value} hồ sơ ({payload[0].payload.percentage?.toFixed(1)}%)
       </p>
     </div>
   );
@@ -179,7 +179,7 @@ function DashboardCharts({
   const pieData = jobTypeBreakdown.map((d) => ({
     name: d.type,
     value: d.count,
-    percent: total > 0 ? (d.count / total) * 100 : 0,
+    percentage: total > 0 ? (d.count / total) * 100 : 0,
   }));
 
   // Custom label cho Pie (hiện % ở ngoài)
